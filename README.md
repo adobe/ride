@@ -42,10 +42,10 @@ There are additional test options avaialble as well:
 | Document   | Link |
 | -------------  | ------------- |
 | Main Git Repository | [https://github.com/adobe/ride](https://github.com/adobe/ride) 
-| Sample Target Server location	| [http://sample.ride.adobe.com:8080/sample-service-server/rest/hello](http://sample.ride.adobe.com:8080/sample-service-server/rest/hello)  |
-| Snapshot Artifacts	| [https://repo.adobe.com/artifactory/adobe-ride-snapshot/](https://repo.adobe.com/artifactory/adobe-ride-snapshot/)  |
-| Release Artifacts	| [https://repo.adobe.com/artifactory/adobe-ride-release/](https://repo.adobe.com/artifactory/adobe-ride-release/)  |
-| Architect/Driver | [Ted Casey] (https://www.linkedin.com/in/ted-casey-0074064/) |
+| Sample Target Server location	| In provisioning  |
+| Snapshot Artifacts	| TBD  |
+| Release Artifacts	| TBD  |
+| Architect/Driver | [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/) |
 
 ## Repositories
 When extending Adobe Ride, these settings need to be added to the repository node of your project(s) (or parent project) in order to post your extension to your internal artifact management system.
