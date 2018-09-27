@@ -168,7 +168,7 @@ Adobe Ride Components are centralized and contributable through the PR process d
 Components:
 * model-util: library which primarily consumes json schemas which maps to a REST API call body, and generates a message to be used in a test call (explained git readme - link coming)
 * config-util: setup endpoint targeting and test user authorization based on commands given at launch time.
-* core: rolls up all of the rest-assured groovy syntax into simple CoreController.\<method> calls (i.e. CoreController.put(req, resp) and handles the firing of the call based on the config-util input.
+* core: rolls up all of the rest-assured groovy syntax into simple RestApiController.\<method> calls (i.e. RestApiController.put(req, resp) and handles the firing of the call based on the config-util input.
 * fuzzer-lib: exhaustively fuzzes a REST body with negative, edge-case, and malicious (though safe for testing) calls to the service.
 * performance-lib: Scala libary based on Gatling which allows you to place your scala-modified test code in snippet block and run performance metrics
 
