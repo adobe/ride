@@ -1,0 +1,9 @@
+**/.DS_Store
+**/.classpath
+**/.project
+**/.settings
+**/target
+**/test-output
+
+.idea/
+**/*.iml
