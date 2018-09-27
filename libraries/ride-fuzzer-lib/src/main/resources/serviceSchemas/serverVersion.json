@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "title" : "target fuzzer server version",
+    "type": "object",
+    "description": "this is the schema the response in a version check",
+	"required": ["projectVersion"],
+	"additionalProperties": true,
+	"properties": {
+		"projectName": { "type": "string" },
+		"projectVersion": { "type": "string" },
+		"buildInfo": { "type": "string" },
+		"versionNumber": { "type": "string" },
+		"branchName": { "type": "string" },
+		"cycleNumber": { "type": "string" },
+		"gitCommit": { "type": "string" },
+		"buildDate": { "type": "string" }
+	}
+}

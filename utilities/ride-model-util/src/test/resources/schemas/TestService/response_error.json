@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Response ERROR Response Schema",
+  "description": "This is the schema for the ERROR response",
+  "type": "object",
+  "required": [
+    "errors",
+    "jsonapi"
+  ],
+  "properties": {
+    "errors": {
+      "$ref": "#/definitions/errors"
+    },
+    "jsonapi": {
+      "$ref": "definition_jsonapi.json"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+
+    "errors": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/errorItem"}
+    },
+
+    "errorItem": {
+      "type": "object",
+      "required": [
+        "status",
+        "title"
+      ],
+      "properties": {
+        "status": {
+          "type": "number"
+        },
+        "title": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "pointer": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  }
+}

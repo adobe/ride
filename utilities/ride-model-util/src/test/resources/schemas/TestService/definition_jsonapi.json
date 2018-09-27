@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "JSONAPI specifier definition",
+  "description": "This is the schema for the jsonapi specifier on requests and responses",
+  "type": "object",
+  "required": [
+    "version"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

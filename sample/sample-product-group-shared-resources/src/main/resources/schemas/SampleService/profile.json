@@ -1,0 +1,157 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"definitions": {
+		"record": {
+			"type": "object",
+			"required": [
+				"person",
+				"addresses"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"person": {
+					"$ref": "#/definitions/person"
+				},
+				"addresses": {
+					"type": "array",
+					"items": {
+						"properties": {
+							"address": {
+								"$ref": "#/definitions/address"
+							}
+						},
+						"type": "object"
+					}
+				}
+			}
+		},
+		"person": {
+			"type": "object",
+			"required": [
+				"firstName"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"firstName": {
+					"type": "string"
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"birthDay": {
+					"type": "integer"
+				},
+				"birthMonth": {
+					"type": "integer"
+				},
+				"birthYear": {
+					"type": "integer"
+				},
+				"gender": {
+					"enum": [
+						"female",
+						"male",
+						"dts"
+					]
+				},
+				"audit": {
+					"$ref": "#/definitions/audit"
+				}
+			}
+		},
+		"address": {
+			"type": "object",
+			"required": [
+				"city"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"street1": {
+					"type": "string"
+				},
+				"street2": {
+					"type": "string"
+				},
+				"city": {
+					"type": "string"
+				}
+			}
+		},
+		"audit": {
+			"type": "object",
+			"required": [
+				"createdOn"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"createdOn": {
+					"type": "string",
+					"pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+					"format": "date-time",
+					"description": "creation time in yyyy-MM-dd'T'HH:mm:ssZ format",
+					"mutable": false,
+					"searchable": true
+				},
+				"modifiedOn": {
+					"type": "string",
+					"pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+					"format": "date-time",
+					"description": "modification time in yyyy-MM-dd'T'HH:mm:ssZ format",
+					"mutable": false,
+					"searchable": true
+				},
+				"createdByUser": {
+					"$ref": "#/definitions/createdBy"
+				}
+			}
+		},
+		"createdBy": {
+			"type": "object",
+			"required": [
+				"id",
+				"username",
+				"fullName",
+				"authentication"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"username": {
+					"type": "string",
+					"format": "email"
+				},
+				"fullName": {
+					"type": "string"
+				},
+				"authentication": {
+					"enum": [
+						"oauth",
+						"ldap"
+					]
+				}
+			}
+		}
+	},
+	"type": "array",
+	"items": {
+		"properties": {
+			"record": {
+				"$ref": "#/definitions/record"
+			},
+			"xid": {
+				"type": "string"
+			},
+			"sourceId": {
+				"type": "string"
+			},
+			"timestamp": {
+				"type": "string",
+				"format": "timestamp",
+				"description": "custom format will need to be handled in modelObject"
+			}
+		},
+		"type": "object"
+	}
+}

@@ -2,10 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.adobe.ride</groupId>
-  <artifactId>cloud-automation-parent</artifactId>
+  <artifactId>ride-parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>cloud-automation-parent</name>
+  <name>ride-parent</name>
   <description>Adobe Ride Parent Pom</description>
 
   <properties>
@@ -117,10 +117,10 @@
   </dependencies>
 
   <modules>
-    <module>../utilities/cloud-automation-model-util</module>
-    <module>../utilities/cloud-automation-config-util</module>
+    <module>../utilities/ride-model-util</module>
+    <module>../utilities/ride-config-util</module>
     <module>../core</module>
-    <module>../libraries/cloud-automation-fuzzer-lib</module>
-    <module>../libraries/cloud-automation-performance-lib</module>
+    <module>../libraries/ride-fuzzer-lib</module>
+    <module>../libraries/ride-performance-lib</module>
   </modules>
 </project>

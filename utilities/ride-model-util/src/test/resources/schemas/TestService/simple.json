@@ -1,0 +1,1 @@
+{"$schema":"http://json-schema.org/draft-04/schema", "title":"Profile", "type":"object", "description":"Profile", "properties":{ "title": {"type":"string","description":"User id who has created the entity."}}}

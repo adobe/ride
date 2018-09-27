@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "title" : "API Key Header error schema",
+    "type": "object",
+    "description": "This is the schema response for a REST call that uses the API-Key header incorrectly",
+	"required": ["error_code", "message"],
+	"additionalProperties": false,
+	"properties": {
+		"error_code": {"type" : "string"},
+		"message": {"type" : "string"}
+	}
+}

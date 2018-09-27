@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "ObservePoint Report Audit Status Request Schema",
+  "description": "This is the schema for the audit status reporting API - POST to /engine/audits/:id",
+  "type": "object",
+  "required": [
+    "data", "jsonapi"
+  ],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": [
+        "attributes"
+      ],
+      "properties": {
+        "attributes": {
+          "$ref": "#/definitions/requestAttributes"
+        }
+      }
+    },
+    "jsonapi": { "$ref": "resource:/schemas/SampleService/definition_jsonapi.json"}
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "requestAttributes": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["complete"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>com.adobe.ride.sample</groupId>
+    <artifactId>sample-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../build/pom.xml</relativePath>
+  </parent>
+  
+  <artifactId>sample-service-performance-tests</artifactId>
+  <name>sample-service-performance-tests</name>
+  <description>Test which utilize the sample extension and Ride performance-lib to display how to write performance tests.</description>
+
+
+  <properties>
+    <encoding>UTF-8</encoding>
+    <scala.version>2.12.6</scala.version>
+    <scala-maven-plugin.version>3.3.2</scala-maven-plugin.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.adobe.ride</groupId>
+      <artifactId>ride-performance-lib</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.ride.sample</groupId>
+      <artifactId>sample-service-extension</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+
+    <plugins>
+      <plugin>
+        <!-- see http://davidb.github.com/scala-maven-plugin -->
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>${scala-maven-plugin.version}</version>
+        <configuration>
+          <includeScopes>plugin</includeScopes>
+          <scalaVersion>${scala.version}</scalaVersion>
+          <args>
+            <arg>-optimize</arg>
+            <arg>-target:jvm-1.8</arg>
+          </args>
+          <javacArgs>
+            <javacArg>-source</javacArg>
+            <javacArg>1.8</javacArg>
+            <javacArg>-target</javacArg>
+            <javacArg>1.8</javacArg>
+          </javacArgs>
+          <launchers>
+
+            <!-- Launchers for the edit distance timing tests -->
+            <launcher>
+              <id>runPerformance</id>
+
+              <mainClass>com.adobe.ride.sample.performance.SampleServiceBasicRunner</mainClass>
+              <jvmArgs>
+                <jvmArg>-Xms256m</jvmArg>
+                <jvmArg>-Dtarget=${target}</jvmArg>
+              </jvmArgs>
+            </launcher>
+          </launchers>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
