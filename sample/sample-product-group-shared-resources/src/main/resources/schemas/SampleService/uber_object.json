@@ -1,0 +1,13 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"title" : "uber cloud object",
+	"type": "object",
+	"description": "content holder",
+	"required": ["name", "type"],
+	"additionalProperties": false,
+	"properties": {
+		"type":  { "enum" : ["type1", "type2", "type3"]},
+		"name": { "type" : "string", "pattern":"^[a-zA-z0-9]", "minLength": 3, "maxLength": 30},
+		"objectCode": { "type" : "integer", "minimum":1, "maximum":5}
+	}
+}

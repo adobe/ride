@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "title" : "fuzzer error schema",
+    "type": "object",
+    "description": "this is the schema the response for a REST call that returns an error",
+	"required": ["code", "message"],
+	"additionalProperties": false,
+	"properties": {
+		"code": {"type" : "string"},
+		"message": {"type" : "string"}
+	}
+}

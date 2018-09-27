@@ -1,0 +1,87 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+	"definitions": {
+		"imagelink": { 
+			"type":"object",
+			"required":["href"],
+			"additionalProperties": false,
+			"properties": { 
+				"width": { "type": "integer", "minimum":16, "maximum":2048}, 
+				"height":{ "type": "integer", "minimum":16, "maximum":2048}, 
+				"href": { "type": "string", "format":"uri" },
+				"type": { "type": "string" }
+			}
+		},
+		"contentlink": {
+			"type":"object",
+			"required":["href"],
+			"additionalProperties": false,
+			"properties": { 
+				"href": { "type": "string", "format":"uri" },
+				"type": { "type": "string" }
+			}
+		}
+	},
+    "title" : "Article schema",
+    "type": "object",
+    "description": "Schema for an article.",
+	"required": ["entityName", "entityType"],
+	"additionalProperties": false,
+	"properties": {
+		"publicationId":  { "type" : "string", "pattern": "^[0-9a-zA-Z]{1}[0-9a-zA-Z._-]{0,62}[0-9a-zA-Z]{1}$", "mutable":false },
+		"entityId": { "type" : "string", "pattern": "^urn:[0-9a-zA-Z]{1}[0-9a-zA-Z.-]{0,62}[0-9a-zA-Z]{1}:article:[0-9a-zA-Z]{1}[0-9a-zA-Z._-]{0,62}[0-9a-zA-Z]{1}$", "description" : "urn:{publicationName}:{entityType}:{entityName}", "mutable":false },
+		"entityType": { "type" : "string", "pattern" : "article", "mutable":false, "searchable":true },
+		"entityName": { "type": "string", "pattern": "^[0-9a-zA-Z]{1}[0-9a-zA-Z._-]{0,62}[0-9a-zA-Z]{1}$", "mutable":false, "searchable":true },
+		"version": { "type": "string", "pattern": "^[0-9]{12,13}$", "mutable":false },
+		"url": {"type": "string", "format" : "uri", "maxLength": 2048 },
+		"created": { "type": "string", "pattern":"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$", "format": "date-time", "description":"creation time in yyyy-MM-dd'T'HH:mm:ssZ format", "mutable":false, "searchable":true },
+		"modified": { "type": "string", "pattern":"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$", "format": "date-time", "description":"last modified time in yyyy-MM-dd'T'HH:mm:ssZ format", "mutable":false, "searchable":true },
+		"published": { "type": "string", "pattern":"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$", "format": "date-time", "description":"last published time in yyyy-MM-dd'T'HH:mm:ssZ format", "searchable":true },
+		"syncdUrl": { "type": "string", "sync" : "{$path:/publicationId}/article/{$path:/entityName};version={$path:/version}" },
+		"_links": 
+			{
+				"type": "object", 
+				"additionalProperties": false,
+				"properties": {
+					"contentUrl": { "$ref":"#/definitions/contentlink", "mutable":false },
+					"thumbnail": { "$ref":"#/definitions/imagelink", "imagelink":true },
+					"socialSharing": { "$ref":"#/definitions/imagelink", "imagelink":true },
+					"collections" : { "type" : "array", "items": { "$ref":"entitylink.json" }, "mutable":false },
+					"relatedContent" : { "type" : "array", "items": { "$ref":"./entitylink.json" } },
+					"articleFolio" : {  "$ref":"#/definitions/contentlink"  }
+					}
+			},
+
+		"title": { "type" : "string", "maxLength" : 250, "minLength" : 1, "searchable":true },
+		"shortTitle": { "type": "string",  "maxLength" : 140, "minLength" : 1, "description":"An abbreviated article title", "searchable":true },
+		"abstract": { "type" : "string", "maxLength" : 400, "minLength" : 1, "searchable":true },
+		"shortAbstract": { "type" : "string", "maxLength" : 250, "minLength" : 1, "searchable":true },
+		"keywords" : { "type" : "array", "items": {  "type": "string", "maxLength" : 40, "minLength" : 1 }, "minItems":1, "uniqueItems": true, "searchable":true },
+		"internalKeywords" : { "type" : "array", "items": {  "type": "string", "maxLength" : 40, "minLength": 1 }, "minItems": 1, "uniqueItems": true },
+		"productIds": { "type": "array", "items": { "type": "string" }  },
+		"department": { "type": "string", "searchable":true },
+		"category": { "type": "string", "maxLength": 40, "searchable":true },
+		"importance": { "enum" : ["low", "normal", "high"] },
+		"socialShareUrl" : { "type": "string", "format": "uri", "maxLength": 150  },
+		"publishStatus": { "enum" : ["unpublished", "publishing", "published"] },
+		"authorInfo": { 
+			"type":"object",
+			"additionalProperties":false,
+			"properties":{
+				"name":{ "type": "string", "maxLength": 100, "searchable":true },
+				"authorUrl": { "type": "string", "sync": "{$path:/url}/author/{$path:/authorInfo/name}", "maxLength": 150 },
+				"otherArticles": { "type": "string", "sync": "/_links/relatedContent", "maxLength": 150 }
+			}
+		},	
+		"articleText": { "type": "string", "maxLength": 2000 },
+		"suggestedKeywords" : { "type" : "array", "items": {  "type": "string", "maxLength" : 40, "minLength" : 1 }, "minItems":1, "uniqueItems": true },
+		"suggestedCategory": { "type": "string", "maxLength": 40 },
+		"isAd": { "type": "boolean" },
+		"adType" : { "enum" :["static", "eft"] },
+		"adCategory": { "type": "string", "maxLength": 40  },
+		"advertiser": { "type":"string", "maxLength": 40  },
+		"language": { "enum" : ["zh-CN", "zh-TW", "cs-CZ", "da-DK", "nl-NL", "en-GB", "en-US", "fi-FI", "fr-FR", "de-DE", "hu-HU", "it-IT", "ja-JP", "ko-KR", "no-NO", "pl-PL", "pt-BR", "ru-RU", "es-ES", "sv-SE", "tr-TR", "uk-UA" ] }, 
+		"accessState" : { "enum": [ "free", "metered", "protected" ] },
+		"hideFromBrowsePage" : { "type": "boolean" }
+		}
+}

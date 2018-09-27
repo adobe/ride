@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
+
+  <Appenders>
+    <Console name="CONSOLE" target="SYSTEM_OUT" >
+      <PatternLayout pattern="[%d{ISO8601}] %p - %c - %m%n" />
+    </Console>
+    <RollingFile name="LOGFILE" fileName="../logs/log4j.log" append="true" filePattern="../logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+      <PatternLayout pattern="%date{ISO8601}{GMT+0} [thread=%thread] [%-7level] %class{1}(%method:%line) %message %mdc{requestLogId} %n" />
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Logger name="com.amazonaws" level="WARN">
+      <AppenderRef ref="CONSOLE"/>
+    </Logger>
+    <Root level="INFO">
+      <AppenderRef ref="LOGFILE"/>
+    </Root>
+  </Loggers>
+</log4j:configuration>

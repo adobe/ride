@@ -1,0 +1,14 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"title" : "cloud sub_object1",
+	"type": "object",
+	"description": "sub_object",
+	"required": ["name", "type"],
+	"additionalProperties": false,
+	"properties": {
+		"type":  { "enum" : ["type1", "type2", "type3"]},
+		"name": { "type" : "string", "pattern":"^[a-zA-z0-9]{3,30}"},
+		"objectCode": { "type" : "integer", "minimum":1, "maximum":5},
+		"thisProperty": { "type" : "string"}
+	}
+}

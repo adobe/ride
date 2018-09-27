@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {},
+    "title" : "Entity Link",
+    "type": "object",
+    "description": "this is the J34.2 schema for an article entity link",
+	"required":["href"],
+	"additionalProperties": false,
+	"properties": { 
+		"href": { "type": "string", "format":"uri" },
+		"type": { "type": "string" }
+	}
+}
