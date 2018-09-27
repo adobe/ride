@@ -89,26 +89,26 @@ Depending on your infrastructure you may need to add settings.xml file to your l
 <table>
 	<tr><th>Module Name</th><th>Description</th><th>Maven Snippet (snapshot version)</th></tr>
 	<tr><td>Configuration Utility</td><td>Designed to configure endpoints and users for runs at runtime based on command-line flags</td><td>
-		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;cloud-automation-config-util&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
+		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;ride-config-util&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
 	</td></tr>
 	<tr><td>Model Utility</td><td>Consumes json schema for a service and generates valid data for API calls</td><td> 
-		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;cloud-automation-model-util&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
+		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;ride-model-util&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
 	</td></tr>
 	<tr><td>Core</td><td>Rolls up all of the tedious syntax to make REST API calls through rest-assured and java, speeding development</td><td>
-		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;cloud-automation-core&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
+		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;ride-core&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
 	</td></tr>
 	<tr><td>Fuzzer Library</td><td>Works in conjunction with the Model Utility to throw arrays of data (including edge and malicious data) at the api and determine what the right response should be</td><td>
-		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;cloud-automation-fuzzer-lib&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
+		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;ride-fuzzer-lib&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
 	</td></tr>
 	<tr><td>Performance Library</td><td>Scala libary based on Gatling which allows you to place your scala-modified test code in snippet block and run performance metrics</td><td>
-		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;cloud-automation-performance-lib&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
+		<pre>&lt;dependency&gt;</br>&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.adobe.ride&lt;/groupId&gt;</br>&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;ride-performance-lib&lt;/artifactId&gt; </br>&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</br>&lt;/dependency&gt;</pre>
 	</td></tr>
 <table>
  
 ## Design
 
 ### Key Concepts
-One of Adobe Ride's stated goals is improved speed of rest API test development.  By measuring the number of logical lines of code required to create a given test with and without Ride, we can demonstratively show improvement in this regard.  We achieve this through abstraction of repetitive code.  In essence, the more basic the test, the less lines of code should be required to write it in the framework.  This concept can be then further leveraged through extensibility.  By extending the architecture implemented in the core of the framework, even complex but regularly used logical paths can be compressed to fewer lines of code to achieve the same goal through extension.  Finally, we create flexibility of usage through modularity.  The architecture is based (like many java projects) on hierachically in/dependent jars, giving framework extenders options on what to extend.
+One of Adobe Ride's stated goals is improved speed of rest API test development.  By measuring the number of logical lines of code required to create a given test with and without Ride, we can demonstratively show improvement in this regard.  We achieve this through abstraction of repetitive code.  In essence, the more basic the test, the less lines of code should be required to write it in the framework.  This concept can be then further leveraged through extensibility.  By extending the architecture implemented in the core of the framework, even complex but regularly used logical paths can be compressed to fewer lines of code to achieve the same goal through extension.  Finally, we create flexibility of usage through modularity.  The architecture is based (like many java projects) on hierarchically in/dependent jars, giving framework extenders options on what to extend.
 
 ### Abstraction and Optimization
 
@@ -180,7 +180,7 @@ Release versions are created as PRs are reviewed and made widely available.
 When a service REST API comes online, in order to test it with Adobe Ride, the Core will need to be extended to a service-library.  This is done in order to handle workflows and data specific to that API/Service.
 
 ### SharedResources
-Shared resources is a term used to describe a set of resources you create for your Ride extension project (just like any other resource in a javaproject), but specifically json schema for datamodeling and generation, and config files for use in endpoint targeting and testuser management. Ideally your shared-resources resources lives in separate and centralized source repo outside of your extension extension project, built as a jar, and then used as a dependency for your project (explained in the useage docs). This is so that if, as is common, you are working in an environment creating multiple webservices/API, there can be one set of resources that can be used by multiple extensions for easy end to end testing.  However, it is just as valid to but these resources in the resources directory of your project (src/main/resources).
+Shared resources is a term used to describe a set of resources you create for your Ride extension project (just like any other resource in a javaproject), but specifically json schema for datamodeling and generation, and config files for use in endpoint targeting and testuser management. Ideally your shared-resources resources lives in separate and centralized source repo outside of your extension extension project, built as a jar, and then used as a dependency for your project (explained in the useage docs). This is so that if, as is common, you are working in an environment creating multiple webservices/API, there can be one set of resources that can be used by multiple extensions for easy end to end testing.  However, it is just as valid to put these resources in the resources directory of your java project (src/main/resources).
 
 ### Reporting 
 Ride relies on TestNG and log4j for the bulk of reporting.  However use of ReportNG is a work in progress.
