@@ -32,6 +32,11 @@
   </distributionManagement>
 
   <repositories>
+  	<repository>
+      <id>sonatype</id>
+      <name>Maven Sonatype repo</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
     <repository>
       <id>maven2-repository.java.net</id>
       <name>Java.net Repository for Maven</name>
