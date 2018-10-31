@@ -16,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
@@ -28,7 +29,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -39,12 +39,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONTokener;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
+import com.adobe.ride.utilities.model.ModelObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -67,6 +70,8 @@ public class SampleService {
   public final static String OBJECT_NAME_REGEX = "[0-9a-zA-Z]{1}[0-9a-zA-Z_ %.-]{0,63}";
   public final static String OBJECT_TYPE_PATH_PARAM = "/{objectType}";
   public final static String OBJECT_NAME_PATH_PARAM = "/{objectName}";
+  public final static String SCHEMA_TYPE = "type";
+  public final static String ARRAY_TYPE = "array";
 
   private static final String default_location = "/schemas/SampleService/type.json";
 
@@ -85,71 +90,54 @@ public class SampleService {
       @PathParam("objectType") String objectType, @PathParam("objectName") String objectName)
       throws ParseException, IOException, ProcessingException, SQLException {
     String resource = default_location.replace("type", objectType);
-
-    JsonNode schemaNode = JsonLoader.fromResource(resource);
-    JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-    JsonSchema schema = factory.getJsonSchema(schemaNode);
-
-    JsonNode objectMetadata = JsonLoader.fromString(objectData);
-    ProcessingReport report = schema.validate(objectMetadata);
-
+    ModelObject modObj = new ModelObject(resource);
+    InputStream modelStream = this.getClass().getResourceAsStream(resource);
+    org.json.JSONObject rawSchema = new org.json.JSONObject(new JSONTokener(modelStream));
+    Schema schema = SchemaLoader.load(rawSchema);
     String output = "";
-
-    String responseString = (report.isSuccess()) ? "valid" : "invalid";
-    Iterator<ProcessingMessage> reportIterator = report.iterator();
-
-    JSONArray failureNodes = new JSONArray();
-
     int responseCode;
-
-    if (responseString != "valid") {
-      boolean failed = false;
-      while (reportIterator.hasNext()) {
-        ProcessingMessage msg = (ProcessingMessage) reportIterator.next();
-        JsonNode failureObj = msg.asJson();
-        String failureMessage = msg.asJson().get("message").toString();
-        String lvl = failureObj.get("level").asText();
-        // lvl = LogLevel.valueOf(lvl);
-        if (lvl == "warning") {
-          logger.log(Level.INFO, failureMessage);
-        } else {
-          failed = true;
-          String failedNode = "unknown";
-          if (msg.asJson().has("instance")) {
-            failedNode = msg.asJson().get("instance").get("pointer").toString();
-          }
-
-          JSONObject failureNode = new JSONObject();
-          failureNode.put("failedNode", failedNode);
-          failureNode.put("failureMessage", failureMessage);
-          failureNodes.add(failureNode);
-        }
-      }
-
-      if (failed) {
-        JSONObject response = new JSONObject();
-        response.put("failures", failureNodes);
-        response.put("message", "You have submitted an improperly formatted request");
-        output = response.toJSONString();
-        responseCode = 400;
+    JSONArray failureMsgs = new JSONArray();
+    try {
+      if (rawSchema.get(SCHEMA_TYPE).equals(ARRAY_TYPE)) {
+        org.json.JSONArray array = new org.json.JSONArray(objectData);
+        schema.validate(array);
       } else {
-        Connection connection = connectToSQLiteDB();
-        output = objectData;
-        if (!testTableExists) {
-          createRootTable(connection);
-        }
-        responseCode = updateOrCreateObject(connection, objectName, objectMetadata);
-        connection.close();
+        org.json.JSONObject object = new org.json.JSONObject(objectData);
+        schema.validate(object);
       }
-    } else {
       Connection connection = connectToSQLiteDB();
       output = objectData;
       if (!testTableExists) {
         createRootTable(connection);
       }
-      responseCode = updateOrCreateObject(connection, objectName, objectMetadata);
+      if (rawSchema.get(SCHEMA_TYPE).equals(ARRAY_TYPE)) {
+        // For array types that are valid just return a 201. This is a sample server :)
+        responseCode = 201;
+      } else {
+        JSONObject objectMetadata = (JSONObject) parser.parse(objectData);
+        responseCode = updateOrCreateObject(connection, objectName, objectMetadata);
+      }
       connection.close();
+
+    } catch (ValidationException e) {
+      responseCode = 400;
+      System.out.println("Validataion Exception Msg: " + e.getMessage());
+      JSONObject failure = new JSONObject();
+      failure.put("reason", e.getErrorMessage());
+      failure.put("keyName", e.getKeyword());
+      failure.put("cause", e.getPointerToViolation());
+      failure.put("jsonMsg", e.toJSON());
+      failureMsgs.add(failure);
     }
+
+    if (responseCode == 400) {
+      JSONObject response = new JSONObject();
+      response.put("failures", failureMsgs);
+      response.put("message", "You have submitted an improperly formatted request");
+      output = response.toJSONString();
+    }
+
+
     return Response.status(responseCode).entity(output).build();
   }
 
@@ -189,7 +177,7 @@ public class SampleService {
   }
 
   private int updateOrCreateObject(Connection connection, String objectName,
-      JsonNode objectMetadata) throws SQLException {
+      JSONObject objectMetadata) throws SQLException {
     int count = 0;
     int responseCode = 500;
 
