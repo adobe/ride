@@ -15,6 +15,7 @@ package com.adobe.ride.utilities.model;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -51,6 +52,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * 
  */
 public class ModelObject {
+  
+  Charset encoding = StandardCharsets.UTF_8;
+  
   private static final String default_location = "/schemas/service/objectType.json";
 
   protected static final Logger logger = Logger.getLogger(ModelObject.class.getName());
@@ -122,9 +126,8 @@ public class ModelObject {
 
     // pull in model as String
     try {
-      Charset nullCharset = null; // platform default
       modelString =
-          IOUtils.toString(this.getClass().getResourceAsStream(resourceLocation), nullCharset);
+          IOUtils.toString(this.getClass().getResourceAsStream(resourceLocation), encoding);
       loadModelString(modelString);
     } catch (IOException e) {
       logger.log(Level.SEVERE, "An IO exception was thrown", e);

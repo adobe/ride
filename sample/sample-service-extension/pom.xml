@@ -8,12 +8,12 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../build/pom.xml</relativePath>
   </parent>
-
+  
   <artifactId>sample-service-extension</artifactId>
   <packaging>jar</packaging>
   <name>sample-service-extension</name>
   <description>Sample Extension of the Adobe Ride Automation Framework</description>
-
+  
   <properties>
     <data.model.version>0.0.1-SNAPSHOT</data.model.version>
   </properties>

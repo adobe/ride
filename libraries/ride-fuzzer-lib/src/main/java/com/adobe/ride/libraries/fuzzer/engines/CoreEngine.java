@@ -43,7 +43,7 @@ public class CoreEngine extends RideCore {
   private char[] testCharArray = new char[] {'T', 'E', 'S', 'T'};
   private double testDouble = Double.parseDouble("78547893.7583758349753489758934");
   private Number testNumber = 1456.34;
-  private Byte testByte = 1;\
+  private Byte testByte = 1;
 
   /**
    * Constructor for the core engine which initializes key members for subclasses.
@@ -180,7 +180,7 @@ public class CoreEngine extends RideCore {
   private Object[] noSQLInjectionStringsArray = {
     "0;var date=new Date(); do{curDate = new Date();}while(curDate-date<10000)",
     "$where: function() { for (i = 0; i < 5; i++) {text += 'Failure Loop ' + i + '<br>';} }"
-    };
+  };
 
   private Object[] passiveSQLInjectionStringsArray = {
     // OWASP recommended Values
@@ -318,8 +318,8 @@ public class CoreEngine extends RideCore {
     "'; exec xp_regread",
     "t'exec master..xp_cmdshell 'nslookup www.google.com'--",
     "--sp_password"
-    };
-
+  };
+  
   @SuppressWarnings("unused")
   private Object[] nonIntArray = {
     testString,
@@ -332,7 +332,7 @@ public class CoreEngine extends RideCore {
     testByte,
     // testByteArray
   };
-
+  
   private Object[] nonBooleanArray = {
     testString,
     -53,
@@ -345,7 +345,7 @@ public class CoreEngine extends RideCore {
     testByte,
     // testByteArray
   };
-
+  
   private Object[] localizedStringsArray = {
     // reduced set of localized strings
     "あじえうぃ", // Hiragana

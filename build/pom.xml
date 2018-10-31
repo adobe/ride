@@ -16,7 +16,7 @@
     <rest-assured.version>3.0.6</rest-assured.version>
     <jackson.version>2.9.6</jackson.version>
   </properties>
-
+  
   <distributionManagement>
     <repository>
       <id>TBD</id>
@@ -52,7 +52,7 @@
       </snapshots>
     </repository>
   </repositories>
-
+  
   <dependencies>
     <dependency>
       <groupId>org.testng</groupId>
@@ -66,7 +66,6 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
@@ -87,7 +86,6 @@
       <artifactId>json-schema-validator</artifactId>
       <version>${rest-assured.version}</version>
     </dependency>
-
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
