@@ -13,7 +13,7 @@
   <packaging>jar</packaging>
   <name>ride-model-util</name>
   <description>Utility designed for json schema handling and object production</description>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>

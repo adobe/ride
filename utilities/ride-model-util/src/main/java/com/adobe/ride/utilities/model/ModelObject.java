@@ -703,11 +703,7 @@ public class ModelObject {
           DataGenerator.generateRegexValue(DataGenerator.genericRegex));
     }
 
-    // if(!nulled){
     return returnObj;
-    /*
-     * }else{ return NULL_MODEL_VALUE; }
-     */
   }
 
   /**
@@ -768,6 +764,7 @@ public class ModelObject {
 
   @SuppressWarnings("unchecked")
   private ArrayNode buildArrayNode(JSONObject propertyDef) {
+    // TODO: Improve handling for min and max values
     ArrayList<Object> buildArray = new JSONArray();
     JSONObject itemProps = (JSONObject) propertyDef.get("items");
     int arrayLength;
@@ -776,9 +773,6 @@ public class ModelObject {
       int max = Integer.parseInt(propertyDef.get("maxItems").toString());
       arrayLength = max;
     } else {
-      // TODO: Need to work with dev to come up with min and max
-      // items for this to better compute how many items to add.
-      // Using 3 for now.
       arrayLength = 3;
     }
 
@@ -821,8 +815,7 @@ public class ModelObject {
 
         if (startStringIndex != 0 && endStringIndex != 0) {
           endStringIndex += endSearchStringLength;
-        } // TODO: Check to see if we need to throw for invalid schema (add unit test for
-          // this).
+        } 
 
         // generate value between last sync value and this
         String nonSyncVal =
@@ -848,8 +841,8 @@ public class ModelObject {
         endStringIndex = -1;
       }
     }
-    return returnValue.replace("\"", "");// For some reason, JsonNode is adding extra quotes. need
-                                         // to remove.
+    // Compensate for JsonNode escaping internal quotes in json object.
+    return returnValue.replace("\"", "");
   }
 
   /**
