@@ -15,7 +15,6 @@ package com.adobe.ride.utilities.model;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -52,9 +51,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * 
  */
 public class ModelObject {
-  
-  Charset encoding = StandardCharsets.UTF_8;
-  
   private static final String default_location = "/schemas/service/objectType.json";
 
   protected static final Logger logger = Logger.getLogger(ModelObject.class.getName());
@@ -67,15 +63,15 @@ public class ModelObject {
   private JSONObject modelProperties;
   private JSONObject modelDefinitions;
   private JSONArray requiredModelProperties;
-  private boolean requiredOnly = false;
-  private String modelString;
+  protected boolean requiredOnly = false;
+  protected String modelString;
   private final String NULL_MODEL_VALUE = "nulledValue";
   private static final String REFERENCE_KEY = "$ref";
   private String service;
   private String objectPath;
   private String objectName;
   private String objectType;
-  private String resourceLocation;
+  protected String resourceLocation;
   protected JSONObject objectMetadata = new JSONObject();
   protected JSONArray objectItems;
   protected JSONObject presetNodes;
@@ -90,7 +86,7 @@ public class ModelObject {
    *
    * @param modelString The string containing the json schemas
    */
-  private void loadModelString(String modelString) {
+  protected void loadModelString(String modelString) {
     try {
       // turn model contents into usable JSONObjects
       model = (JSONObject) parser.parse(modelString);
@@ -122,11 +118,13 @@ public class ModelObject {
    * @param resourceLocation The location of the json-schema file in the resources folder. Eg.
    *        /schema/TestService/profile.json
    */
-  private void loadModel(String resourceLocation) {
+  protected void loadModel(String resourceLocation) {
+
     // pull in model as String
     try {
+      Charset nullCharset = null; // platform default
       modelString =
-          IOUtils.toString(this.getClass().getResourceAsStream(resourceLocation), encoding);
+          IOUtils.toString(this.getClass().getResourceAsStream(resourceLocation), nullCharset);
       loadModelString(modelString);
     } catch (IOException e) {
       logger.log(Level.SEVERE, "An IO exception was thrown", e);
@@ -400,6 +398,8 @@ public class ModelObject {
         returnValue = ModelPropertyType.IPV6;
       } else if (object.get("format").toString().equals("ipv4")) {
         returnValue = ModelPropertyType.IPV4;
+      } else if (object.get("format").toString().equals("uri-reference")) {
+        returnValue = ModelPropertyType.URI_REF;
       } else if (object.containsKey("pattern")) {
         returnValue = ModelPropertyType.PATTERN;
       } else if (type.equals("string")) {
@@ -703,7 +703,11 @@ public class ModelObject {
           DataGenerator.generateRegexValue(DataGenerator.genericRegex));
     }
 
+    // if(!nulled){
     return returnObj;
+    /*
+     * }else{ return NULL_MODEL_VALUE; }
+     */
   }
 
   /**
@@ -764,7 +768,6 @@ public class ModelObject {
 
   @SuppressWarnings("unchecked")
   private ArrayNode buildArrayNode(JSONObject propertyDef) {
-    // TODO: Improve handling for min and max values
     ArrayList<Object> buildArray = new JSONArray();
     JSONObject itemProps = (JSONObject) propertyDef.get("items");
     int arrayLength;
@@ -773,6 +776,9 @@ public class ModelObject {
       int max = Integer.parseInt(propertyDef.get("maxItems").toString());
       arrayLength = max;
     } else {
+      // TODO: Need to work with dev to come up with min and max
+      // items for this to better compute how many items to add.
+      // Using 3 for now.
       arrayLength = 3;
     }
 
@@ -815,7 +821,8 @@ public class ModelObject {
 
         if (startStringIndex != 0 && endStringIndex != 0) {
           endStringIndex += endSearchStringLength;
-        }
+        } // TODO: Check to see if we need to throw for invalid schema (add unit test for
+          // this).
 
         // generate value between last sync value and this
         String nonSyncVal =
@@ -841,8 +848,8 @@ public class ModelObject {
         endStringIndex = -1;
       }
     }
-    // Compensate for JsonNode escaping internal quotes in json object.
-    return returnValue.replace("\"", "");
+    return returnValue.replace("\"", "");// For some reason, JsonNode is adding extra quotes. need
+                                         // to remove.
   }
 
   /**
@@ -1072,7 +1079,6 @@ public class ModelObject {
       logger.log(Level.SEVERE, e.getMessage());
       return null;
     }
-
   }
 
   /**
@@ -1321,6 +1327,10 @@ public class ModelObject {
           String uri = DataGenerator.generateURI();
           returnValue = uri;
           break;
+        case URI_REF:
+          String uri_ref = DataGenerator.generateRandomURIRef();
+          returnValue = uri_ref;
+          break;
         case BYTE:
           returnValue = null;
           break;
@@ -1343,7 +1353,7 @@ public class ModelObject {
    * @param relativePath
    * @return
    */
-  private String getRelativeResourceLocation(String controlPath, String relativePath) {
+  protected String getRelativeResourceLocation(String controlPath, String relativePath) {
     String returnPath = "";
     String[] relativeSegments = relativePath.split("\\.\\.");
     int relSegLength = relativeSegments.length;
@@ -1389,7 +1399,7 @@ public class ModelObject {
    * @param key String target node
    * @param value Object value to be assigned
    */
-  private void setMetadataValue(ModelPropertyType type, String pathToParent, String key,
+  protected void setMetadataValue(ModelPropertyType type, String pathToParent, String key,
       Object value) {
     JsonNode tree = null;
     pathToParent = (pathToParent == "/") ? "" : pathToParent;
