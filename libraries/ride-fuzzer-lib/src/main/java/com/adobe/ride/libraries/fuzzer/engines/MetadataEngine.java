@@ -107,8 +107,7 @@ public class MetadataEngine extends CoreEngine {
     if (requestBuilder != null) {
       this.requestBuilder = requestBuilder;
     } else {
-      this.requestBuilder =
-          initializeFuzzerRequestSpecBldr(RestApiController.getRequestBuilder(false));
+      this.requestBuilder = RestApiController.getRequestBuilder(false);
       this.requestBuilder.addHeader("Accept", "application/json");
       this.requestBuilder.addHeader("Content-Type",
           (contentType != null) ? contentType : "application/json;charset=utf-8");
@@ -185,10 +184,13 @@ public class MetadataEngine extends CoreEngine {
       if (modelDataType.equals(ModelPropertyType.URI)
           && (fuzzDataType.equals(ModelPropertyType.STRING) && nodeDef.containsKey("format"))) {
         if (nodeDef.get("format").toString().equals("uri") || nodeDef.get("format").toString().equals("uri-reference")) {
+          // TODO: ModelObject does handle uri format need to investigate and possibly remove this
+          // conditional
           retVal = validateURI(data.toString());
         }
       } else if (modelDataType.equals(ModelPropertyType.STRING)
           && fuzzDataType.equals(ModelPropertyType.STRING) && !nodeDef.containsKey("format")) {
+        // TODO: I believe this conditional is no longer needed. Need to investigate
         retVal = validateStr(data.toString(), nodeDef);
       } else if (modelDataType.equals(ModelPropertyType.INTEGER)
           && (fuzzDataType.equals(ModelPropertyType.INTEGER)
@@ -455,6 +457,8 @@ public class MetadataEngine extends CoreEngine {
 
     ResponseSpecBuilder expectedValues = new ResponseSpecBuilder();
 
+    
+
     try {
       org.json.JSONObject objectMetadata = new org.json.JSONObject(callBody);
       schema.validate(objectMetadata);
@@ -508,7 +512,17 @@ public class MetadataEngine extends CoreEngine {
       default:
         return null;
     }
+
+    // resetVersion(response);TODO: Might need to implement this a new way
+
   }
+
+  /*
+   * private void resetVersion(Response response){ if(response.getStatusCode() == 201 ||
+   * response.getStatusCode() == 200) { currentVersion =
+   * response.body().jsonPath().getString("version"); entity.setProperty("version", currentVersion);
+   * entity.setLastRetrievedVersion(currentVersion); } }
+   */
 
   /**
    * Method to set the links property being tested.
