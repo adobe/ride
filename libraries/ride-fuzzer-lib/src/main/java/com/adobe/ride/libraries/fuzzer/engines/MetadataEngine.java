@@ -14,7 +14,9 @@ package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.io.IOException;
 import java.net.URI;
-
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
 // import java.util.UUID;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -66,6 +68,7 @@ public class MetadataEngine extends CoreEngine {
   private boolean objectExists = false;
   private Method requestMethod;
   private RequestSpecBuilder requestBuilder = null;
+  private Schema schema;
 
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
@@ -134,6 +137,9 @@ public class MetadataEngine extends CoreEngine {
     if (model.containsKey("definitions")) {
       customDefs = (JSONObject) model.get("definitions");
     }
+
+    org.json.JSONObject rawSchema = new org.json.JSONObject(entity.getModelString());
+    schema = SchemaLoader.load(rawSchema);
   }
 
   /**
@@ -177,7 +183,7 @@ public class MetadataEngine extends CoreEngine {
 
       if (modelDataType.equals(ModelPropertyType.URI)
           && (fuzzDataType.equals(ModelPropertyType.STRING) && nodeDef.containsKey("format"))) {
-        if (nodeDef.get("format").toString().equals("uri")) {
+        if (nodeDef.get("format").toString().equals("uri") || nodeDef.get("format").toString().equals("uri-reference")) {
           retVal = validateURI(data.toString());
         }
       } else if (modelDataType.equals(ModelPropertyType.STRING)
@@ -443,31 +449,17 @@ public class MetadataEngine extends CoreEngine {
       modelInstance.put(modelProperty, propertyValue);
     }
 
-
-
     String callBody = modelInstance.toJSONString();
     requestBuilder.setBody(callBody);
 
     ResponseSpecBuilder expectedValues = new ResponseSpecBuilder();
 
+    
 
-    ProcessingReport report = null;
     try {
+      org.json.JSONObject objectMetadata = new org.json.JSONObject(callBody);
+      schema.validate(objectMetadata);
 
-      JsonNode schemaNode = JsonLoader.fromResource(entity.getModelResourceLocation());
-      JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-      JsonSchema schema = factory.getJsonSchema(schemaNode);
-
-      JsonNode objectMetadata = JsonLoader.fromString(callBody);
-
-      report = schema.validate(objectMetadata);
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (ProcessingException e) {
-      e.printStackTrace();
-    }
-
-    if (report.isSuccess()) {
       if (requestMethod == Method.DELETE) {
         expectedValues.expectStatusCode(204);
       } else if (requestMethod == Method.GET) {
@@ -489,7 +481,7 @@ public class MetadataEngine extends CoreEngine {
           objectExists = true;
         }
       }
-    } else {
+    } catch (ValidationException e) {
       expectedValues.expectStatusCode(400);
     }
 
@@ -517,7 +509,6 @@ public class MetadataEngine extends CoreEngine {
       default:
         return null;
     }
-
   }
 
   /**
@@ -556,7 +547,7 @@ public class MetadataEngine extends CoreEngine {
     }
     boolean expectSuccess = evalData(type, propertyValue);
     Response response = callService(propertyValue, expectSuccess);
-    validateResult(response, expectSuccess);
+    validateResult(property, propertyValue, response, expectSuccess);
   }
 
   /**
@@ -573,7 +564,7 @@ public class MetadataEngine extends CoreEngine {
       Object propertyValue) {
     boolean expectSuccess = evalData(ModelPropertyType.STRING, propertyValue);
     Response response = callService(propertyValue, expectSuccess);
-    validateResult(response, expectSuccess);
+    validateResult(property, propertyValue, response, expectSuccess);
   }
 
   /**
@@ -590,7 +581,7 @@ public class MetadataEngine extends CoreEngine {
       Object propertyValue) {
     boolean expectSuccess = evalData(ModelPropertyType.STRING, propertyValue);
     Response response = callService(propertyValue, expectSuccess);
-    validateResult(response, expectSuccess);
+    validateResult(property, propertyValue, response, expectSuccess);
   }
 
   /**
@@ -607,7 +598,7 @@ public class MetadataEngine extends CoreEngine {
       Object propertyValue) {
     boolean expectSuccess = evalData(ModelPropertyType.STRING, propertyValue);
     Response response = callService(propertyValue, expectSuccess);
-    validateResult(response, expectSuccess);
+    validateResult(property, propertyValue, response, expectSuccess);
   }
 
   /**
@@ -641,5 +632,4 @@ public class MetadataEngine extends CoreEngine {
       modelInstance.put(modelProperty, nodeValue);
     }
   }
-
 }

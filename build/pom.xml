@@ -16,8 +16,7 @@
     <rest-assured.version>3.0.6</rest-assured.version>
     <jackson.version>2.9.6</jackson.version>
   </properties>
-
-
+  
   <distributionManagement>
     <repository>
       <id>TBD</id>
@@ -32,6 +31,11 @@
   </distributionManagement>
 
   <repositories>
+    <repository>
+      <id>sonatype</id>
+      <name>Maven Sonatype repo</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
     <repository>
       <id>maven2-repository.java.net</id>
       <name>Java.net Repository for Maven</name>
@@ -62,7 +66,6 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-    
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
@@ -83,7 +86,6 @@
       <artifactId>json-schema-validator</artifactId>
       <version>${rest-assured.version}</version>
     </dependency>
-    
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>

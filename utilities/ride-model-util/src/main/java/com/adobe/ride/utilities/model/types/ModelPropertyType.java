@@ -19,7 +19,8 @@ package com.adobe.ride.utilities.model.types;
  * 
  */
 public enum ModelPropertyType {
-  PATTERN, ANYOF, ARRAY, BOOLEAN, BYTE, DATE, DATETIME, EMAIL, REF_DEFINITION, REF_SCHEMA, REF_DATA, ENUM, INTEGER, IPV4, IPV6, NULL, NUMBER, OBJECT, STRING, SYNC, TIMESTAMP, URI;
+  PATTERN, ANYOF, ARRAY, BOOLEAN, BYTE, DATE, DATETIME, EMAIL, REF_DEFINITION, REF_SCHEMA, REF_DATA, ENUM, INTEGER, IPV4, IPV6, NULL, NUMBER, OBJECT, STRING, SYNC, TIMESTAMP, URI, URI_REF;
+
 
   public static ModelPropertyType eval(String string) {
     for (ModelPropertyType t : ModelPropertyType.values()) {

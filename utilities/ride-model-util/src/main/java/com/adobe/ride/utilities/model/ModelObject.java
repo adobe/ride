@@ -67,15 +67,15 @@ public class ModelObject {
   private JSONObject modelProperties;
   private JSONObject modelDefinitions;
   private JSONArray requiredModelProperties;
-  private boolean requiredOnly = false;
-  private String modelString;
+  protected boolean requiredOnly = false;
+  protected String modelString;
   private final String NULL_MODEL_VALUE = "nulledValue";
   private static final String REFERENCE_KEY = "$ref";
   private String service;
   private String objectPath;
   private String objectName;
   private String objectType;
-  private String resourceLocation;
+  protected String resourceLocation;
   protected JSONObject objectMetadata = new JSONObject();
   protected JSONArray objectItems;
   protected JSONObject presetNodes;
@@ -90,7 +90,7 @@ public class ModelObject {
    *
    * @param modelString The string containing the json schemas
    */
-  private void loadModelString(String modelString) {
+  protected void loadModelString(String modelString) {
     try {
       // turn model contents into usable JSONObjects
       model = (JSONObject) parser.parse(modelString);
@@ -122,7 +122,8 @@ public class ModelObject {
    * @param resourceLocation The location of the json-schema file in the resources folder. Eg.
    *        /schema/TestService/profile.json
    */
-  private void loadModel(String resourceLocation) {
+  protected void loadModel(String resourceLocation) {
+
     // pull in model as String
     try {
       modelString =
@@ -400,6 +401,8 @@ public class ModelObject {
         returnValue = ModelPropertyType.IPV6;
       } else if (object.get("format").toString().equals("ipv4")) {
         returnValue = ModelPropertyType.IPV4;
+      } else if (object.get("format").toString().equals("uri-reference")) {
+        returnValue = ModelPropertyType.URI_REF;
       } else if (object.containsKey("pattern")) {
         returnValue = ModelPropertyType.PATTERN;
       } else if (type.equals("string")) {
@@ -815,7 +818,7 @@ public class ModelObject {
 
         if (startStringIndex != 0 && endStringIndex != 0) {
           endStringIndex += endSearchStringLength;
-        }
+        } 
 
         // generate value between last sync value and this
         String nonSyncVal =
@@ -1072,7 +1075,6 @@ public class ModelObject {
       logger.log(Level.SEVERE, e.getMessage());
       return null;
     }
-
   }
 
   /**
@@ -1321,6 +1323,10 @@ public class ModelObject {
           String uri = DataGenerator.generateURI();
           returnValue = uri;
           break;
+        case URI_REF:
+          String uri_ref = DataGenerator.generateRandomURIRef();
+          returnValue = uri_ref;
+          break;
         case BYTE:
           returnValue = null;
           break;
@@ -1343,7 +1349,7 @@ public class ModelObject {
    * @param relativePath
    * @return
    */
-  private String getRelativeResourceLocation(String controlPath, String relativePath) {
+  protected String getRelativeResourceLocation(String controlPath, String relativePath) {
     String returnPath = "";
     String[] relativeSegments = relativePath.split("\\.\\.");
     int relSegLength = relativeSegments.length;
@@ -1389,7 +1395,7 @@ public class ModelObject {
    * @param key String target node
    * @param value Object value to be assigned
    */
-  private void setMetadataValue(ModelPropertyType type, String pathToParent, String key,
+  protected void setMetadataValue(ModelPropertyType type, String pathToParent, String key,
       Object value) {
     JsonNode tree = null;
     pathToParent = (pathToParent == "/") ? "" : pathToParent;

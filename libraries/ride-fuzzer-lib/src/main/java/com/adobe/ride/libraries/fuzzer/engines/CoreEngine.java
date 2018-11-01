@@ -13,9 +13,12 @@ governing permissions and limitations under the License.
 package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.io.IOException;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
+import com.adobe.ride.core.RideCore;
+import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.ResponseSpecification;
@@ -27,9 +30,8 @@ import io.restassured.specification.ResponseSpecification;
  * @author tedcasey
  *
  */
-public class CoreEngine {
+public class CoreEngine extends RideCore {
   String encoding = "UTF-8";
-
   public String errorSchema;
   private ResponseSpecBuilder responseBuilder = new ResponseSpecBuilder();
   public ResponseSpecification noResponse;
@@ -75,8 +77,18 @@ public class CoreEngine {
    * 
    * @param response
    */
-  public void validateResult(Response response, boolean expectSuccess) {
+  public void validateResult(String property, Object testedValue, Response response,
+      boolean expectSuccess) {
     int code = response.getStatusCode();
+
+    if (expectSuccess == true && code == 400) {
+      logger.log(Level.SEVERE, "Fuzzer Failure: \n   Property: " + property + "\n   TestedValue: "
+          + testedValue.toString() + "\n   Expected: 2xx\n   Returned: 400");
+    } else if (expectSuccess == false && (code == 200 || code == 201)) {
+      logger.log(Level.SEVERE, "Fuzzer Failure: \n   Property: " + property + "\n   TestedValue: "
+          + testedValue.toString() + "\n   Expected: 400\n   Returned: 2xx");
+    }
+
     if (expectSuccess) {
       Assert.assertTrue(199 < code && code < 299);
     } else {
@@ -143,6 +155,7 @@ public class CoreEngine {
   /**
    * Arrays with actual fuzz values to be injected
    */
+
   // @formatter:off
   private Object[] nonStringsArray = {
     true,
@@ -229,9 +242,7 @@ public class CoreEngine {
     "' and 1 in (select var from temp)--",
     "' union select 1,load_file('/etc/passwd'),1,1,1;",
     "' and 1=( if((load_file(char(110,46,101,120,116))<>char(39,39)),1,0));",
-
     // Google recommended passive SQL injection
-
     // "\\x27\\x4F\\x52 SELECT *" , TODO: Server FGE fails to detect. Disagrees with Sample expectation. Need to investigate. Could be dangerous.
     // "\\x27\\x6F\\x72 SELECT *" , TODO: ^^
     "'%20or%20'x'='x",

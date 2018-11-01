@@ -59,16 +59,30 @@ public abstract class DataGenerator {
   protected static final String jsonFullDateFormat = "yyyy-MM-dd";
   protected static final String dataPrepend = "test-";
   public static final String genericRegex = "[0-9a-zA-Z.-]{0,62}";
+  public static final String genericSmallAlphaRegex = "[a-z]{5,10}";
+  public static final String genericSmallRandomNumberRegex = "[0-9]{2}";
+  public static final String sampleDomainRegex = "(\\.com|\\.net|\\.org|\\.us|\\.biz|\\.ca|\\.eu|\\.cn|\\.uk|\\.gr)";
+  public static final String phoneRegex = "(tel\\:\\+1-)\\d{3}-\\d{3}-\\d{4}";
 
+  public static final String IPV4_SIMPLE_REGEX = "[0-9]{1,4}:[0-9]{1,4}:[0-9]{1,4}:[0-9]{1,4}";
   public static final String IPV4_REGEX =
-      "\\A(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z";
+      "(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
   public static final String IPV6_HEX4DECCOMPRESSED_REGEX =
-      "\\A((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?) ::((?:[0-9A-Fa-f]{1,4}:)*)(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z";
+      "((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?) ::((?:[0-9A-Fa-f]{1,4}:)*)(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
   public static final String IPV6_6HEX4DEC_REGEX =
-      "\\A((?:[0-9A-Fa-f]{1,4}:){6,6})(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z";
+      "((?:[0-9A-Fa-f]{1,4}:){6,6})(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
   public static final String IPV6_HEXCOMPRESSED_REGEX =
-      "\\A((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)\\z";
-  public static final String IPV6_REGEX = "\\A(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\z";
+      "([0-9A-Fa-f]{1,4}([0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)";
+  public static final String IPV6_REGEX = "([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}";
+  public static final String[] uriRefRegexSampleArray = { 
+      "^(ftp:\\/\\/)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+sampleDomainRegex,
+      "^(http:\\/\\/)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+sampleDomainRegex,
+      "^(ldap:\\/\\/)\\["+IPV6_REGEX+"\\](\\/c=GB\\?objectClass\\?one)",
+      "^(mailto:)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+"\\@"+genericSmallAlphaRegex+sampleDomainRegex,
+      "^(news:)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+"(\\.)"+genericSmallAlphaRegex+"(\\.unix)",
+      phoneRegex,
+      "^(telnet:\\/\\/)"+IPV4_SIMPLE_REGEX+"\\/"+genericSmallRandomNumberRegex,
+      "^(urn\\:)"+genericSmallAlphaRegex+"\\:"+genericSmallAlphaRegex+"\\:"+genericSmallAlphaRegex+"(\\:dtd\\:xml\\:4\\.1\\.2)"};
 
   // something like this for localized chars
 
@@ -319,6 +333,15 @@ public abstract class DataGenerator {
    */
   public static String generateURI() {
     return generateAlphaNumericString(5, 10) + ".com";
+  }
+  
+  /**
+   * 
+   * @return string which conforms to json schema draft 7 uri-ref definition
+   */
+  public static String generateRandomURIRef() {
+    int position = generateRandomInt(0, uriRefRegexSampleArray.length-1);
+    return generateRegexValue(uriRefRegexSampleArray[position]);
   }
 
   /**

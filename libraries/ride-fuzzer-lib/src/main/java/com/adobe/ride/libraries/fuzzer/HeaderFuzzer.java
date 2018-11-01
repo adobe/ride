@@ -155,7 +155,6 @@ public class HeaderFuzzer extends CoreEngine {
    * @param response
    * 
    */
-  @Override
   public void validateResult(Response response, boolean expectSuccess) {
     int code = response.getStatusCode();
     if (expectSuccess) {
