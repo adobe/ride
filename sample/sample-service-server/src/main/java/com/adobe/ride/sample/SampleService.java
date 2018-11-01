@@ -46,7 +46,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import com.adobe.ride.utilities.model.ModelObject;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 
 /**
  * 
@@ -80,9 +79,8 @@ public class SampleService {
   @SuppressWarnings("unchecked")
   public Response createOrUpdateObject(String objectData,
       @PathParam("objectType") String objectType, @PathParam("objectName") String objectName)
-      throws ParseException, IOException, ProcessingException, SQLException {
+      throws ParseException, IOException, SQLException {
     String resource = default_location.replace("type", objectType);
-    ModelObject modObj = new ModelObject(resource);
     InputStream modelStream = this.getClass().getResourceAsStream(resource);
     org.json.JSONObject rawSchema = new org.json.JSONObject(new JSONTokener(modelStream));
     Schema schema = SchemaLoader.load(rawSchema);
@@ -113,13 +111,7 @@ public class SampleService {
 
     } catch (ValidationException e) {
       responseCode = 400;
-      System.out.println("Validataion Exception Msg: " + e.getMessage());
-      JSONObject failure = new JSONObject();
-      failure.put("reason", e.getErrorMessage());
-      failure.put("keyName", e.getKeyword());
-      failure.put("cause", e.getPointerToViolation());
-      failure.put("jsonMsg", e.toJSON());
-      failureMsgs.add(failure);
+      failureMsgs.add(e.getMessage());
     }
 
     if (responseCode == 400) {
@@ -182,7 +174,6 @@ public class SampleService {
 
       }
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
