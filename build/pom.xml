@@ -17,17 +17,12 @@
     <jackson.version>2.9.6</jackson.version>
   </properties>
   
-  <distributionManagement>
+  <distributionManagement> 
     <repository>
-      <id>TBD</id>
-      <name>TBD</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <id>bintray-adobe-maven</id>
+      <name>adobe-maven</name>
+      <url>https://api.bintray.com/maven/adobe/maven/ride/;publish=1</url>
     </repository>
-    <snapshotRepository>
-      <id>TBD</id>
-      <name>TBD</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
   </distributionManagement>
 
   <repositories>
