@@ -24,6 +24,7 @@ import com.adobe.ride.libraries.fuzzer.engines.CoreEngine;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.Filter;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -43,6 +44,7 @@ public class HeaderFuzzer extends CoreEngine {
   protected Method RESTmethod;
   private RequestSpecification requestSpec;
   private String header;
+  protected Filter[] filters;
 
   /**
    * Constructor to be used when fuzzing a header.
@@ -54,13 +56,14 @@ public class HeaderFuzzer extends CoreEngine {
    * @throws Exception
    */
   public HeaderFuzzer(String callingService, RequestSpecBuilder reqSpec, String path,
-      Headers headerToBeFuzzed, Method method) throws Exception {
+      Headers headerToBeFuzzed, Method method, Filter... filters) throws Exception {
     super("header", headerToBeFuzzed.toString());
     this.callingService = callingService;
     requestSpec = reqSpec.build();
     RESTmethod = method;
     header = headerToBeFuzzed.toString();
     this.path = path;
+    this.filters = filters;
   }
 
   /**
@@ -177,7 +180,7 @@ public class HeaderFuzzer extends CoreEngine {
 
     ResponseSpecification expectedResponse = expectedValues.build();
     Response response =
-        RestApiController.callRestAPI(callingService, path, bldr, expectedResponse, RESTmethod);
+        RestApiController.fireRestCall(callingService, path, bldr, expectedResponse, RESTmethod, filters);
 
     validateResult(response, false);
   }

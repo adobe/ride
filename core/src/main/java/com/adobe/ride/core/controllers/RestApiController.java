@@ -14,7 +14,9 @@ package com.adobe.ride.core.controllers;
 
 import static io.restassured.RestAssured.given;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.json.simple.JSONObject;
@@ -23,7 +25,6 @@ import org.json.simple.parser.ParseException;
 import com.adobe.ride.config.aop.TargetServiceConfiguration;
 import com.adobe.ride.config.management.TestProperties;
 import com.adobe.ride.core.RideCore;
-import com.adobe.ride.core.filters.CheckAuthFilter;
 import com.adobe.ride.core.globals.Headers;
 import com.adobe.ride.utilities.model.ModelObject;
 import io.restassured.RestAssured;
@@ -44,8 +45,14 @@ import io.restassured.specification.ResponseSpecification;
  *
  */
 public class RestApiController extends RideCore {
+  public static final TestProperties tp = TestProperties.getInstance();
 
+  private static Filter authCheckFilter;
   // private static CoreGlobals globals = CoreGlobals.INSTANCE;
+
+  public static void setAuthFilter(Filter authFilter) {
+    authCheckFilter = authFilter;
+  }
 
   private final static JSONParser parser = new JSONParser();
 
@@ -156,13 +163,14 @@ public class RestApiController extends RideCore {
    *
    * @param serviceName Name mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
+   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
+   * @param resBuilder RestAssured ResponseSpecBuilder for constructing RA response.
+   * @param filter RestAssured Filter
    * @return RA Response object.
    */
   public static Response delete(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
-      ResponseSpecification expectedResponse) {
-    return callRestAPI(serviceName, restAPI, reqBuilder, expectedResponse, Method.DELETE);
+      ResponseSpecification expectedResponse, Filter filter) {
+    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.DELETE, filter);
   }
 
   /**
@@ -170,13 +178,14 @@ public class RestApiController extends RideCore {
    *
    * @param serviceName Name mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
+   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
+   * @param resBuilder RestAssured ResponseSpecBuilder for constructing RA response.
+   * @param filter RestAssured Filter
    * @return RA Response object.
    */
   public static Response get(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
-      ResponseSpecification expectedResponse) {
-    return callRestAPI(serviceName, restAPI, reqBuilder, expectedResponse, Method.GET);
+      ResponseSpecification expectedResponse, Filter filter) {
+    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.GET, filter);
   }
 
   /**
@@ -184,13 +193,14 @@ public class RestApiController extends RideCore {
    *
    * @param serviceName Name mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
+   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
+   * @param resBuilder RestAssured ResponseSpecBuilder for constructing RA response.
+   * @param filter RestAssured Filter
    * @return RA Response object.
    */
   public static Response head(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
-      ResponseSpecification expectedResponse) {
-    return callRestAPI(serviceName, restAPI, reqBuilder, expectedResponse, Method.HEAD);
+      ResponseSpecification expectedResponse, Filter filter) {
+    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.HEAD, filter);
   }
 
   /**
@@ -198,13 +208,14 @@ public class RestApiController extends RideCore {
    *
    * @param serviceName Name mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
+   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
+   * @param resBuilder RestAssured ResponseSpecBuilder for constructing RA response.
+   * @param filter RestAssured Filter
    * @return RA Response object.
    */
   public static Response options(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
-      ResponseSpecification expectedResponse) {
-    return callRestAPI(serviceName, restAPI, reqBuilder, expectedResponse, Method.OPTIONS);
+      ResponseSpecification expectedResponse, Filter filter) {
+    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.OPTIONS, filter);
   }
 
   /**
@@ -212,13 +223,14 @@ public class RestApiController extends RideCore {
    *
    * @param serviceName Name mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
+   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
+   * @param resBuilder RestAssured ResponseSpecBuilder for constructing RA response.
+   * @param filter RestAssured Filter
    * @return RA Response object.
    */
   public static Response patch(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
-      ResponseSpecification expectedResponse) {
-    return callRestAPI(serviceName, restAPI, reqBuilder, expectedResponse, Method.PATCH);
+      ResponseSpecification expectedResponse, Filter filter) {
+    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.PATCH, filter);
   }
 
   /**
@@ -226,13 +238,14 @@ public class RestApiController extends RideCore {
    *
    * @param serviceName Name mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
+   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
+   * @param resBuilder RestAssured ResponseSpecBuilder for constructing RA response.
+   * @param filter RestAssured Filter
    * @return RA Response object.
    */
   public static Response post(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
-      ResponseSpecification expectedResponse) {
-    return callRestAPI(serviceName, restAPI, reqBuilder, expectedResponse, Method.POST);
+      ResponseSpecification expectedResponse, Filter filter) {
+    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.POST, filter);
   }
 
   /**
@@ -240,83 +253,34 @@ public class RestApiController extends RideCore {
    *
    * @param serviceName Name mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
+   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
+   * @param resBuilder RestAssured ResponseSpecBuilder for constructing RA response.
+   * @param filter RestAssured Filter
    * @return RA Response object.
    */
   public static Response put(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
-      ResponseSpecification expectedResponse) {
-    return callRestAPI(serviceName, restAPI, reqBuilder, expectedResponse, Method.PUT);
+      ResponseSpecification expectedResponse, Filter filter) {
+    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.PUT, filter);
   }
 
-  /**
-   * Static method for making Rest Assured API requests.
-   *
-   * @param serviceName Name mapping to the config folder in resources.
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
-   * @param method The HTTP Method type.
-   * @param addAuthorization boolean to indicate if auto authorization attempt is desired.
-   * @return RA Response object.
-   */
-  public static Response callRestAPI(String serviceName, String restAPI,
-      RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method) {
-    return callRestAPI(serviceName, restAPI, reqBuilder, expectedResponse, method, false);
-  }
-
-  /**
-   * Static method for making Rest Assured API requests with no logging.
-   * 
-   * @param Name mapping to the config folder in resources.
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
-   * @param method The HTTP Method type.
-   * @param addAuthorization boolean to indicate if auto authorization attempt is desired.
-   * @return
-   */
-  public static Response callRestAPIWithNoLogging(String serviceName, String restAPI,
-      RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method) {
-
-    TestProperties tp = TestProperties.getInstance();
-    TargetServiceConfiguration targetService = tp.getTargetServiceConfig(serviceName);
-    reqBuilder.setBaseUri(targetService.getURL());
-
-    return fireRestCallWithNoLogging(serviceName, restAPI, reqBuilder, expectedResponse, method,
-        false);
-  }
-
-  /**
-   * Static method for making Rest Assured API requests.
-   *
-   * @param serviceName Name mapping to the config folder in resources.
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RA RequestSpecBuilder for constructing RA request.
-   * @param resBuilder RA ResponseSpecBuilder for constructing RA response.
-   * @param method The HTTP Method type.
-   * @param addAuthorization boolean to indicate if auto authorization attempt is desired.
-   * @return RA Response object.
-   */
-  public static Response callRestAPI(String serviceName, String restAPI,
+  public static Response fireRestCall(String callingService, String restAPI,
       RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
-      boolean addAuthorization) {
-
-    TestProperties tp = TestProperties.getInstance();
-    TargetServiceConfiguration targetService = tp.getTargetServiceConfig(serviceName);
-    reqBuilder.setBaseUri(targetService.getURL());
-
-    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, method,
-        addAuthorization);
-  }
-
-  private static Response fireRestCall(String callingService, String restAPI,
-      RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
-      boolean addAuthorization) {
+      Filter... filters) {
     RequestSpecification req;
-    if (addAuthorization) {
-      // Check if API Consumer has passed an auth token in a filter
-      reqBuilder.addFilter(new CheckAuthFilter(callingService));
+    
+    TestProperties tp = TestProperties.getInstance();
+    TargetServiceConfiguration targetService = tp.getTargetServiceConfig(callingService);
+    reqBuilder.setBaseUri(targetService.getURL());
+
+    List<Filter> filterList = new ArrayList<Filter>();
+    for (Filter f : filters) {
+      if (f != null) {
+        filterList.add(f);
+      }
+    }
+
+    if (filterList.size() > 0) {
+      reqBuilder.addFilters(filterList);
     }
     req = reqBuilder.build();
 
@@ -343,13 +307,23 @@ public class RestApiController extends RideCore {
     }
   }
 
-  private static Response fireRestCallWithNoLogging(String callingService, String restAPI,
+  public static Response fireRestCallWithNoLogging(String callingService, String restAPI,
       RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
-      boolean addAuthorization) {
+      Filter... filters) {
     RequestSpecification req;
-    if (addAuthorization) {
-      // Check if API Consumer has passed an auth token in a filter
-      reqBuilder.addFilter(new CheckAuthFilter(callingService));
+    TestProperties tp = TestProperties.getInstance();
+    TargetServiceConfiguration targetService = tp.getTargetServiceConfig(callingService);
+    reqBuilder.setBaseUri(targetService.getURL());
+
+    List<Filter> filterList = new ArrayList<Filter>();
+    for (Filter f : filters) {
+      if (f != null) {
+        filterList.add(f);
+      }
+    }
+
+    if (filterList.size() > 0) {
+      reqBuilder.addFilters(filterList);
     }
 
     req = reqBuilder.build();
@@ -389,12 +363,20 @@ public class RestApiController extends RideCore {
    */
   public static InputStream openRestStream(String callingService, String restAPI,
       RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
-      boolean addAuthorization) {
+      Filter... filters) {
     RequestSpecification req;
-    if (addAuthorization) {
-      // Check if API Consumer has passed an auth token in a filter
-      reqBuilder.addFilter(new CheckAuthFilter(callingService));
+
+    List<Filter> filterList = new ArrayList<Filter>();
+    for (Filter f : filters) {
+      if (f != null) {
+        filterList.add(f);
+      }
     }
+
+    if (filterList.size() > 0) {
+      reqBuilder.addFilters(filterList);
+    }
+
     req = reqBuilder.build();
 
     switch (method) {

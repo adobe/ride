@@ -14,6 +14,8 @@ package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -37,6 +39,7 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.Filter;
 import io.restassured.http.Method;
 // import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.Response;
@@ -86,7 +89,7 @@ public class MetadataEngine extends CoreEngine {
       ModelPropertyType type, Object value, Method requestMethod, String contentType) {
     super(entityObj.getModelString(), property);
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        null);
+        null, null);
   }
 
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
@@ -94,12 +97,26 @@ public class MetadataEngine extends CoreEngine {
       RequestSpecBuilder requestBuilder) {
     super(entityObj.getModelString(), property);
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        requestBuilder);
+        requestBuilder, null);
+  }
+  
+  public MetadataEngine(String serviceName, ModelObject entityObj, String property,
+      ModelPropertyType type, Object value, Method requestMethod, String contentType,
+      RequestSpecBuilder requestBuilder, Filter... filters) {
+    super(entityObj.getModelString(), property);
+    List<Filter> filterList = new ArrayList<Filter>();
+    if(filters.length > 0) {
+      for(Filter f : filters) {
+        filterList.add(f);
+      }
+    }
+    initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
+        requestBuilder, filterList);
   }
 
   private void initializeEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilder) {
+      RequestSpecBuilder requestBuilde, List<Filter> filters) {
 
     this.serviceName = serviceName;
     this.entity = entityObj;
@@ -111,6 +128,10 @@ public class MetadataEngine extends CoreEngine {
       this.requestBuilder.addHeader("Accept", "application/json");
       this.requestBuilder.addHeader("Content-Type",
           (contentType != null) ? contentType : "application/json;charset=utf-8");
+    }
+    
+    if(filters !=null ) {
+      requestBuilder.addFilters(filters);
     }
     JSONObject model = entity.getModel();
     modelProperties = (JSONObject) model.get("properties");
@@ -484,6 +505,10 @@ public class MetadataEngine extends CoreEngine {
     } catch (ValidationException e) {
       expectedValues.expectStatusCode(400);
     }
+    
+    
+    
+    
 
     ResponseSpecification expectedResponse = expectedValues.build();
     currentPath = entity.getObjectPath();
@@ -492,20 +517,20 @@ public class MetadataEngine extends CoreEngine {
 
     switch (method) {
       case DELETE:
-        return RestApiController.delete(serviceName, currentPath, requestBuilder, expectedResponse);
+        return RestApiController.delete(serviceName, currentPath, requestBuilder, expectedResponse, null);
       case GET:
-        return RestApiController.get(serviceName, currentPath, requestBuilder, expectedResponse);
+        return RestApiController.get(serviceName, currentPath, requestBuilder, expectedResponse, null);
       case HEAD:
-        return RestApiController.head(serviceName, currentPath, requestBuilder, expectedResponse);
+        return RestApiController.head(serviceName, currentPath, requestBuilder, expectedResponse, null);
       case OPTIONS:
         return RestApiController.options(serviceName, currentPath, requestBuilder,
-            expectedResponse);
+            expectedResponse, null);
       case PATCH:
-        return RestApiController.patch(serviceName, currentPath, requestBuilder, expectedResponse);
+        return RestApiController.patch(serviceName, currentPath, requestBuilder, expectedResponse, null);
       case POST:
-        return RestApiController.post(serviceName, currentPath, requestBuilder, expectedResponse);
+        return RestApiController.post(serviceName, currentPath, requestBuilder, expectedResponse, null);
       case PUT:
-        return RestApiController.put(serviceName, currentPath, requestBuilder, expectedResponse);
+        return RestApiController.put(serviceName, currentPath, requestBuilder, expectedResponse, null);
       default:
         return null;
     }

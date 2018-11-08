@@ -25,6 +25,7 @@ import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeExce
 import com.adobe.ride.utilities.model.types.ModelPropertyType;
 
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.Filter;
 import io.restassured.http.Method;
 
 /**
@@ -41,6 +42,7 @@ public class MetadataFuzzer {
   protected Method requestMethod;
   protected String contentType;
   protected RequestSpecBuilder requestBuilder;
+  protected Filter[] filters;
 
   /** Arrays to be dynamically populated with metadata info for fuzzing **/
   private Object[][] propertiesFuzzSet;
@@ -107,6 +109,25 @@ public class MetadataFuzzer {
       RequestSpecBuilder builder, Method method, String contentType) {
     initializeFuzzer(targetService, entityToBeFuzzed, builder, method, contentType);
   }
+  
+  /**
+   * Method to initialize the Fuzzer factory and related engine subcomponents
+   * 
+   * @param serviceName String representation of the service name, maps back to a config file for
+   *        environment configuration
+   * @param entityToBeFuzzed ModelObject of a subclass thereof
+   * @param builder RequestSpecBuilder custom specification to be used in the fuzzer calls. If null,
+   *        a base spec with only Authorization, Content-Type, and Accepts set. The latter two set
+   *        to a json variant,
+   * @param method Method http verb to be used in the call. If null, PUT is used.
+   * @param contentType String content type header value (if null, default is
+   *        "application/json;charset=utf-8")
+   * @param filter Filter to be applied to calls.
+   */
+  public MetadataFuzzer(String targetService, ModelObject entityToBeFuzzed,
+      RequestSpecBuilder builder, Method method, String contentType, Filter filter) {
+    initializeFuzzer(targetService, entityToBeFuzzed, builder, method, contentType, filter);
+  }
 
   /**
    * Cruft method left over before streamlining. Leaving in for backwards compatibility
@@ -122,7 +143,7 @@ public class MetadataFuzzer {
   }
 
   private void initializeFuzzer(String targetService, ModelObject entityToBeFuzzed,
-      RequestSpecBuilder requestBuilder, Method method, String contentType) {
+      RequestSpecBuilder requestBuilder, Method method, String contentType, Filter... filters) {
 
     // Populate global properties
     this.entity = entityToBeFuzzed;
@@ -133,6 +154,7 @@ public class MetadataFuzzer {
     this.requestMethod = method;
     this.contentType = contentType;
     this.requestBuilder = requestBuilder;
+    this.filters = filters;
     propertiesFuzzSet = new Object[properties.keySet().size()][3];
 
     // Prep TestNG dataprovider to make reporting better.
@@ -224,7 +246,7 @@ public class MetadataFuzzer {
       // boolean isLinksProperty = (totalFuzzSet[i][2] == "linksProperty");
 
       result[i] = new MetadataEngine(targetService, entity, currentkey, type, currentValue,
-          requestMethod, contentType, requestBuilder);
+          requestMethod, contentType, requestBuilder, filters);
     }
     return result;
   }

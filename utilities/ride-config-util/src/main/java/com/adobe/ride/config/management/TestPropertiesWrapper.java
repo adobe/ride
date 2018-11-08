@@ -23,6 +23,10 @@ public class TestPropertiesWrapper {
   private String propertyFileName;
   private Map<String, Object> testProperties = null;
 
+  public TestPropertiesWrapper() {
+    
+  }
+  
   public TestPropertiesWrapper(Map<String, Object> testProperties) {
     Validation.isNullOrEmptyMap(testProperties);
 
