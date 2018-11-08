@@ -32,10 +32,6 @@ public class PropertyFileConfiguration {
   private PropertiesConfiguration propertiesConfiguration = null;
   private String configurationPath = null;
   
-  public PropertyFileConfiguration() {
-    
-  }
-
   @SuppressFBWarnings(value = "OBL_UNSATISFIED_OBLIGATION",
       justification = "This was not authored by QE and may be refactored at a later time.")
   public PropertyFileConfiguration(String configurationPath) throws ConfigurationException {

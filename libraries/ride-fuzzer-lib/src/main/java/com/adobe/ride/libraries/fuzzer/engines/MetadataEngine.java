@@ -116,7 +116,7 @@ public class MetadataEngine extends CoreEngine {
 
   private void initializeEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilde, List<Filter> filters) {
+      RequestSpecBuilder requestBuilder, List<Filter> filters) {
 
     this.serviceName = serviceName;
     this.entity = entityObj;
@@ -130,7 +130,7 @@ public class MetadataEngine extends CoreEngine {
           (contentType != null) ? contentType : "application/json;charset=utf-8");
     }
     
-    if(filters !=null ) {
+    if(filters.size() > 0 ) {
       requestBuilder.addFilters(filters);
     }
     JSONObject model = entity.getModel();

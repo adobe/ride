@@ -45,14 +45,6 @@ import io.restassured.specification.ResponseSpecification;
  *
  */
 public class RestApiController extends RideCore {
-  public static final TestProperties tp = TestProperties.getInstance();
-
-  private static Filter authCheckFilter;
-  // private static CoreGlobals globals = CoreGlobals.INSTANCE;
-
-  public static void setAuthFilter(Filter authFilter) {
-    authCheckFilter = authFilter;
-  }
 
   private final static JSONParser parser = new JSONParser();
 
@@ -267,7 +259,6 @@ public class RestApiController extends RideCore {
       RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
       Filter... filters) {
     RequestSpecification req;
-    
     TestProperties tp = TestProperties.getInstance();
     TargetServiceConfiguration targetService = tp.getTargetServiceConfig(callingService);
     reqBuilder.setBaseUri(targetService.getURL());
@@ -365,6 +356,9 @@ public class RestApiController extends RideCore {
       RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
       Filter... filters) {
     RequestSpecification req;
+    TestProperties tp = TestProperties.getInstance();
+    TargetServiceConfiguration targetService = tp.getTargetServiceConfig(callingService);
+    reqBuilder.setBaseUri(targetService.getURL());
 
     List<Filter> filterList = new ArrayList<Filter>();
     for (Filter f : filters) {
