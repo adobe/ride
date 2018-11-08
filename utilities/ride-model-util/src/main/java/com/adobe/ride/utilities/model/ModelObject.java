@@ -81,6 +81,10 @@ public class ModelObject {
   protected JSONObject presetNodes;
   protected Set<String> nodesToBuild;
 
+  public ModelObject() {
+    
+  }
+  
   /**
    * Method to load the model from a json string which contains the schema in json-schema compliant
    *
