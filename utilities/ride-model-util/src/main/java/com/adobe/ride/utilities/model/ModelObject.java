@@ -23,7 +23,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
@@ -31,7 +30,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import com.adobe.ride.utilities.model.exceptions.InvalidSyncReferenceException;
 import com.adobe.ride.utilities.model.exceptions.ModelSearchException;
 import com.adobe.ride.utilities.model.exceptions.SchemaTypeException;
@@ -52,9 +50,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * 
  */
 public class ModelObject {
-  
+
   Charset encoding = StandardCharsets.UTF_8;
-  
+
   private static final String default_location = "/schemas/service/objectType.json";
 
   protected static final Logger logger = Logger.getLogger(ModelObject.class.getName());
@@ -82,9 +80,9 @@ public class ModelObject {
   protected Set<String> nodesToBuild;
 
   public ModelObject() {
-    
+
   }
-  
+
   /**
    * Method to load the model from a json string which contains the schema in json-schema compliant
    *
@@ -818,7 +816,7 @@ public class ModelObject {
 
         if (startStringIndex != 0 && endStringIndex != 0) {
           endStringIndex += endSearchStringLength;
-        } 
+        }
 
         // generate value between last sync value and this
         String nonSyncVal =
