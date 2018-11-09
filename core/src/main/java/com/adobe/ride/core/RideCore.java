@@ -12,13 +12,33 @@ governing permissions and limitations under the License.
 
 package com.adobe.ride.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.json.simple.parser.JSONParser;
 
 import com.adobe.ride.utilities.model.ModelObject;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.Filter;
 
 public class RideCore {
   public static final Logger logger = Logger.getLogger(ModelObject.class.getName());
   public static final JSONParser parser = new JSONParser();
+  
+  public static RequestSpecBuilder nullCheckAndAddFilters(RequestSpecBuilder reqBuilder, Filter... filters) {
+    List<Filter> filterList = new ArrayList<Filter>();
+    if(filters != null) {
+      for(Filter f : filters) {
+        if(f != null) {
+          filterList.add(f);
+        }
+      }
+    }
+    if(filterList.size() > 0 ) {
+      reqBuilder.addFilters(filterList);
+    }
+    
+    return reqBuilder;
+  }
 }

@@ -18,6 +18,7 @@ import com.adobe.ride.core.types.ExpectedResponse;
 import com.adobe.ride.utilities.model.ModelObject;
 
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.Filter;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
@@ -107,13 +108,14 @@ public class BoilerPlateRestController extends RestApiController {
    * @param method
    * @param service
    * @param object
+   * @param filter
    * @return
    */
   public static Response negativeHeaderTest(HeaderItem header, TestType testType, Method method,
-      String service, ModelObject object) {
+      String service, ModelObject object, Filter filter) {
     RequestSpecBuilder builder = getDefaultTestReqSpecBuilder();
 
-    return negativeHeaderTest(builder, header, testType, method, service, object);
+    return negativeHeaderTest(builder, header, testType, method, service, object, filter);
   }
 
   /**
@@ -126,16 +128,17 @@ public class BoilerPlateRestController extends RestApiController {
    * @param method
    * @param service
    * @param object
+   * @param filter
    * @return
    */
   public static Response negativeHeaderTest(RequestSpecBuilder builder, HeaderItem header,
-      TestType testType, Method method, String service, ModelObject object) {
+      TestType testType, Method method, String service, ModelObject object, Filter filter) {
 
     ResponseSpecification expResponse =
         (testType == TestType.INVALID) ? ExpectedResponse.NOT_ACCEPTABLE_RESPONSE
             : ExpectedResponse.UNSUPPORTED_MEDIA_TYPE_RESPONSE;
 
-    return negativeHeaderTest(expResponse, builder, header, testType, method, service, object);
+    return negativeHeaderTest(expResponse, builder, header, testType, method, service, object, filter);
   }
 
   /**
@@ -149,19 +152,20 @@ public class BoilerPlateRestController extends RestApiController {
    * @param method
    * @param service
    * @param object
+   * @param filter
    * @return
    */
   public static Response negativeHeaderTest(ResponseSpecification expResponse,
       RequestSpecBuilder reqBuilder, HeaderItem header, TestType testType, Method method,
-      String service, ModelObject object) {
+      String service, ModelObject object, Filter filter) {
 
     // Prep the request with the test spcifications
     RequestSpecBuilder builder = getTestReqSpecBuilder(reqBuilder, header, testType);
     // validate the request has all the necessary service-specific specs to complete the call.
     RequestSpecBuilder validatedBuilder = validateBuilder(builder, object, method);
     validatedBuilder.log(LogDetail.ALL);
-    return RestApiController.callRestAPI(service, object.getObjectPath(), validatedBuilder,
-        expResponse, method, true);
+    return RestApiController.fireRestCall(service, object.getObjectPath(), validatedBuilder,
+        expResponse, method, filter);
   }
 
   /**
@@ -195,8 +199,8 @@ public class BoilerPlateRestController extends RestApiController {
 
     RequestSpecBuilder validatedBuilder = validateBuilder(builder, object, method);
     validatedBuilder.log(LogDetail.ALL);
-    Response response = RestApiController.callRestAPI(service, object.getObjectPath(),
-        validatedBuilder, ExpectedResponse.NOT_AUTH_RESPONSE, method, false);
+    Response response = RestApiController.fireRestCall(service, object.getObjectPath(),
+        validatedBuilder, ExpectedResponse.NOT_AUTH_RESPONSE, method, null);
     return response;
   }
 
@@ -207,60 +211,60 @@ public class BoilerPlateRestController extends RestApiController {
    */
 
 
-  public static Response testGetWithInvalidAcceptHeader(String service, ModelObject object) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.GET, service, object);
+  public static Response testGetWithInvalidAcceptHeader(String service, ModelObject object, Filter filter) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.GET, service, object, filter);
   }
 
-  public static Response testGetWithUnsupportedAcceptHeader(String service, ModelObject object) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.GET, service, object);
+  public static Response testGetWithUnsupportedAcceptHeader(String service, ModelObject object, Filter filter) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.GET, service, object, filter);
   }
 
-  public static Response testGetWithInvalidAPIKey(String service, ModelObject object) {
+  public static Response testGetWithInvalidAPIKey(String service, ModelObject object, Filter filter) {
     return negativeHeaderTest(Headers.CLIENT_API_KEY, TestType.INVALID, Method.GET, service,
-        object);
+        object, filter);
   }
 
   public static Response testGetUnAuthenticated(String service, ModelObject object) {
     return negativeAuthTest(Method.GET, service, object);
   }
 
-  public static Response testPostWithInvalidAcceptHeader(String service, ModelObject object) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.POST, service, object);
+  public static Response testPostWithInvalidAcceptHeader(String service, ModelObject object, Filter filter) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.POST, service, object, filter);
   }
 
-  public static Response testPostWithUnsupportedAcceptHeader(String service, ModelObject object) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.POST, service, object);
+  public static Response testPostWithUnsupportedAcceptHeader(String service, ModelObject object, Filter filter) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.POST, service, object, filter);
   }
 
-  public static Response testPostWithInvalidAPIKey(String service, ModelObject object) {
+  public static Response testPostWithInvalidAPIKey(String service, ModelObject object, Filter filter) {
     return negativeHeaderTest(Headers.CLIENT_API_KEY, TestType.INVALID, Method.POST, service,
-        object);
+        object, filter);
   }
 
-  public static Response testPostUnAuthenticated(String service, ModelObject object) {
+  public static Response testPostUnAuthenticated(String service, ModelObject object, Filter filter) {
     return negativeAuthTest(Method.POST, service, object);
   }
 
-  public static Response testPutWithInvalidAcceptHeader(String service, ModelObject object) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.PUT, service, object);
+  public static Response testPutWithInvalidAcceptHeader(String service, ModelObject object, Filter filter) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.PUT, service, object, filter);
   }
 
-  public static Response testPutWithUnsupportedAcceptHeader(String service, ModelObject object) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.PUT, service, object);
+  public static Response testPutWithUnsupportedAcceptHeader(String service, ModelObject object, Filter filter) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.PUT, service, object, filter);
   }
 
-  public static Response testPutWithInvalidAPIKey(String service, ModelObject object) {
+  public static Response testPutWithInvalidAPIKey(String service, ModelObject object, Filter filter) {
     return negativeHeaderTest(Headers.CLIENT_API_KEY, TestType.INVALID, Method.PUT, service,
-        object);
+        object, filter);
   }
 
   public static Response testPutUnAuthenticated(String service, ModelObject object) {
     return negativeAuthTest(Method.PUT, service, object);
   }
 
-  public static Response testDeleteWithInvalidAPIKey(String service, ModelObject object) {
+  public static Response testDeleteWithInvalidAPIKey(String service, ModelObject object, Filter filter) {
     return negativeHeaderTest(Headers.CLIENT_API_KEY, TestType.INVALID, Method.DELETE, service,
-        object);
+        object, filter);
   }
 
   public static Response testDeleteUnAuthenticated(String service, ModelObject object) {

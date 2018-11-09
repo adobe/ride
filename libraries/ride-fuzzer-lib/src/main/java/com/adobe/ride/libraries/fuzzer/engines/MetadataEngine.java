@@ -14,6 +14,8 @@ package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -23,7 +25,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
-
+import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.utilities.model.ModelObject;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
@@ -37,6 +39,7 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.Filter;
 import io.restassured.http.Method;
 // import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.Response;
@@ -86,7 +89,7 @@ public class MetadataEngine extends CoreEngine {
       ModelPropertyType type, Object value, Method requestMethod, String contentType) {
     super(entityObj.getModelString(), property);
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        null);
+        null, null);
   }
 
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
@@ -94,12 +97,20 @@ public class MetadataEngine extends CoreEngine {
       RequestSpecBuilder requestBuilder) {
     super(entityObj.getModelString(), property);
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        requestBuilder);
+        requestBuilder, null);
+  }
+  
+  public MetadataEngine(String serviceName, ModelObject entityObj, String property,
+      ModelPropertyType type, Object value, Method requestMethod, String contentType,
+      RequestSpecBuilder requestBuilder, Filter... filters) {
+    super(entityObj.getModelString(), property);
+    initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
+        requestBuilder, filters);
   }
 
   private void initializeEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilder) {
+      RequestSpecBuilder requestBuilder, Filter... filters) {
 
     this.serviceName = serviceName;
     this.entity = entityObj;
@@ -112,6 +123,9 @@ public class MetadataEngine extends CoreEngine {
       this.requestBuilder.addHeader("Content-Type",
           (contentType != null) ? contentType : "application/json;charset=utf-8");
     }
+
+    requestBuilder = RideCore.nullCheckAndAddFilters(requestBuilder, filters);
+    
     JSONObject model = entity.getModel();
     modelProperties = (JSONObject) model.get("properties");
     linksProperties = (modelProperties.containsKey("_links"))
@@ -489,26 +503,8 @@ public class MetadataEngine extends CoreEngine {
     currentPath = entity.getObjectPath();
 
     Method method = (requestMethod != null) ? requestMethod : Method.PUT;
-
-    switch (method) {
-      case DELETE:
-        return RestApiController.delete(serviceName, currentPath, requestBuilder, expectedResponse);
-      case GET:
-        return RestApiController.get(serviceName, currentPath, requestBuilder, expectedResponse);
-      case HEAD:
-        return RestApiController.head(serviceName, currentPath, requestBuilder, expectedResponse);
-      case OPTIONS:
-        return RestApiController.options(serviceName, currentPath, requestBuilder,
-            expectedResponse);
-      case PATCH:
-        return RestApiController.patch(serviceName, currentPath, requestBuilder, expectedResponse);
-      case POST:
-        return RestApiController.post(serviceName, currentPath, requestBuilder, expectedResponse);
-      case PUT:
-        return RestApiController.put(serviceName, currentPath, requestBuilder, expectedResponse);
-      default:
-        return null;
-    }
+    
+    return RestApiController.fireRestCall(serviceName, currentPath, requestBuilder, expectedResponse, method, null);
   }
 
   /**

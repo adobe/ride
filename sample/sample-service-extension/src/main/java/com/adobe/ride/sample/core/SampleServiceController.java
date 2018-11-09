@@ -16,6 +16,7 @@ import org.apache.http.HttpHeaders;
 
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.core.types.MimeTypes;
+import com.adobe.ride.sample.filters.AuthFilter;
 import com.adobe.ride.sample.types.Service;
 import com.adobe.ride.utilities.model.ModelObject;
 
@@ -31,6 +32,8 @@ import io.restassured.specification.ResponseSpecification;
  *
  */
 public class SampleServiceController extends RestApiController {
+  
+  private static Filter filter = new AuthFilter("SampleService");
 
   protected static RequestSpecBuilder getDefaultReqSpecBuilder(Filter... filters) {
     RequestSpecBuilder builder;
@@ -44,31 +47,31 @@ public class SampleServiceController extends RestApiController {
       ResponseSpecification expectedResponse) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
     reqBuilder.setBody(object.getObjectMetadata());
-    return callRestAPI(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder, expectedResponse,
-        Method.PUT);
+    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder, expectedResponse,
+        Method.PUT, filter);
   }
 
   public static Response createOrUpdateObject(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse, boolean addAuthorization) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
     reqBuilder.setBody(object.getObjectMetadata());
-    return RestApiController.callRestAPI(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.PUT, addAuthorization);
+    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
+        expectedResponse, Method.PUT, filter);
   }
 
   public static Response createOrUpdateArrayObject(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse, boolean addAuthorization) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
     reqBuilder.setBody(object.getObjectItems());
-    return RestApiController.callRestAPI(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.PUT, addAuthorization);
+    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
+        expectedResponse, Method.PUT, filter);
   }
 
   public static Response get(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
     reqBuilder.setBody(object.getObjectMetadata());
-    return RestApiController.callRestAPI(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
+    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
         expectedResponse, Method.GET);
   }
 
@@ -76,15 +79,15 @@ public class SampleServiceController extends RestApiController {
       ResponseSpecification expectedResponse, boolean addAuthorization) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
     reqBuilder.setBody(object.getObjectMetadata());
-    return RestApiController.callRestAPI(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.GET, addAuthorization);
+    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
+        expectedResponse, Method.GET, filter);
   }
 
   public static Response delete(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
     reqBuilder.setBody(object.getObjectMetadata());
-    return RestApiController.callRestAPI(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
+    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
         expectedResponse, Method.DELETE);
   }
 
@@ -92,7 +95,7 @@ public class SampleServiceController extends RestApiController {
       ResponseSpecification expectedResponse, boolean addAuthorization) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
     reqBuilder.setBody(object.getObjectMetadata());
-    return RestApiController.callRestAPI(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.DELETE, addAuthorization);
+    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
+        expectedResponse, Method.DELETE, filter);
   }
 }

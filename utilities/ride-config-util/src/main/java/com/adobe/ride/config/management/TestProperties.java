@@ -41,7 +41,7 @@ public class TestProperties {
       new HashMap<String, TargetServiceConfiguration>();
   private static final TestProperties instanceHolder = new TestProperties();
 
-  private TestProperties() {
+  public TestProperties() {
     try {
       loadEnvironmentProperties();
       loadCommonProperties();

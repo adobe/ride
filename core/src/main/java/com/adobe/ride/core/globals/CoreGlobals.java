@@ -34,7 +34,7 @@ public class CoreGlobals {
   private LogLevel logLevel;
   private LogConfig customLogConfig;
 
-  private CoreGlobals() {
+  protected CoreGlobals() {
     this.target = System.getProperty(COMMAND_LINE_PROPERTY_TARGET);
 
     // set apiKey to default if not specified

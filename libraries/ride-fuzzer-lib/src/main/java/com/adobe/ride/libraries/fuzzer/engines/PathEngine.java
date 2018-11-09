@@ -20,6 +20,7 @@ import com.adobe.ride.core.controllers.RestApiController;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.Filter;
 import io.restassured.http.Method;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.Response;
@@ -37,6 +38,7 @@ public class PathEngine extends CoreEngine {
   protected String serviceName;
   private Method httpMethod;
   private RequestSpecBuilder reqSpecBldr;
+  private Filter[] filters;
 
   /**
    * Constructor
@@ -48,9 +50,10 @@ public class PathEngine extends CoreEngine {
    * @param rESTmethod HTTP method call to be used.
    */
   public PathEngine(String serviceName, RequestSpecBuilder reqSpec, String path, String target,
-      Method RESTmethod) {
+      Method RESTmethod, Filter... filters) {
     super(path, target);
     this.serviceName = serviceName;
+    this.filters = filters;
     httpMethod = RESTmethod;
   }
 
@@ -157,8 +160,7 @@ public class PathEngine extends CoreEngine {
     expectedValues.expectBody(JsonSchemaValidator.matchesJsonSchema(errorSchema));
 
     ResponseSpecification expectedResponse = expectedValues.build();
-    Response response = RestApiController.callRestAPI(serviceName, path, reqSpecBldr,
-        expectedResponse, httpMethod);
+    Response response = RestApiController.fireRestCall(serviceName, path, reqSpecBldr, expectedResponse, httpMethod, filters);
 
     validateResult(response, false);
   }
