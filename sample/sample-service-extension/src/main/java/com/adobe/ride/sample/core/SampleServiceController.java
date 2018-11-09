@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 package com.adobe.ride.sample.core;
 
 import org.apache.http.HttpHeaders;
-
+import com.adobe.ride.sample.core.SampleServiceController.ObjectType;
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.core.types.MimeTypes;
 import com.adobe.ride.sample.filters.AuthFilter;
@@ -33,7 +33,11 @@ import io.restassured.specification.ResponseSpecification;
  */
 public class SampleServiceController extends RestApiController {
   
-  private static Filter filter = new AuthFilter("SampleService");
+  public static final Filter filter = new AuthFilter("SampleService");
+
+  public enum ObjectType {
+    OBJECT, ARRAY;
+  }
 
   protected static RequestSpecBuilder getDefaultReqSpecBuilder(Filter... filters) {
     RequestSpecBuilder builder;
@@ -45,57 +49,59 @@ public class SampleServiceController extends RestApiController {
 
   public static Response createOrUpdate(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse) {
-    RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
-    reqBuilder.setBody(object.getObjectMetadata());
-    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder, expectedResponse,
-        Method.PUT, filter);
+    return callCore(ObjectType.OBJECT, objectPath, object, expectedResponse, Method.PUT, false);
   }
 
   public static Response createOrUpdateObject(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse, boolean addAuthorization) {
-    RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
-    reqBuilder.setBody(object.getObjectMetadata());
-    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.PUT, filter);
+    return callCore(ObjectType.OBJECT, objectPath, object, expectedResponse, Method.PUT,
+        addAuthorization);
   }
 
   public static Response createOrUpdateArrayObject(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse, boolean addAuthorization) {
-    RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
-    reqBuilder.setBody(object.getObjectItems());
-    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.PUT, filter);
+    return callCore(ObjectType.ARRAY, objectPath, object, expectedResponse, Method.PUT,
+        addAuthorization);
   }
 
   public static Response get(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse) {
-    RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
-    reqBuilder.setBody(object.getObjectMetadata());
-    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.GET);
+    return callCore(ObjectType.OBJECT, objectPath, object, expectedResponse, Method.GET, false);
   }
 
   public static Response get(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse, boolean addAuthorization) {
-    RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
-    reqBuilder.setBody(object.getObjectMetadata());
-    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.GET, filter);
+    return callCore(ObjectType.OBJECT, objectPath, object, expectedResponse, Method.GET,
+        addAuthorization);
   }
 
   public static Response delete(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse) {
-    RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
-    reqBuilder.setBody(object.getObjectMetadata());
-    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.DELETE);
+    return callCore(ObjectType.OBJECT, objectPath, object, expectedResponse, Method.DELETE, false);
   }
 
   public static Response delete(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse, boolean addAuthorization) {
+    return callCore(ObjectType.OBJECT, objectPath, object, expectedResponse, Method.DELETE,
+        addAuthorization);
+  }
+
+  private static Response callCore(ObjectType type, String objectPath, ModelObject object,
+      ResponseSpecification expectedResponse, Method method, boolean addAuthorization) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
-    reqBuilder.setBody(object.getObjectMetadata());
-    return fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-        expectedResponse, Method.DELETE, filter);
+    if (type == ObjectType.OBJECT) {
+      reqBuilder.setBody(object.getObjectMetadata());
+    } else {
+      reqBuilder.setBody(object.getObjectItems());
+    }
+    Response response = null;
+    if (addAuthorization) {
+      response = fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
+          expectedResponse, method, filter);
+    } else {
+      response = fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
+          expectedResponse, method);
+    }
+    return response;
   }
 }
