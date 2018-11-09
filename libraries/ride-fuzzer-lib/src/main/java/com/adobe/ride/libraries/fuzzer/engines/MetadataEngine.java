@@ -12,10 +12,8 @@ governing permissions and limitations under the License.
 
 package com.adobe.ride.libraries.fuzzer.engines;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -25,17 +23,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
+
 import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.utilities.model.ModelObject;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
 import com.adobe.ride.utilities.model.types.ModelPropertyType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -99,7 +92,7 @@ public class MetadataEngine extends CoreEngine {
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
         requestBuilder, null);
   }
-  
+
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder, Filter... filters) {
@@ -125,7 +118,7 @@ public class MetadataEngine extends CoreEngine {
     }
 
     requestBuilder = RideCore.nullCheckAndAddFilters(requestBuilder, filters);
-    
+
     JSONObject model = entity.getModel();
     modelProperties = (JSONObject) model.get("properties");
     linksProperties = (modelProperties.containsKey("_links"))
@@ -197,7 +190,8 @@ public class MetadataEngine extends CoreEngine {
 
       if (modelDataType.equals(ModelPropertyType.URI)
           && (fuzzDataType.equals(ModelPropertyType.STRING) && nodeDef.containsKey("format"))) {
-        if (nodeDef.get("format").toString().equals("uri") || nodeDef.get("format").toString().equals("uri-reference")) {
+        if (nodeDef.get("format").toString().equals("uri")
+            || nodeDef.get("format").toString().equals("uri-reference")) {
           retVal = validateURI(data.toString());
         }
       } else if (modelDataType.equals(ModelPropertyType.STRING)
@@ -468,7 +462,7 @@ public class MetadataEngine extends CoreEngine {
 
     ResponseSpecBuilder expectedValues = new ResponseSpecBuilder();
 
-    
+
 
     try {
       org.json.JSONObject objectMetadata = new org.json.JSONObject(callBody);
@@ -503,8 +497,9 @@ public class MetadataEngine extends CoreEngine {
     currentPath = entity.getObjectPath();
 
     Method method = (requestMethod != null) ? requestMethod : Method.PUT;
-    
-    return RestApiController.fireRestCall(serviceName, currentPath, requestBuilder, expectedResponse, method, null);
+
+    return RestApiController.fireRestCall(serviceName, currentPath, requestBuilder,
+        expectedResponse, method, null);
   }
 
   /**

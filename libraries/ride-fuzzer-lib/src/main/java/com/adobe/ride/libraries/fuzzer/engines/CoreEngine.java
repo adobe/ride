@@ -14,11 +14,13 @@ package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.io.IOException;
 import java.util.logging.Level;
+
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
+
 import com.adobe.ride.core.RideCore;
-import io.restassured.builder.RequestSpecBuilder;
+
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.ResponseSpecification;
