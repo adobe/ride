@@ -254,26 +254,25 @@ public class RestApiController extends RideCore {
       ResponseSpecification expectedResponse, Filter filter) {
     return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.PUT, filter);
   }
-
-  public static Response fireRestCall(String callingService, String restAPI,
-      RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
-      Filter... filters) {
+  
+  private static RequestSpecification prepRequest(String callingService, RequestSpecBuilder reqBuilder, Filter... filters) {
     RequestSpecification req;
     TestProperties tp = TestProperties.getInstance();
     TargetServiceConfiguration targetService = tp.getTargetServiceConfig(callingService);
     reqBuilder.setBaseUri(targetService.getURL());
 
-    List<Filter> filterList = new ArrayList<Filter>();
-    for (Filter f : filters) {
-      if (f != null) {
-        filterList.add(f);
-      }
-    }
+    reqBuilder = nullCheckAndAddFilters(reqBuilder, filters);
 
-    if (filterList.size() > 0) {
-      reqBuilder.addFilters(filterList);
-    }
     req = reqBuilder.build();
+    
+    return req;
+  }
+
+  public static Response fireRestCall(String callingService, String restAPI,
+      RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
+      Filter... filters) {
+    
+    RequestSpecification req = prepRequest(callingService, reqBuilder, filters);
 
     switch (method) {
       case DELETE:
@@ -301,23 +300,8 @@ public class RestApiController extends RideCore {
   public static Response fireRestCallWithNoLogging(String callingService, String restAPI,
       RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
       Filter... filters) {
-    RequestSpecification req;
-    TestProperties tp = TestProperties.getInstance();
-    TargetServiceConfiguration targetService = tp.getTargetServiceConfig(callingService);
-    reqBuilder.setBaseUri(targetService.getURL());
 
-    List<Filter> filterList = new ArrayList<Filter>();
-    for (Filter f : filters) {
-      if (f != null) {
-        filterList.add(f);
-      }
-    }
-
-    if (filterList.size() > 0) {
-      reqBuilder.addFilters(filterList);
-    }
-
-    req = reqBuilder.build();
+    RequestSpecification req = prepRequest(callingService, reqBuilder, filters);
 
     switch (method) {
       case DELETE:
@@ -360,16 +344,7 @@ public class RestApiController extends RideCore {
     TargetServiceConfiguration targetService = tp.getTargetServiceConfig(callingService);
     reqBuilder.setBaseUri(targetService.getURL());
 
-    List<Filter> filterList = new ArrayList<Filter>();
-    for (Filter f : filters) {
-      if (f != null) {
-        filterList.add(f);
-      }
-    }
-
-    if (filterList.size() > 0) {
-      reqBuilder.addFilters(filterList);
-    }
+    reqBuilder = nullCheckAndAddFilters(reqBuilder, filters);
 
     req = reqBuilder.build();
 

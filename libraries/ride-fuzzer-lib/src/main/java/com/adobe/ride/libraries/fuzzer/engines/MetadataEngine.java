@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
-
+import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.utilities.model.ModelObject;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
@@ -104,19 +104,13 @@ public class MetadataEngine extends CoreEngine {
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder, Filter... filters) {
     super(entityObj.getModelString(), property);
-    List<Filter> filterList = new ArrayList<Filter>();
-    if(filters.length > 0) {
-      for(Filter f : filters) {
-        filterList.add(f);
-      }
-    }
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        requestBuilder, filterList);
+        requestBuilder, filters);
   }
 
   private void initializeEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilder, List<Filter> filters) {
+      RequestSpecBuilder requestBuilder, Filter... filters) {
 
     this.serviceName = serviceName;
     this.entity = entityObj;
@@ -129,10 +123,9 @@ public class MetadataEngine extends CoreEngine {
       this.requestBuilder.addHeader("Content-Type",
           (contentType != null) ? contentType : "application/json;charset=utf-8");
     }
+
+    requestBuilder = RideCore.nullCheckAndAddFilters(requestBuilder, filters);
     
-    if(filters.size() > 0 ) {
-      requestBuilder.addFilters(filters);
-    }
     JSONObject model = entity.getModel();
     modelProperties = (JSONObject) model.get("properties");
     linksProperties = (modelProperties.containsKey("_links"))
@@ -505,35 +498,13 @@ public class MetadataEngine extends CoreEngine {
     } catch (ValidationException e) {
       expectedValues.expectStatusCode(400);
     }
-    
-    
-    
-    
 
     ResponseSpecification expectedResponse = expectedValues.build();
     currentPath = entity.getObjectPath();
 
     Method method = (requestMethod != null) ? requestMethod : Method.PUT;
-
-    switch (method) {
-      case DELETE:
-        return RestApiController.delete(serviceName, currentPath, requestBuilder, expectedResponse, null);
-      case GET:
-        return RestApiController.get(serviceName, currentPath, requestBuilder, expectedResponse, null);
-      case HEAD:
-        return RestApiController.head(serviceName, currentPath, requestBuilder, expectedResponse, null);
-      case OPTIONS:
-        return RestApiController.options(serviceName, currentPath, requestBuilder,
-            expectedResponse, null);
-      case PATCH:
-        return RestApiController.patch(serviceName, currentPath, requestBuilder, expectedResponse, null);
-      case POST:
-        return RestApiController.post(serviceName, currentPath, requestBuilder, expectedResponse, null);
-      case PUT:
-        return RestApiController.put(serviceName, currentPath, requestBuilder, expectedResponse, null);
-      default:
-        return null;
-    }
+    
+    return RestApiController.fireRestCall(serviceName, currentPath, requestBuilder, expectedResponse, method, null);
   }
 
   /**
