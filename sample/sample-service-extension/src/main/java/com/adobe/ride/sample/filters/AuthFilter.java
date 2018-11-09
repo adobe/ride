@@ -10,14 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-package com.adobe.ride.core.filters;
+package com.adobe.ride.sample.filters;
 
 import org.apache.commons.lang3.Validate;
-
-import com.adobe.ride.config.management.GlobalConstants;
-
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
+import io.restassured.http.Header;
 import io.restassured.response.Response;
 import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.FilterableResponseSpecification;
@@ -26,10 +24,16 @@ import io.restassured.specification.FilterableResponseSpecification;
  * @author tedcasey
  *
  */
-public class CheckAuthFilter implements Filter {
+public class AuthFilter implements Filter {
+  private final String callingServiceName;
 
-  public CheckAuthFilter(String callingServiceName) {
+  public AuthFilter(String callingServiceName) {
     Validate.notNull(callingServiceName);
+    this.callingServiceName = callingServiceName;
+  }
+
+  public AuthFilter() {
+    this.callingServiceName = "";
   }
 
   public Response filter(FilterableRequestSpecification requestSpec,
@@ -37,21 +41,9 @@ public class CheckAuthFilter implements Filter {
 
     if (!requestSpec.getHeaders().hasHeaderWithName("Authorization")) {
 
-      // Authorization not attached, so use auth workflow.
-      String tmp =
-          (System.getProperty(GlobalConstants.TARGET_TEST_ENVIRONMENT_KEY) == null) ? "localhost"
-              : System.getProperty(GlobalConstants.TARGET_TEST_ENVIRONMENT_KEY);
-
-      // Check if running in localhost
-      if (!(tmp.equals("localhost"))) {
-        // Add your domain-specific auth workflow code
-        /*-
-         * Example: 
-         * MyAuthenticationLib authlib = AuthSingleton; 
-         * String token = "Bearer " + authlib.getToken(); 
-         * requestSpec.header(new Header("Authorization", token));
-         */
-      }
+      // Token retrieved from some code invoked here
+      String token = "somesupersecrettoken";
+      requestSpec.header(new Header("Authorization", token));
     }
 
     final Response response = ctx.next(requestSpec, responseSpec);
