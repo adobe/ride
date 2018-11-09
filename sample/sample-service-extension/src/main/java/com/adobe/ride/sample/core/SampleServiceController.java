@@ -13,7 +13,6 @@ governing permissions and limitations under the License.
 package com.adobe.ride.sample.core;
 
 import org.apache.http.HttpHeaders;
-import com.adobe.ride.sample.core.SampleServiceController.ObjectType;
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.core.types.MimeTypes;
 import com.adobe.ride.sample.filters.AuthFilter;
