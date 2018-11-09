@@ -26,7 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
-import java.util.logging.Logger;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -37,6 +37,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -45,7 +46,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import com.adobe.ride.utilities.model.ModelObject;
 
 /**
  * 
@@ -57,7 +57,6 @@ import com.adobe.ride.utilities.model.ModelObject;
  */
 @Path("/")
 public class SampleService {
-  private static final Logger logger = Logger.getLogger(SampleService.class.getName());
   public final static String OBJECT_NAME_REGEX = "[0-9a-zA-Z]{1}[0-9a-zA-Z_ %.-]{0,63}";
   public final static String OBJECT_TYPE_PATH_PARAM = "/{objectType}";
   public final static String OBJECT_NAME_PATH_PARAM = "/{objectName}";
