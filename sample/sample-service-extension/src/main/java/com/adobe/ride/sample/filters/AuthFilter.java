@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 package com.adobe.ride.sample.filters;
 
 import org.apache.commons.lang3.Validate;
+
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
 import io.restassured.http.Header;
@@ -25,16 +26,12 @@ import io.restassured.specification.FilterableResponseSpecification;
  *
  */
 public class AuthFilter implements Filter {
-  private final String callingServiceName;
 
   public AuthFilter(String callingServiceName) {
     Validate.notNull(callingServiceName);
-    this.callingServiceName = callingServiceName;
   }
 
-  public AuthFilter() {
-    this.callingServiceName = "";
-  }
+  public AuthFilter() {}
 
   public Response filter(FilterableRequestSpecification requestSpec,
       FilterableResponseSpecification responseSpec, FilterContext ctx) {
