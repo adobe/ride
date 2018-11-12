@@ -13,20 +13,22 @@ governing permissions and limitations under the License.
 package com.adobe.ride.core.controllers;
 
 import static io.restassured.RestAssured.given;
+
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import com.adobe.ride.config.aop.TargetServiceConfiguration;
 import com.adobe.ride.config.management.TestProperties;
 import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.globals.Headers;
 import com.adobe.ride.utilities.model.ModelObject;
+
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.ConnectionConfig;
@@ -254,8 +256,9 @@ public class RestApiController extends RideCore {
       ResponseSpecification expectedResponse, Filter filter) {
     return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.PUT, filter);
   }
-  
-  private static RequestSpecification prepRequest(String callingService, RequestSpecBuilder reqBuilder, Filter... filters) {
+
+  private static RequestSpecification prepRequest(String callingService,
+      RequestSpecBuilder reqBuilder, Filter... filters) {
     RequestSpecification req;
     TestProperties tp = TestProperties.getInstance();
     TargetServiceConfiguration targetService = tp.getTargetServiceConfig(callingService);
@@ -264,14 +267,14 @@ public class RestApiController extends RideCore {
     reqBuilder = nullCheckAndAddFilters(reqBuilder, filters);
 
     req = reqBuilder.build();
-    
+
     return req;
   }
 
   public static Response fireRestCall(String callingService, String restAPI,
       RequestSpecBuilder reqBuilder, ResponseSpecification expectedResponse, Method method,
       Filter... filters) {
-    
+
     RequestSpecification req = prepRequest(callingService, reqBuilder, filters);
 
     switch (method) {
