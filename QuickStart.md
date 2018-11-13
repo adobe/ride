@@ -14,7 +14,7 @@ There are a number of documents in this repo revolving around Ride usage and in 
 
 You will need to add the Ride core dependency to your pom:
 ```
-	<dependency>
+    <dependency>
       <groupId>com.adobe.ride</groupId>
       <artifactId>ride-core</artifactId>
       <version>1.0.2</version>
@@ -89,7 +89,8 @@ Open the stage.properties file and add the following code:
 	SampleService.schema=https
 	SampleService.port=443
 	SampleService.endpoint=www.mycompany.com
-	SampleService.basePath=/sample-service-server/rest ```
+	SampleService.basePath=/sample-service-server/rest 
+```
 	
 Alter the instances of "SampleService" to reflect the actual name of your service, and change your schema, ports, endpoints, and basepaths to the actual ones your service uses (if no basepath, just use /).  Note: whatever you name your service your service name here should also match the name of your folder in the resources schemas folder.
 
@@ -189,11 +190,6 @@ import com.adobe.ride.core.types.ExpectedResponse;
 import com.mycompany.mywebservice.core.MyWebServiceController;
 import com.mycompany.mywebservice.objects.SampleServiceObject1;
 
-/**
- * 
- * @author tedcasey
- *
- */
 public class BasicTest_IT {
 
   @Test(groups = {"smoke", "acceptance"})

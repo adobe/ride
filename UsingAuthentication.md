@@ -1,4 +1,4 @@
-![Authentication](images/Ride_Authentication.jpg)
+![Authentication](Ride_Authentication.jpeg)
 
 # Using Authentication in your Ride Calls
 ![Adobe Ride Extension Logo](images/RideExtLogo.jpg)
