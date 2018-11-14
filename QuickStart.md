@@ -29,16 +29,16 @@ This quick start will focus on eclipse/maven build workflows, but ant and gradle
 <html>
 	<ul style="list-style-type:square">
 		<li>src/main/resources</li>
-		<ul>            
+		<ul style="list-style-type:square">            
 			<li>schemas</li>
-			<ul>            
+			<ul style="list-style-type:square">            
 				<li>SampleService</li>
-				<ul>            
+				<ul style="list-style-type:square">            
 					<li>sample_service_object_1.json</li>
 				</ul>
 			</ul>
 			<li>configs</li>
-			<ul>            
+			<ul style="list-style-type:square">            
 				<li>localhost.properties</li>
 				<li>stage01.properties</li>
 				<li>prod.properties</li>
@@ -51,12 +51,12 @@ This quick start will focus on eclipse/maven build workflows, but ant and gradle
 <html>
 	<ul style="list-style-type:square">
 		<li>src/main/java</li>
-		<ul>            
+		<ul style="list-style-type:square">            
 			<li>com.mycompany.mywebservice.core</li>
-			<ul>            
+			<ul style="list-style-type:square">            
 				<li>MyWebServiceController.java</li>           
 			<li>com.mycompany.mywebservice.objects</li>
-			<ul>            
+			<ul style="list-style-type:square">            
 				<li>RequestObject.java</li>
 			</ul>
 		</ul>
