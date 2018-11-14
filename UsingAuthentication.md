@@ -77,7 +77,7 @@ In order to apply this filter we simply need to instantiate it, and pass it to o
 ```
 public class SampleServiceController extends RestApiController {
   
-  **public static final Filter filter = new AuthFilter("SampleService");**
+  public static final Filter filter = new AuthFilter("SampleService");
   
   ...
   
@@ -89,7 +89,7 @@ public class SampleServiceController extends RestApiController {
     Response response = null;
     if (addAuthorization) {
       response = fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
-          expectedResponse, method, **filter**);
+          expectedResponse, method, filter);
     } else {
       response = fireRestCall(Service.SAMPLE_SERVICE.toString(), objectPath, reqBuilder,
           expectedResponse, method);
