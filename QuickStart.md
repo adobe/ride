@@ -8,7 +8,7 @@
 
 # Jump Start Your Engine
 
-There are a number of documents in this repo revolving around Ride usage and in depth solutions to planning your rest api testing needs.  But to get started using Ride, you should think of it simply as a sdk to help you build libraries to make testing your target REST APIs easier and more maintainable.  This document focuses on the bare basics of Ride and how to get up an running quickly. 
+There are a number of documents in this repo revolving around Ride usage and in depth solutions to planning your rest api testing needs.  But to get started using Ride, you should think of it simply as a sdk to help you build libraries to make testing your target REST APIs easier and more maintainable.  This document focuses on the bare basics of Ride and how to get up and running quickly. 
 
 # Dependencies
 
@@ -26,21 +26,42 @@ You will need to add the Ride core dependency to your pom:
 This quick start will focus on eclipse/maven build workflows, but ant and gradle and any other Java IDE should work just fine too.  To get started, create a new Maven project (sorry, Ride is java-only for now) in the IDE of your choice, giving it a groupId and artifactId you'd like to use (i.e. something like com.mycompany.mywebservice /  webservice-automation-library).  Add the following files to your project (don't worry about the contents, for now just create the place holders:
 
 #### ResourceFiles
-src/main/resources
-	- schemas
-		- SampleService
-			sample\_service\_object\_1.json
-	- configs
-		localhost.properties
-		stage01.properties
-		prod.properties
+<html>
+	<ul style="list-style-type:square">
+		<li>src/main/resources</li>
+		<ul>            
+			<li>schemas</li>
+			<ul>            
+				<li>SampleService</li>
+				<ul>            
+					<li>sample_service_object_1.json</li>
+				</ul>
+			</ul>
+			<li>configs</li>
+			<ul>            
+				<li>localhost.properties</li>
+				<li>stage01.properties</li>
+				<li>prod.properties</li>
+			</ul>
+		</ul>
+	</ul>
+</html>
 		
 #### Java Packages/Classes
-src/main/java
-	- com.mycompany.mywebservice.core
-		- MyWebServiceController.java
-	- com.mycompany.mywebservice.objects
-		- RequestObject.java
+<html>
+	<ul style="list-style-type:square">
+		<li>src/main/java</li>
+		<ul>            
+			<li>com.mycompany.mywebservice.core</li>
+			<ul>            
+				<li>MyWebServiceController.java</li>           
+			<li>com.mycompany.mywebservice.objects</li>
+			<ul>            
+				<li>RequestObject.java</li>
+			</ul>
+		</ul>
+	</ul>
+</html>
 		
 # Resource Code
 
@@ -92,13 +113,13 @@ Open the stage.properties file and add the following code:
 	SampleService.basePath=/sample-service-server/rest 
 ```
 	
-Alter the instances of "SampleService" to reflect the actual name of your service, and change your schema, ports, endpoints, and basepaths to the actual ones your service uses (if no basepath, just use /).  Note: whatever you name your service your service name here should also match the name of your folder in the resources schemas folder.
+Alter the instances of "SampleService" to reflect the actual name of your service, and change your schema, ports, endpoints, and basepaths to the actual ones your service uses (if no basepath, just use /).  Note: whatever you name your service here, it should also match the name of the folder in the schemas resources.
 
-Ok, your resources are setup, lets get your code set up.
+Ok, your resources are setup.  Let's get your code set up.
 
 # Java Code
 
-Open the file RequestObject.java, and Add Code until it looks like the following:
+Open the file RequestObject.java and add Code until it looks like the following:
 
 ```
 package com.mycompany.mywebservice.objects;
@@ -116,7 +137,7 @@ public class SampleServiceObject1 extends ModelObject {
 
 What we have here is a simple java class which extends the ModelObject in Ride.  The superclass arguments tell Ride where the schema of the object and configs of the service live (based on what we've defined above).  The arguments we pass into the class tell it what we want to name the instance and whether we want to instantiate all of the properties defined in the json schema or just the required ones.
 
-Now that we have an object, let's defined the controller which actually sends the object to the server.  Open the file MyWebServiceController.java, and Add Code until it looks like the following:
+Now that we have an object, let's defined the controller which actually sends the object to the server.  Open the file MyWebServiceController.java and add Code until it looks like the following:
 ```
 com.mycompany.mywebservice.core
 
@@ -141,7 +162,7 @@ public class MyWebServiceController extends RestApiController {
     return builder;
   }
 
-  private static Response firePOSTCall(String objectPath, ModelObject object,
+  public static Response firePOSTCall(String objectPath, ModelObject object,
       ResponseSpecification expectedResponse) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
     reqBuilder.setBody(object.getObjectMetadata());
@@ -168,7 +189,7 @@ Let's create a project to write our tests.  In your IDE create a new Java Projec
 In your pom, add a dependency for the library you just created:
 
 ```
-	<dependency>
+    <dependency>
       <groupId>com.mycompany.mywebservice</groupId>
       <artifactId>webservice-automation-library</artifactId>
       <version>0.0.1-SNAPSHOT</version>
@@ -193,7 +214,7 @@ import com.mycompany.mywebservice.objects.SampleServiceObject1;
 public class BasicTest_IT {
 
   @Test(groups = {"smoke", "acceptance"})
-  public void testAuthenticatedCalltoServer() {
+  public void testCalltoServer() {
     String itemName = UUID.randomUUID().toString();
     // Create Object and dynamically generate data from schema
     SampleServiceObject1 testObject = new SampleServiceObject1(itemName, false);
@@ -213,7 +234,7 @@ When it's run your REST call should be generated and logged, which you'll see in
 
 ## Final Thoughts
 
-With a little bit of upfront work, you can see that you can have an extremely useable and flexible library to generate tests against your webservice in just a few lines of code.  From there you can delve into leverage all of the resources available in Ride to really provide some comfort that your service is being fully tested.
+With a little bit of upfront work, you can realize an extremely useable and flexible library with which you can generate tests against your webservice in just a few lines of code.  Once you have an understanding of these quick start basics, you can begin to leverage all of the resources available in Ride to ensure your service is being fully tested.
 
 
 
