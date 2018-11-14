@@ -1,7 +1,6 @@
-![Authentication](Ride_Authentication.jpeg)
+![Authentication](images/Ride_Authentication.jpeg)
 
 # Using Authentication in your Ride Calls
-![Adobe Ride Extension Logo](images/RideExtLogo.jpg)
 
 * [Overview](#overview)
 * [Rest Assured Filters](#rest-assured-filters)
@@ -16,7 +15,7 @@ Ride provides for the ability to utilize Rest-Assured Filters to augment calls i
 
 ## Rest Assured Filters
 
-Per it's [documentation](https://github.com/rest-assured/rest-assured/wiki/usage#filters), Rest assure filters allow you "to inspect and alter a request before it's actually committed and also inspect and alter the response before it's returned to the expectations".  In the Ride core, you can send an arbitrary number of Filters to call any rest api, so adding a filter for authentication will not interefere (as long as your code is correct) with any other filters.
+Per its [documentation](https://github.com/rest-assured/rest-assured/wiki/usage#filters), Rest assured filters allow you "to inspect and alter a request before it's actually committed and also inspect and alter the response before it's returned to the expectations".  In the Ride core, you can send an arbitrary number of Filters to call any rest api, so adding a filter for authentication will not interefere (as long as your code is correct) with any other filters.
 
 ## Passing a Filter to a Ride call
 
@@ -32,40 +31,40 @@ For the purposes of this document, we'll ignore the first 5 arguments and focus 
 
 ## The Authentication Sample Filter
 
-In the Ride samples there is a com.adobe.ride.sample.filters.AuthFilter in the sample-service-extension project.  This filter shows an example of how you can define how your system takes authentication data and authorized calls to your API:
+In the Ride samples there is a com.adobe.ride.sample.filters.AuthFilter in the sample-service-extension project.  This filter shows an example of how you can define how your system takes authentication data and authorizes calls to your API:
 
 ```
-public class AuthFilter implements Filter {
-  @SuppressWarnings("unused")
-  private final String callingServiceName;
-
-  public AuthFilter(String callingServiceName) {
-    Validate.notNull(callingServiceName);
-    this.callingServiceName = callingServiceName;
-  }
-
-  public AuthFilter() {
-    this.callingServiceName = "";
-  }
-
-  public Response filter(FilterableRequestSpecification requestSpec,
-      FilterableResponseSpecification responseSpec, FilterContext ctx) {
-
-    if (!requestSpec.getHeaders().hasHeaderWithName("Authorization")) {
-
-      // Token retrieved from some code invoked here
-      String token = "somesupersecrettoken";
-      requestSpec.header(new Header("Authorization", token));
-    }
-
-    final Response response = ctx.next(requestSpec, responseSpec);
-
-    return response;
-  }
-}
+1  public class AuthFilter implements Filter {
+2  @SuppressWarnings("unused")
+3  private final String callingServiceName;
+4
+5   public AuthFilter(String callingServiceName) {
+6    Validate.notNull(callingServiceName);
+7    this.callingServiceName = callingServiceName;
+8   }
+9
+10  public AuthFilter() {
+11    this.callingServiceName = "";
+12  }
+13
+14  public Response filter(FilterableRequestSpecification requestSpec,
+15      FilterableResponseSpecification responseSpec, FilterContext ctx) {
+16
+17    if (!requestSpec.getHeaders().hasHeaderWithName("Authorization")) {
+18
+19      // Token retrieved from some code invoked here
+20      String token = "somesupersecrettoken";
+21      requestSpec.header(new Header("Authorization", token));
+22    }
+23
+24    final Response response = ctx.next(requestSpec, responseSpec);
+25
+26    return response;
+27  }
+28}
 ```
 
-There are two important things to look at here: (1) the constructor which takes an argument @ roughly line 5, and (2) the filter method @ roughly line 14.  
+There are two important things to look at here: (1) the constructor which takes an argument (line 5), and (2) the filter method (line 14).  
 
 Let's look at the filter method first.  This is a Rest Assured built in method that is available to all classes that implement the Filter class.  This method will contain all of the code you require, including references to external classes and libraries, in order to add information to your call that will make it able to be authorized.  In this sample code, the filter checks to see if there is already an "Authorization" header in the RestAssured RequestSpec, and if there isn't, it adds one with "supersecrettoken" as the value.  In the real world, there would be more  code here in order to authenticate and retrieve a token to put in as the value.
 
@@ -82,7 +81,7 @@ public class SampleServiceController extends RestApiController {
   
   ...
   
-  private static Response callCore(ObjectType type, String objectPath, ModelObject object,
+  public static Response callCore(ObjectType type, String objectPath, ModelObject object,
       ResponseSpecification expectedResponse, Method method, boolean addAuthorization) {
     
     ...
@@ -97,6 +96,9 @@ public class SampleServiceController extends RestApiController {
     }
     return response;
   } 
+  
+  ...
+}
 ```
 
 Notice how the filter is setup as soon as the class is loaded, and then when a method in the sample extension called "callCore" is called, the method determines whether the call is to be tried with or without Authorization and then adds the Filter, if the Authorization is called for.  It leaves off the argument complement if not because variable arguments in methods can also handle the case when you send not arguments in.

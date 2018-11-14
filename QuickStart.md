@@ -119,7 +119,7 @@ Ok, your resources are setup.  Let's get your code set up.
 
 # Java Code
 
-Open the file RequestObject.java and add Code until it looks like the following:
+Open the file RequestObject.java and add the following code:
 
 ```
 package com.mycompany.mywebservice.objects;
