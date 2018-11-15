@@ -15,7 +15,7 @@ Ride provides for the ability to utilize Rest-Assured Filters to augment calls i
 
 ## Rest Assured Filters
 
-Per its [documentation](https://github.com/rest-assured/rest-assured/wiki/usage#filters), Rest assured filters allow you "to inspect and alter a request before it's actually committed and also inspect and alter the response before it's returned to the expectations".  In the Ride core, you can send an arbitrary number of Filters to call any rest api, so adding a filter for authentication will not interefere (as long as your code is correct) with any other filters.
+Per its [documentation](https://github.com/rest-assured/rest-assured/wiki/usage#filters), Rest Assured filters allow you "to inspect and alter a request before it's actually committed and also inspect and alter the response before it's returned to the expectations".  In the Ride core, you can send an arbitrary number of Filters to call any rest api, so adding a filter for authentication will not interfere (as long as your code is correct) with any other filters.
 
 ## Passing a Filter to a Ride call
 
@@ -53,7 +53,7 @@ In the Ride samples there is a com.adobe.ride.sample.filters.AuthFilter in the s
 17    if (!requestSpec.getHeaders().hasHeaderWithName("Authorization")) {
 18
 19      // Token retrieved from some code invoked here
-20      String token = "somesupersecrettoken";
+20      String token = MyAuthenticationLibrary.authenticate(callingServiceName)
 21      requestSpec.header(new Header("Authorization", token));
 22    }
 23
@@ -66,7 +66,7 @@ In the Ride samples there is a com.adobe.ride.sample.filters.AuthFilter in the s
 
 There are two important things to look at here: (1) the constructor which takes an argument (line 5), and (2) the filter method (line 14).  
 
-Let's look at the filter method first.  This is a Rest Assured built in method that is available to all classes that implement the Filter class.  This method will contain all of the code you require, including references to external classes and libraries, in order to add information to your call that will make it able to be authorized.  In this sample code, the filter checks to see if there is already an "Authorization" header in the RestAssured RequestSpec, and if there isn't, it adds one with "supersecrettoken" as the value.  In the real world, there would be more  code here in order to authenticate and retrieve a token to put in as the value.
+Let's look at the filter method first.  This class, in general, uses the standard workflow for using Rest Assured filters (i.e. implementing the Rest Assured Filter interface).  In this filter method (which must be implemented per the filter), you should place all the code you require in order to augment your call to have it properly authenticate.  You can import whatever external class and libraries you need, in order to add information to your call.  In this sample code, the filter checks to see if there is already an "Authorization" header in the RestAssured RequestSpec, and if there isn't, it calls a static method on an external class to retrieve a token for the header.  In your filter, you would leverage your own authentication flows.
 
 The Constructor which takes an argument, allows you to pass in service specific data at runtime in order to be able to re-use this filter for multiple services, if you require that.
 
