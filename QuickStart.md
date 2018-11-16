@@ -17,6 +17,7 @@ This quick start will focus on eclipse/maven build workflows, but ant and gradle
 ### Dependencies
 
 You will need to add the Ride core dependency to your pom to get the ride libraries:
+
 ```
     <dependency>
       <groupId>com.adobe.ride</groupId>
@@ -71,6 +72,7 @@ Add the following files to your project (don't worry about the contents, for now
 ## Schemas
 
 Open request_object.json and populate it with the schema for your service call payload.  It should look something like this (in most cases, quite a lot more complex):
+
 ```
 {
 	"$schema": "http://json-schema.org/draft-06/schema",
@@ -92,6 +94,7 @@ Open request_object.json and populate it with the schema for your service call p
 ## Configs
 
 Open the localhost.properties file and add the following code:
+
 ```
 	declaredServices=SampleService
 	isProduction=false
@@ -105,7 +108,8 @@ Open the localhost.properties file and add the following code:
 
 Open the stage.properties file and add the following code:
 
-	```
+
+```
 	declaredServices=SampleService
 	isProduction=false
 	
@@ -142,6 +146,7 @@ public class SampleServiceObject1 extends ModelObject {
 What we have here is a simple java class which extends the ModelObject in Ride.  The superclass arguments tell Ride where the schema of the object and configs of the service live (based on what we've defined above).  The arguments we pass into the class tell it what we want to name the instance and whether we want to instantiate all of the properties defined in the json schema or just the required ones.
 
 Now that we have an object, let's defined the controller which actually sends the object to the server.  Open the file MyWebServiceController.java and add the following code:
+
 ```
 com.mycompany.mywebservice.core
 
@@ -182,7 +187,10 @@ public class MyWebServiceController extends RestApiController {
 Ok, now we have our config information setup and our basic object and controller code.  Let's compile it into a library.
 
 From either your IDE or the location of your pom in terminal/command line window, run the standard maven install command:
-``` mvn clean install ```
+
+``` 
+mvn clean install
+```
 
 ## Test Project and Code
 
@@ -232,7 +240,9 @@ public class BasicTest_IT {
 
 Let's run the test, and specify which environment we want to target in the config definitions from the terminal:
 
-``` mvn clean verify -Dtarget=stage01 ```
+``` 
+mvn clean verify -Dtarget=stage01 
+```
 
 When it's run your REST call should be generated and logged, which you'll see in the console, and assuming your webservice exists in the way it is specified in the configs, you should see a response come back
 
