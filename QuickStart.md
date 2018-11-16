@@ -105,7 +105,7 @@ Open the localhost.properties file and add the following code:
 
 Open the stage.properties file and add the following code:
 
-```
+	```
 	declaredServices=SampleService
 	isProduction=false
 	
@@ -113,7 +113,9 @@ Open the stage.properties file and add the following code:
 	SampleService.schema=https
 	SampleService.port=443
 	SampleService.endpoint=www.mycompany.com
-	SampleService.basePath=/sample-service-server/rest ```
+	SampleService.basePath=/sample-service-server/rest 
+	
+```
 	
 Alter the instances of "SampleService" to reflect the actual name of your service, and change your schema, ports, endpoints, and basepaths to the actual ones your service uses (if no basepath, just use /).  Note: whatever you name your service here, it should also match the name of the folder in the schemas resources.
 
