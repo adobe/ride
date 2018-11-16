@@ -10,9 +10,13 @@
 
 There are a number of documents in this repo revolving around Ride usage and in depth solutions to planning your rest api testing needs.  But to get started using Ride, you should think of it simply as a sdk to help you build libraries to make testing your target REST APIs easier and more maintainable.  This document focuses on the bare basics of Ride and how to get up and running quickly. 
 
-# Dependencies
+# Setup
 
-You will need to add the Ride core dependency to your pom:
+This quick start will focus on eclipse/maven build workflows, but ant and gradle and any other Java IDE should work just fine too.  To get started, create a new Maven project (sorry, Ride is java-only for now) in the IDE of your choice, giving it a groupId and artifactId you'd like to use (i.e. something like com.mycompany.mywebservice /  webservice-automation-library).  
+
+### Dependencies
+
+You will need to add the Ride core dependency to your pom to get the ride libraries:
 ```
     <dependency>
       <groupId>com.adobe.ride</groupId>
@@ -21,9 +25,7 @@ You will need to add the Ride core dependency to your pom:
     </dependency>
 ```
 
-# Setup
-
-This quick start will focus on eclipse/maven build workflows, but ant and gradle and any other Java IDE should work just fine too.  To get started, create a new Maven project (sorry, Ride is java-only for now) in the IDE of your choice, giving it a groupId and artifactId you'd like to use (i.e. something like com.mycompany.mywebservice /  webservice-automation-library).  Add the following files to your project (don't worry about the contents, for now just create the place holders:
+Add the following files to your project (don't worry about the contents, for now just create the place holders:
 
 #### ResourceFiles
 <html>
