@@ -110,8 +110,7 @@ Open the stage.properties file and add the following code:
 	SampleService.schema=https
 	SampleService.port=443
 	SampleService.endpoint=www.mycompany.com
-	SampleService.basePath=/sample-service-server/rest 
-```
+	SampleService.basePath=/sample-service-server/rest ```
 	
 Alter the instances of "SampleService" to reflect the actual name of your service, and change your schema, ports, endpoints, and basepaths to the actual ones your service uses (if no basepath, just use /).  Note: whatever you name your service here, it should also match the name of the folder in the schemas resources.
 
@@ -137,7 +136,7 @@ public class SampleServiceObject1 extends ModelObject {
 
 What we have here is a simple java class which extends the ModelObject in Ride.  The superclass arguments tell Ride where the schema of the object and configs of the service live (based on what we've defined above).  The arguments we pass into the class tell it what we want to name the instance and whether we want to instantiate all of the properties defined in the json schema or just the required ones.
 
-Now that we have an object, let's defined the controller which actually sends the object to the server.  Open the file MyWebServiceController.java and add Code until it looks like the following:
+Now that we have an object, let's defined the controller which actually sends the object to the server.  Open the file MyWebServiceController.java and add the following code:
 ```
 com.mycompany.mywebservice.core
 
