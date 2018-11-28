@@ -21,7 +21,7 @@
     <repository>
       <id>bintray-adobe-maven</id>
       <name>adobe-maven</name>
-      <url>https://api.bintray.com/maven/adobe/maven/ride/;publish=1</url>
+      <url>https://api.bintray.com/maven/adobe/maven/adobe-ride/;publish=1</url>
     </repository>
   </distributionManagement>
 
