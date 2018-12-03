@@ -389,22 +389,27 @@ public class ModelObject {
         returnValue = ModelPropertyType.REF_SCHEMA;
       }
     } else if (object.containsKey("format")) {
-      if (object.get("format").toString().equals("date-time")) {
+      String format = object.get("format").toString();
+      if (format.equals("date")) {
+        returnValue = ModelPropertyType.DATE;
+      } else if (format.equals("date-time")) {
         returnValue = ModelPropertyType.DATETIME;
-      } else if (object.get("format").toString().equals("timestamp")) {
+      } else if (format.equals("timestamp")) {
         returnValue = ModelPropertyType.TIMESTAMP;
-      } else if (object.get("format").toString().equals("email")) {
+      } else if (format.equals("email")) {
         returnValue = ModelPropertyType.EMAIL;
-      } else if (object.get("format").toString().equals("ipv6")) {
+      } else if (format.equals("ipv6")) {
         returnValue = ModelPropertyType.IPV6;
-      } else if (object.get("format").toString().equals("ipv4")) {
+      } else if (format.equals("ipv4")) {
         returnValue = ModelPropertyType.IPV4;
-      } else if (object.get("format").toString().equals("uri-reference")) {
+      } else if (format.equals("uri")) {
+        returnValue = ModelPropertyType.URI;
+      }  else if (format.equals("uri-reference")) {
         returnValue = ModelPropertyType.URI_REF;
       } else if (object.containsKey("pattern")) {
         returnValue = ModelPropertyType.PATTERN;
       } else if (type.equals("string")) {
-        returnValue = ModelPropertyType.eval(object.get("format").toString());
+        returnValue = ModelPropertyType.eval(format);
       }
     } else if (object.containsKey("pattern")) {
       returnValue = ModelPropertyType.PATTERN;
@@ -1064,6 +1069,8 @@ public class ModelObject {
           return value;
         case URI:
           return URI.create(value);
+        case URI_REF:
+          return URI.create(value);
         case BYTE:
           return Byte.parseByte(value);
         default:
@@ -1222,7 +1229,9 @@ public class ModelObject {
           returnValue = bool;
           break;
         case DATE:
-          return DataGenerator.getTodayJSONFullDateFormat();
+          String date = DataGenerator.generateRandomPassedDate(5000, 8000);
+          returnValue = date;
+          break;
         case DATETIME:
           String datetime = DataGenerator.generateStdDateTime(0);
           returnValue = datetime;
