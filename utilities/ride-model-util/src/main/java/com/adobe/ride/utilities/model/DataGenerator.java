@@ -24,6 +24,8 @@ import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
@@ -93,6 +95,17 @@ public abstract class DataGenerator {
   public static String getDateFormat() {
     return rideDefaultDateFormat;
   }
+  
+  /**
+   * 
+   * @return JSON formatted date.
+   */
+  public static String generateRandomPassedDate(int minNumDaysPassed, int maxNumDaysPassed) {
+    int diff = generateRandomInt(minNumDaysPassed, maxNumDaysPassed);
+    LocalDate rndDate = LocalDate.now().minusDays(diff);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(jsonFullDateFormat);
+    return formatter.format(rndDate);
+  }
 
   /**
    * 
@@ -158,6 +171,11 @@ public abstract class DataGenerator {
    */
   public static String generateRegexValue(String pattern) {
     try {
+      // Trailing pipe check not yet supported by generex      
+      String lastChar = pattern.substring(pattern.length() - 2);
+      if(lastChar.equals("|)")) {
+        pattern.replace("|)", "|\\^\\$)");
+      }
       Generex generex = new Generex(pattern);
       String result = generex.random();
       // need to sanitize the result in the case of schema problems
