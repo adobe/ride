@@ -43,9 +43,8 @@ There are additional test options avaialble as well:
 | -------------  | ------------- |
 | Main Git Repository | [https://github.com/adobe/ride](https://github.com/adobe/ride) 
 | Sample Target Server location	| In provisioning  |
-| Snapshot Artifacts	| TBD  |
-| Release Artifacts	| https://api.bintray.com/maven/adobe/maven/ride/  |
-| Architect/Driver | [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/) |
+| Snapshot and Release Artifacts	| https://oss.sonatype.org/content/groups/public  |
+| Architect/Driver | tedcasey@adobe.com |
 
 ## Repositories
 When extending Adobe Ride, these settings need to be added to the repository node of your project(s) (or parent project) in order to post your extension to your internal artifact management system.
