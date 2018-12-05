@@ -41,10 +41,10 @@ There are additional test options avaialble as well:
 
 | Document   | Link |
 | -------------  | ------------- |
-| Main Git Repository | [https://github.com/adobe/ride](https://github.com/adobe/ride) 
+| Main Git Repository | [https://github.com/adobe/ride](https://github.com/adobe/ride) |
 | Sample Target Server location	| In provisioning  |
-| Snapshot Artifacts	| TBD  |
-| Release Artifacts	| https://api.bintray.com/maven/adobe/maven/ride/  |
+| Snapshot and Release Artifacts	| https://oss.sonatype.org/content/groups/public/com/adobe/ride  |
+| Dependency Repository	| [Maven Central](https://oss.sonatype.org/content/groups/public)  |
 | Architect/Driver | [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/) |
 
 ## Repositories

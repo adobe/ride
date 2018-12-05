@@ -19,17 +19,22 @@
   
   <distributionManagement> 
     <repository>
-      <id>bintray-adobe-maven</id>
-      <name>adobe-maven</name>
-      <url>https://api.bintray.com/maven/adobe/maven/adobe-ride/;publish=1</url>
+      <id>sonatype-adobe-release</id>
+      <name>sonatype-adobe-release</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
+    <snapshotRepository>
+      <id>sonatype-adobe-snapshot</id>
+      <name>sonatype-adobe-snapshot</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <repositories>
     <repository>
       <id>sonatype</id>
       <name>Maven Sonatype repo</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <url>https://oss.sonatype.org/content/groups/staging</url>
     </repository>
     <repository>
       <id>maven2-repository.java.net</id>
