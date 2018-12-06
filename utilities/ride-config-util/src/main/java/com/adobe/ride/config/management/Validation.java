@@ -51,7 +51,8 @@ public class Validation {
 
   /**
    * Checks if is null or empty parameter.
-   *
+   * 
+   * @param <T> the generic type
    * @param parameterName the name of the parameter that is missing the incoming value
    * @param parameter the actual parameter to test if null or empty
    */
@@ -146,7 +147,6 @@ public class Validation {
    * Checks if is null list.
    *
    * @param <T> the generic type
-   * @param <K> the key type
    * @param list the list
    */
   public static <T> void isNullList(List<T> list) {
@@ -159,6 +159,7 @@ public class Validation {
    * Represents the case where a method takes in a parameter that has a number of properties, some
    * of which have not been set.
    *
+   * @param <T> the generic type
    * @param property the property value to validate against
    */
   public static <T> void isIncompleteArgument(T property) {
@@ -177,6 +178,7 @@ public class Validation {
    * Represents the case where a method takes in a parameter that has a number of properties, some
    * of which have not been set.
    *
+   * @param <T> the generic type
    * @param parameterName the name of the actual parameter to which the property belongs
    * @param propertyName the property name
    * @param property the property value to validate against

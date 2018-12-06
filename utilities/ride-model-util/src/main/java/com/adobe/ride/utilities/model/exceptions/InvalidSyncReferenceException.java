@@ -24,6 +24,7 @@ public class InvalidSyncReferenceException extends ServiceException {
 
   /**
    * @param obj JSONObject with unexpected definition
+   * @param pattern regex pattern in object
    */
   public InvalidSyncReferenceException(JSONObject obj, String pattern) {
     super("Encountered unexpected sync path when loading - model: " + obj.toString() + ", pattern: "

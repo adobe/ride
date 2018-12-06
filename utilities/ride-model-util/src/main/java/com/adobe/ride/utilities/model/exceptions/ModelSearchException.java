@@ -24,6 +24,7 @@ public class ModelSearchException extends ServiceException {
 
   /**
    * @param obj JSONObject with unexpected format
+   * @param property not found
    */
   public ModelSearchException(JSONObject obj, String property) {
     super("Unable to find property " + property + " on object: " + obj.toString());

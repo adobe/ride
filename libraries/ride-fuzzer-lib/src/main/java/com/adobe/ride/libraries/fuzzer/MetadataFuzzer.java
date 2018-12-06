@@ -12,18 +12,12 @@ governing permissions and limitations under the License.
 
 package com.adobe.ride.libraries.fuzzer;
 
-import java.io.IOException;
-
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.testng.annotations.Factory;
-
 import com.adobe.ride.libraries.fuzzer.engines.MetadataEngine;
 import com.adobe.ride.utilities.model.ModelObject;
-import com.adobe.ride.utilities.model.exceptions.UnexpectedModelDefinitionException;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
 import com.adobe.ride.utilities.model.types.ModelPropertyType;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
 import io.restassured.http.Method;
@@ -38,7 +32,7 @@ public class MetadataFuzzer {
   protected ModelObject entity;
   protected JSONObject properties;
   protected JSONObject instance;
-  protected String targetService;
+  protected String serviceName;
   protected Method requestMethod;
   protected String contentType;
   protected RequestSpecBuilder requestBuilder;
@@ -57,8 +51,8 @@ public class MetadataFuzzer {
    *        environment configuration
    * @param entityToBeFuzzed ModelObject of a subclass thereof
    */
-  public MetadataFuzzer(String targetService, ModelObject entityToBeFuzzed) {
-    initializeFuzzer(targetService, entityToBeFuzzed, null, null, null);
+  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed) {
+    initializeFuzzer(serviceName, entityToBeFuzzed, null, null, null);
   }
 
   /**
@@ -71,9 +65,9 @@ public class MetadataFuzzer {
    *        a base spec with only Authorization, Content-Type, and Accepts set. The latter two set
    *        to a json variant,
    */
-  public MetadataFuzzer(String targetService, ModelObject entityToBeFuzzed,
+  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed,
       RequestSpecBuilder builder) {
-    initializeFuzzer(targetService, entityToBeFuzzed, builder, null, null);
+    initializeFuzzer(serviceName, entityToBeFuzzed, builder, null, null);
   }
 
   /**
@@ -87,9 +81,9 @@ public class MetadataFuzzer {
    *        to a json variant,
    * @param method Method http verb to be used in the call. If null, PUT is used.
    */
-  public MetadataFuzzer(String targetService, ModelObject entityToBeFuzzed,
+  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed,
       RequestSpecBuilder builder, Method method) {
-    initializeFuzzer(targetService, entityToBeFuzzed, builder, method, null);
+    initializeFuzzer(serviceName, entityToBeFuzzed, builder, method, null);
   }
 
   /**
@@ -105,9 +99,9 @@ public class MetadataFuzzer {
    * @param contentType String content type header value (if null, default is
    *        "application/json;charset=utf-8")
    */
-  public MetadataFuzzer(String targetService, ModelObject entityToBeFuzzed,
+  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed,
       RequestSpecBuilder builder, Method method, String contentType) {
-    initializeFuzzer(targetService, entityToBeFuzzed, builder, method, contentType);
+    initializeFuzzer(serviceName, entityToBeFuzzed, builder, method, contentType);
   }
   
   /**
@@ -124,31 +118,40 @@ public class MetadataFuzzer {
    *        "application/json;charset=utf-8")
    * @param filter Filter to be applied to calls.
    */
-  public MetadataFuzzer(String targetService, ModelObject entityToBeFuzzed,
+  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed,
       RequestSpecBuilder builder, Method method, String contentType, Filter filter) {
-    initializeFuzzer(targetService, entityToBeFuzzed, builder, method, contentType, filter);
+    initializeFuzzer(serviceName, entityToBeFuzzed, builder, method, contentType, filter);
   }
-
   /**
    * Cruft method left over before streamlining. Leaving in for backwards compatibility
    * 
-   * @param entityToBeFuzzed EntityObject subclass instance to be fuzzed.
-   * @param requestMethod method with which to call the api (if null, default is PUT)
+   * @param entityToBeFuzzed 
+   * @param requestMethod 
    * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
    */
-  public MetadataFuzzer(String targetService, ModelObject entityToBeFuzzed, Method method,
+
+  /**
+   * 
+   * @param serviceName String representation of the service name, maps back to a config file for
+   *        environment configuration
+   * @param entityToBeFuzzed ModelObject subclass instance to be fuzzed.
+   * @param method method with which to call the api (if null, default is PUT)
+   * @param contentType content type header value (if null, default is
+   *        "application/json;charset=utf-8")
+   */
+  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed, Method method,
       String contentType) {
-    initializeFuzzer(targetService, entityToBeFuzzed, null, method, contentType);
+    initializeFuzzer(serviceName, entityToBeFuzzed, null, method, contentType);
   }
 
-  private void initializeFuzzer(String targetService, ModelObject entityToBeFuzzed,
+  private void initializeFuzzer(String serviceName, ModelObject entityToBeFuzzed,
       RequestSpecBuilder requestBuilder, Method method, String contentType, Filter... filters) {
 
     // Populate global properties
     this.entity = entityToBeFuzzed;
     this.requestMethod = method;
-    this.targetService = targetService;
+    this.serviceName = serviceName;
     this.properties = this.entity.getModelProperties();
     this.instance = this.entity.getObjectMetadata();
     this.requestMethod = method;
@@ -226,14 +229,10 @@ public class MetadataFuzzer {
   /**
    * Fuzzer factory which drives properties to the fuzz engine.
    * 
-   * @return TestNG Object
-   * @throws UnexpectedModelPropertyTypeException
-   * @throws IOException
-   * @throws ParseException
-   * @throws UnexpectedModelDefinitionException
+   * @return Object[]
    */
   @Factory
-  public Object[] fuzzProperties() throws UnexpectedModelPropertyTypeException {
+  public Object[] fuzzProperties(){
     Object[] result = new Object[propertiesFuzzSet.length];
     // new Object[totalFuzzSet.length]; //see note about _links properties above
     // for (int i = 0; i < totalFuzzSet.length; i++) {
@@ -245,7 +244,7 @@ public class MetadataFuzzer {
       Object currentValue = instance.get(currentkey);
       // boolean isLinksProperty = (totalFuzzSet[i][2] == "linksProperty");
 
-      result[i] = new MetadataEngine(targetService, entity, currentkey, type, currentValue,
+      result[i] = new MetadataEngine(serviceName, entity, currentkey, type, currentValue,
           requestMethod, contentType, requestBuilder, filters);
     }
     return result;

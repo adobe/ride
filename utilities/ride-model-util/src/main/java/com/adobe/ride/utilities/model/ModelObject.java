@@ -69,7 +69,7 @@ public class ModelObject {
   protected String modelString;
   private final String NULL_MODEL_VALUE = "nulledValue";
   private static final String REFERENCE_KEY = "$ref";
-  private String service;
+  private String serviceName;
   private String objectPath;
   private String objectName;
   private String objectType;
@@ -135,30 +135,37 @@ public class ModelObject {
   /**
    * Main Model Object Constructor
    * 
-   * @param service
-   * @param objectType
-   * @param objectName
-   * @param useRequiredOnly
+   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart: Java Code</a>
+   * 
+   * @param serviceName Name of the service specified in the config properties
+   * @param objectType in the default, among other things, used as a segment of the REST path
+   * @param objectName in the default, among other things, used as a segment of the REST path
+   * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
+   *        defined in the spec
    */
-  public ModelObject(String service, String objectType, String objectName,
+  public ModelObject(String serviceName, String objectType, String objectName,
       boolean useRequiredOnly) {
-    initializeModelObject(service, objectType, objectName, null, null, useRequiredOnly);
+    initializeModelObject(serviceName, objectType, objectName, null, null, useRequiredOnly);
   }
 
   /**
    * Model Object Constructor which allows user to start with preset nodes that are not overwritten
    * on data generation
    * 
-   * @param service
-   * @param objectType
-   * @param ObjectName
-   * @param presetNodes
-   * @param useRequiredOnly
+   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart: Java Code</a>
+   * 
+   * @param serviceName Name of the service specified in the config properties
+   * @param objectType in the default, among other things, used as a segment of the REST path
+   * @param objectName in the default, among other things, used as a segment of the REST path
+   * @param presetNodes set of JSON nodes and values to be used in the object, not generated
+   *        dynamically
+   * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
+   *        defined in the spec
    */
-  public ModelObject(String service, String objectType, String ObjectName, JSONObject presetNodes,
+  public ModelObject(String serviceName, String objectType, String objectName, JSONObject presetNodes,
       boolean useRequiredOnly) {
     this.presetNodes = presetNodes;
-    initializeModelObject(service, objectType, objectName, presetNodes, null, useRequiredOnly);
+    initializeModelObject(serviceName, objectType, objectName, presetNodes, null, useRequiredOnly);
   }
 
   /**
@@ -166,19 +173,23 @@ public class ModelObject {
    * on data generation and also allows the user to specify nodes to be built with an array of
    * standard slash delimited paths (i.e. /this/that/theothernode)
    * 
-   * @param service
-   * @param objectType
-   * @param ObjectName
-   * @param presetNodes
-   * @param nodesToBuild
+   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart: Java Code</a>
+   * 
+   * @param serviceName Name of the service specified in the config properties
+   * @param objectType in the default, among other things, used as a segment of the REST path
+   * @param objectName in the default, among other things, used as a segment of the REST path
+   * @param presetNodes set of JSON nodes and values to be used in the object, not generated
+   *        dynamically
+   * @param nodesToBuild set of JSONnodes which are to be dynamically generated. Remaining schema
+   *        defined nodes will not be generated.
    */
-  public ModelObject(String service, String objectType, String ObjectName, JSONObject presetNodes,
+  public ModelObject(String serviceName, String objectType, String objectName, JSONObject presetNodes,
       Set<String> nodesToBuild) {
     this.presetNodes = presetNodes;
-    initializeModelObject(service, objectType, objectName, presetNodes, nodesToBuild, true);
+    initializeModelObject(serviceName, objectType, objectName, presetNodes, nodesToBuild, true);
   }
 
-  private void initializeModelObject(String service, String objectType, String objectName,
+  private void initializeModelObject(String serviceName, String objectType, String objectName,
       JSONObject presetNodes, Set<String> nodesToBuild, boolean useRequiredOnly) {
 
     if (presetNodes != null) {
@@ -190,8 +201,8 @@ public class ModelObject {
     }
 
     resourceLocation =
-        default_location.replace("service", service.toString()).replace("objectType", objectType);
-    this.service = service;
+        default_location.replace("service", serviceName.toString()).replace("objectType", objectType);
+    this.serviceName = serviceName;
     this.objectType = objectType;
     this.setObjectName(objectName);
     this.setObjectPath(objectType + "/" + objectName);
@@ -202,7 +213,7 @@ public class ModelObject {
   /**
    * Create a model object from a json schema from a specified resource location
    * 
-   * @param resourceLocation
+   * @param resourceLocation location of the schema in the project resources
    */
   public ModelObject(String resourceLocation) {
     initializeModelObject(resourceLocation, null, null, false);
@@ -212,9 +223,11 @@ public class ModelObject {
    * Create a model object from a json schema from a specified resource location and use a
    * predefined set of nodes to start with.
    * 
-   * @param resourceLocation
-   * @param presetNodes
-   * @param useRequiredOnly
+   * @param resourceLocation location of the schema within the project resources.
+   * @param presetNodes set of JSON nodes and values to be used in the object, not generated
+   *        dynamically
+   * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
+   *        defined in the spec
    */
   public ModelObject(String resourceLocation, JSONObject presetNodes, boolean useRequiredOnly) {
     initializeModelObject(resourceLocation, presetNodes, null, false);
@@ -224,10 +237,13 @@ public class ModelObject {
    * Create a model object from a json schema from a specified resource location and use a
    * predefined set of nodes to start with. Also only build a targeted set of nodes.
    * 
-   * @param resourceLocation
-   * @param presetNodes
-   * @param nodesToBuild
-   * @param useRequiredOnly
+   * @param resourceLocation location of the schema within the project resources.
+   * @param presetNodes set of JSON nodes and values to be used in the object, not generated
+   *        dynamically
+   * @param nodesToBuild set of JSONnodes which are to be dynamically generated. Remaining schema
+   *        defined nodes will not be generated.
+   * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
+   *        defined in the spec
    */
   public ModelObject(String resourceLocation, JSONObject presetNodes, Set<String> nodesToBuild,
       boolean useRequiredOnly) {
@@ -250,6 +266,13 @@ public class ModelObject {
     loadModel(resourceLocation);
   }
 
+  /**
+   * Constructor to initialize with a JSON schema string
+   * 
+   * @param modelString string which conforms to JSON schema standards.
+   * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
+   *        defined in the spec
+   */
   public ModelObject(String modelString, boolean useRequiredOnly) {
     this.setRequiredOnly(useRequiredOnly);
     this.modelString = modelString;
@@ -326,7 +349,8 @@ public class ModelObject {
    * 
    * @param propertyObject schema node which contains a definition reference
    * @return definition associated with the passed schema node
-   * @throws UnexpectedModelPropertyTypeException
+   * @throws UnexpectedModelPropertyTypeException thrown when one or more of the ModelPropertyTypes
+   *         of the nodes passed in the JSONObject cannot be determined.
    */
   protected JSONObject getDefinitionRef(JSONObject propertyObject)
       throws UnexpectedModelPropertyTypeException {
@@ -338,7 +362,8 @@ public class ModelObject {
    * 
    * @param propertyObject JSONObject node to be analyzed
    * @return String name of the library definition associated with the node
-   * @throws UnexpectedModelPropertyTypeException
+   * @throws UnexpectedModelPropertyTypeException thrown when one or more of the ModelPropertyTypes
+   *         of the nodes passed in the JSONObject cannot be determined.
    */
   protected String getDefinitionName(JSONObject propertyObject)
       throws UnexpectedModelPropertyTypeException {
@@ -359,10 +384,9 @@ public class ModelObject {
    * {@link UnexpectedModelPropertyTypeException} Exception.
    * 
    * @param object JSONObject node in the model from which the type is to be determined.
-   * @return One of the enumerated ModelPropertyTypes.
-   * @throws UnexpectedModelPropertyTypeException There is an enum defined set of known
-   *         ModelProperty types that the class knows how to deal with. If it encounters an unknown
-   *         type it throws this exception.
+   * @return ModelPropertyType One of the enumerated ModelPropertyTypes.
+   * @throws UnexpectedModelPropertyTypeException thrown when one or more of the ModelPropertyTypes
+   *         of the nodes passed in the JSONObject cannot be determined.
    */
   public static ModelPropertyType getModelPropertyType(JSONObject object)
       throws UnexpectedModelPropertyTypeException {
@@ -404,7 +428,7 @@ public class ModelObject {
         returnValue = ModelPropertyType.IPV4;
       } else if (format.equals("uri")) {
         returnValue = ModelPropertyType.URI;
-      }  else if (format.equals("uri-reference")) {
+      } else if (format.equals("uri-reference")) {
         returnValue = ModelPropertyType.URI_REF;
       } else if (object.containsKey("pattern")) {
         returnValue = ModelPropertyType.PATTERN;
@@ -427,7 +451,8 @@ public class ModelObject {
    * Method to retrieve one of the definitions from the anyOf value from a schema node definition
    * 
    * @param propertyObject the node from a schema which has a type of 'AnyOf'
-   * @return random member definition of the one of the objects in the AnyOf json schema field.
+   * @return Object random member definition of the one of the objects in the AnyOf json schema
+   *         field.
    */
   private Object getOneOfAnyOf(JSONObject propertyObject) {
     Object[] array = ((JSONArray) propertyObject.get("anyOf")).toArray();
@@ -448,7 +473,7 @@ public class ModelObject {
    * a {@link ModelSearchException}.
    * 
    * @param property model node from which the RegEx pattern specification is to be returned.
-   * @return
+   * @return String
    * @throws ModelSearchException Exception thrown when function cannot find the property associated
    *         with the property parameter
    */
@@ -518,8 +543,8 @@ public class ModelObject {
   /**
    * Generate x number of valid instances of the defined object.
    * 
-   * @param numberOfInstances
-   * @return
+   * @param numberOfInstances Number of instances to be generated from the model (schema)
+   * @return JSONArray
    */
   @SuppressWarnings("unchecked")
   public JSONArray generateModelInstances(int numberOfInstances) {
@@ -542,7 +567,7 @@ public class ModelObject {
    * Method to return the model with only the required properties and their definitions
    * 
    * @param objModel model from which the required only properties are to be
-   * @return Model with only the required properties and their definitions
+   * @return JSONObject model representation with only the required properties and their definitions
    */
   @SuppressWarnings("unchecked")
   private JSONObject getRequiredOnlyDefs(JSONObject objModel) {
@@ -568,7 +593,7 @@ public class ModelObject {
    * Method which builds a JSON instance which conforms to a given schema.
    * 
    * @param modelObject source from which to build the instance
-   * @return JSON instance which conforms to the given model
+   * @return JSONObject instance which conforms to the given model
    */
   @SuppressWarnings("unchecked")
   private JSONObject buildModelInstance(JSONObject modelObjectProps) {
@@ -594,8 +619,7 @@ public class ModelObject {
    * Convenience method to print a human readable representation of the passed JSONObject for
    * debugging purposes.
    * 
-   * @param object
-   * @throws JsonProcessingException
+   * @param object json object to be printed to the console in a human readable format.
    */
   public static void prettyPrintToConsole(Object object) {
     if (object == null) {
@@ -611,11 +635,12 @@ public class ModelObject {
   }
 
   /**
-   * Method which builds a json object which conforms to a json schema definition passed in the
+   * Method which builds a JSON object which conforms to a JSON schema definition passed in the
    * argument.
    * 
+   * @param pathToParent standard full path to the parent of the object in the schema
    * @param obj schema definition
-   * @return JSON instance which conforms to the definition passed
+   * @return JSONObject instance which conforms to the definition passed
    */
   @SuppressWarnings("unchecked")
   protected JSONObject buildDefinedObjectNode(String pathToParent, JSONObject obj) {
@@ -670,8 +695,9 @@ public class ModelObject {
   /**
    * Method which builds nodes of schema type Object.
    * 
+   * @param pathToParent standard full path to the parent of the object in the schema
    * @param obj node the definition from which the JSON Object is to be built
-   * @return JSON object built from the node definition
+   * @return JSONObject object built from the node definition
    * 
    */
   @SuppressWarnings("unchecked")
@@ -715,9 +741,9 @@ public class ModelObject {
   /**
    * Method to see if a value exists at a path before attempting to generate a new value.
    * 
-   * @param parentPath
-   * @param key
-   * @return
+   * @param parentPath standard full path to the parent of the object in the schema
+   * @param key name of the node
+   * @return Object
    */
   private Object checkForExisitingValue(String parentPath, String key) {
     Object exisitingValue = null;
@@ -744,15 +770,7 @@ public class ModelObject {
    * @param keyPattern String value specified in the patternProperties of the custom object
    *        definition
    * @param numProps number of properties to create in the custom object.
-   * @return
-   * @throws UnexpectedModelPropertyTypeException
-   * @throws UnexpectedModelPropertyTyeException There is an enum defined set of known ModelProperty
-   *         types that the class knows how to deal with. If it encounters an unknown type it throws
-   *         this exception.
-   * @throws UnexpectedModelDefinitionException If the method encounters a definition with neither a
-   *         patternProperties or properties key, this exception will be thrown.
-   * @throws ParseException
-   * @throws IOException
+   * @return Object
    */
   @SuppressWarnings("unchecked")
   private Object buildCustomObject(String keyPattern, int numProps) {
@@ -799,8 +817,8 @@ public class ModelObject {
    * Method to create an object of type "sync" which relies on the values of other nodes within the
    * instance.
    * 
-   * @param propertyDef
-   * @return
+   * @param propertyDef JSON definition of the node to be built.
+   * @return String
    * @throws InvalidSyncReferenceException
    */
   private String createSyncdValue(JSONObject propertyDef) throws InvalidSyncReferenceException {
@@ -854,7 +872,7 @@ public class ModelObject {
   /**
    * Method to get the value at a specific property path.
    * 
-   * @param propertyPath
+   * @param propertyPath full standard path to the property in the json object.
    * @param completeBranch boolean in indicate whether to build the rest of the branch if value not
    *        present
    * @return
@@ -885,7 +903,6 @@ public class ModelObject {
   /**
    * Re-synchronize object after change in data
    * 
-   * @return refreshed objectMetadata
    */
   public void syncObject() {
     buildValidModelInstance();
@@ -894,8 +911,8 @@ public class ModelObject {
   /**
    * Method to complete branch when it's path is among the target node set
    * 
-   * @param propertyPath
-   * @return
+   * @param propertyPath path to the property in the JSON object
+   * @return Object
    */
   private Object buildNodeValueAtPath(String propertyPath) {
     Object returnValue = null;
@@ -974,7 +991,7 @@ public class ModelObject {
   /**
    * Method to complete a branch that is referenced by another while data is being generated
    * 
-   * @param propertyPath
+   * @param propertyPath path to the property in the JSON object
    * @return
    */
   private Object completeBranchAndReturnValue(String propertyPath) {
@@ -1083,29 +1100,11 @@ public class ModelObject {
   }
 
   /**
-   * Method which generates a value which conforms to the node definition passed in the argument. If
-   * this method encounters an unexpected ModelPropertyType or ModelDefintion, it throws a
-   * {@link UnexpectedModelPropertyTypeException} or {@link UnexpectedModelDefinitionException}
-   * respectively. If a path to be set is passed in, this method will not overwrite an existing
-   * value, should it find one.
-   * 
-   * @param propertyDef model definition to use when building value for a node.
-   * @return
-   * @throws UnexpectedModelPropertyTypeException There is an enum defined set of known
-   *         ModelProperty types that the class knows how to deal with. If it encounters an unknown
-   *         type it throws this exception.
-   * @throws UnexpectedModelDefinitionException If the method encounters a definition with neither a
-   *         patternProperties or properties key, this exception will be thrown.
-   * @throws ParseException
-   * @throws IOException
-   */
-
-  /**
    * Alternate signature for generateNodeValue if there is no intent to assign the value anywhere in
    * the objectMetadata
    * 
    * @param propertyDef model definition to use when building value for a node.
-   * @return
+   * @return Object
    */
   public Object generateNodeValue(JSONObject propertyDef) {
     try {
@@ -1126,8 +1125,8 @@ public class ModelObject {
    * @param parentPath path to the parent node of the node to be set.
    * @param key name of the node.
    * @param propertyDef model definition to use when building value for a node.
-   * @return
-   * @throws ModelSearchException
+   * @return Object
+   * @throws ModelSearchException thrown when the parent path cannot be found in the model
    */
   public Object generateNodeValue(String parentPath, String key, JSONObject propertyDef)
       throws ModelSearchException {
@@ -1258,10 +1257,10 @@ public class ModelObject {
           break;
         case REF_SCHEMA:
           ModelObject newObj;
-          if (service != null) {
+          if (serviceName != null) {
             String objectString = propertyDef.get(REFERENCE_KEY).toString().replace(".json", "");
             String objectType = objectString.split("/")[objectString.split("/").length - 1];
-            newObj = new ModelObject(service, objectType, objectName, requiredOnly);
+            newObj = new ModelObject(serviceName, objectType, objectName, requiredOnly);
           } else {
             String objectString = propertyDef.get(REFERENCE_KEY).toString();
             String relativeSchema;
@@ -1352,9 +1351,9 @@ public class ModelObject {
   /**
    * Method to get the path to schemas external to the schema for this object, but referenced.
    * 
-   * @param controlPath
-   * @param relativePath
-   * @return
+   * @param controlPath path to this schema
+   * @param relativePath relative path to referenced schema
+   * @return String
    */
   protected String getRelativeResourceLocation(String controlPath, String relativePath) {
     String returnPath = "";
@@ -1470,7 +1469,7 @@ public class ModelObject {
 
   /**
    * 
-   * @return Array of items for a model of type Array
+   * @return JSONArray of items for a model of type Array
    */
   public JSONArray getObjectItems() {
     return objectItems;
@@ -1487,8 +1486,8 @@ public class ModelObject {
   /**
    * Data to be set on specified index of items on a ModelObject of type Array
    * 
-   * @param index
-   * @param data
+   * @param index position at which the item is to be set.
+   * @param data data to be set.
    */
   @SuppressWarnings("unchecked")
   public void setDataAtItemsIndex(int index, JSONObject data) {
@@ -1503,7 +1502,8 @@ public class ModelObject {
   /**
    * Get data at specific index of objectItems on a ModelObject of type Array
    * 
-   * @param index
+   * @param index position of the item
+   * @return JSONObject
    */
   public JSONObject getDataAtItemsIndex(int index) {
     if (modelType == ModelPropertyType.ARRAY) {
@@ -1525,7 +1525,8 @@ public class ModelObject {
 
   /**
    * 
-   * @param objectName
+   * @param objectName name to be used as a string representation of the object (often used in REST
+   *        path segments)
    */
   public void setObjectName(String objectName) {
     this.objectName = objectName;
@@ -1533,7 +1534,8 @@ public class ModelObject {
 
   /**
    * 
-   * @return String objectType
+   * @return String type of object as defined in the ride object types.
+   * @see ModelPropertyType
    */
   public String getObjectType() {
     return objectType;
@@ -1541,7 +1543,7 @@ public class ModelObject {
 
   /**
    * 
-   * @return String resourceLocation
+   * @return String location of the schema in the project resources.
    */
   public String getModelResourceLocation() {
     return resourceLocation;
@@ -1574,8 +1576,8 @@ public class ModelObject {
   /**
    * Get value of node at given path
    * 
-   * @param path
-   * @return
+   * @param path standard path to the node in the object instance to be retrieved.
+   * @return Object
    */
   public Object getObjectMetadataValueAt(String path) {
     JsonNode node = null;
@@ -1590,7 +1592,7 @@ public class ModelObject {
   }
 
   /**
-   * * Method to remove a key/value pair the Object metadata
+   * Method to remove a key/value pair the Object metadata
    * 
    * @param property String representation of the property to be removed.
    * @return boolean indicator of whether the property existed previously.

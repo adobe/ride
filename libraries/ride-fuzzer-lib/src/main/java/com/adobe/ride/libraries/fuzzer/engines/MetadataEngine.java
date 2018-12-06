@@ -69,30 +69,60 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param entityObj {@link: EntityObject} to be fuzzed
+   * @param serviceName String representation of the service name, maps back to a config file for
+   *        environment configuration
+   * @param entityObj ModelObject to be fuzzed
    * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer.
-   * @param type {@link: ModelPropertyType} to be used in more fine grained fuzzing - TBD
+   * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
    * @param value Start value to be reset in the property to ensure fuzzing is done in isolation.
    * @param requestMethod method with which to call the api (if null, default is PUT)
    * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
-   * @throws UnexpectedModelPropertyTypeException
    */
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType) {
     super(entityObj.getModelString(), property);
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        null, null);
+        null);
   }
 
+  /**
+   * Constructor for the class from which all of the fuzz target data is derived.
+   * 
+   * @param serviceName String representation of the service name, maps back to a config file for
+   *        environment configuration
+   * @param entityObj ModelObject to be fuzzed
+   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer.
+   * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
+   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation.
+   * @param requestMethod method with which to call the api (if null, default is PUT)
+   * @param contentType string content type header value (if null, default is
+   *        "application/json;charset=utf-8")
+   * @param requestBuilder Rest-assured request builder
+   */
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder) {
     super(entityObj.getModelString(), property);
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        requestBuilder, null);
+        requestBuilder);
   }
 
+  /**
+   * Constructor for the class from which all of the fuzz target data is derived.
+   * 
+   * @param serviceName String representation of the service name, maps back to a config file for
+   *        environment configuration
+   * @param entityObj ModelObject to be fuzzed
+   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer.
+   * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
+   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation.
+   * @param requestMethod method with which to call the api (if null, default is PUT)
+   * @param contentType string content type header value (if null, default is
+   *        "application/json;charset=utf-8")
+   * @param requestBuilder Rest-assured request builder
+   * @param filters RestAssured Filters
+   */
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder, Filter... filters) {
@@ -314,7 +344,6 @@ public class MetadataEngine extends CoreEngine {
    * @param dataType Type of the fuzz data being injected.
    * @param data fuzz data
    * @return boolean
-   * @throws UnexpectedModelPropertyTypeException
    */
   private boolean loopAnyOf(ModelPropertyType dataType, Object data) {
     boolean retVal = true;
@@ -343,7 +372,7 @@ public class MetadataEngine extends CoreEngine {
    * 
    * @param str String fuzz data.
    * @param nodeDef Definition of the schema node.
-   * @return Boolean
+   * @return boolean
    */
   private boolean validateStr(String str, JSONObject nodeDef) {
     boolean retVal = true;
@@ -499,7 +528,7 @@ public class MetadataEngine extends CoreEngine {
     Method method = (requestMethod != null) ? requestMethod : Method.PUT;
 
     return RestApiController.fireRestCall(serviceName, currentPath, requestBuilder,
-        expectedResponse, method, null);
+        expectedResponse, method);
   }
 
   /**
@@ -520,9 +549,9 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType
-   * @param property property being fuzzed
-   * @param propertyValue fuzz data injected
+   * @param entityType --
+   * @param property --
+   * @param propertyValue --
    */
   @Test(dataProvider = "nonStringsDP", suiteName = "fuzzer", groups = "fuzz", enabled = false,
       singleThreaded = true)
@@ -545,9 +574,9 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType
-   * @param property
-   * @param propertyValue
+   * @param entityType --
+   * @param property --
+   * @param propertyValue --
    */
   @Test(dataProvider = "localizedStringsDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
@@ -562,9 +591,9 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType
-   * @param property
-   * @param propertyValue
+   * @param entityType --
+   * @param property --
+   * @param propertyValue --
    */
   @Test(dataProvider = "passiveSqlDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
@@ -579,9 +608,9 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType
-   * @param property
-   * @param propertyValue
+   * @param entityType --
+   * @param property --
+   * @param propertyValue --
    */
   @Test(dataProvider = "noSqlDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
@@ -595,14 +624,10 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Resets the start value for the fuzzed property before moving on the the next property to be
    * fuzzed.
-   * 
-   * @throws UnexpectedModelPropertyTypeException
-   * 
-   * @throws ParseException
    */
   @SuppressWarnings("unchecked")
   @AfterMethod
-  private void resetValue() throws UnexpectedModelPropertyTypeException {
+  private void resetValue(){
 
     if (propertyStartValue != null) {
       modelInstance.remove(modelProperty);

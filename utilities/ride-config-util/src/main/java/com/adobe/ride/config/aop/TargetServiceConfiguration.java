@@ -33,7 +33,15 @@ public class TargetServiceConfiguration {
   private final String serviceURL;
 
   /**
-   * Constructor
+   * Constructor for the TargetServiceConfiguration class. All of these arguments will be passed in
+   * from the properties files as part of the config-util workflow.
+   * 
+   * @param serviceName String used in config files to reference the endpoint construction and other
+   *        vars when the config util is invoked
+   * @param schema internet protocol schema used in the endpoint (i.e. http, https, etc.)
+   * @param endpoint endpoint of the service
+   * @param port port the service uses (i.e. 80, 443, etc.)
+   * @param basePath if warranted ("/" for no base path)
    */
   public TargetServiceConfiguration(String serviceName, String schema, String endpoint, String port,
       String basePath) {
@@ -45,30 +53,65 @@ public class TargetServiceConfiguration {
     this.serviceURL = schema + "://" + endpoint + ":" + port + basePath;
   }
 
+  /**
+   * Return the name of the service url being constructed.
+   * 
+   * @return String
+   */
   public String serviceName() {
     return serviceName;
   }
 
+  /**
+   * Return the schema of the service url being constructed.
+   * 
+   * @return String
+   */
   public String schema() {
     return schema;
   }
 
+  /**
+   * Return the endpoint of the service url being constructed.
+   * 
+   * @return String
+   */
   public String endpoint() {
     return endpoint;
   }
 
+  /**
+   * Return the port of the service url being constructed.
+   * 
+   * @return String
+   */
   public int port() {
     return port;
   }
 
+  /**
+   * Return the base path of the service url being constructed.
+   * 
+   * @return String
+   */
   public String basePath() {
     return basePath;
   }
 
+  /**
+   * Return the base uri of the service url being constructed.
+   * 
+   * @return String
+   */
   public String getBaseURI() {
     return schema + "://" + endpoint;
   }
 
+  /**
+   * Return the full url being constructed.
+   * 
+   * @return String
+   */
   public String getURL() {
     return serviceURL;
   }

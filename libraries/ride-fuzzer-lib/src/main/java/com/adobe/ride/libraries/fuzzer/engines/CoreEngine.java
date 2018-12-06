@@ -54,7 +54,6 @@ public class CoreEngine extends RideCore {
    *        "article" in the metadata fuzzer).
    * @param target Target field to be fuzzed (for example a part of of a path or a metadata
    *        property).
-   * @throws IOException
    */
   public CoreEngine(String scope, String target) {
     try {
@@ -77,7 +76,10 @@ public class CoreEngine extends RideCore {
   /**
    * Method to validate a 4xx error responses for expected failures and 2xx expected successes.
    * 
-   * @param response
+   * @param property JSON key to be tested
+   * @param testedValue value passed
+   * @param response Rest-assured representation of the response the call returned
+   * @param expectSuccess boolean indicating whether the call should pass or fail
    */
   public void validateResult(String property, Object testedValue, Response response,
       boolean expectSuccess) {
@@ -104,7 +106,7 @@ public class CoreEngine extends RideCore {
    * @param valuesArray Fuzz values to be added to the DP
    * @param scope Scope of the fuzz tests (i.e. "article" for MetadataFuzzer enabled tests).
    * @param target Field to be fuzzed (i.e. a metadata node in the MetadataFuzzer tests).
-   * @return
+   * @return Object[][]
    */
   private Object[][] prepDP(Object[] valuesArray, String scope, String target) {
     Object[][] dpArray = new Object[valuesArray.length][3];
@@ -128,27 +130,47 @@ public class CoreEngine extends RideCore {
   /**
    * Methods to provide dataproviders for Fuzz test methods.
    */
-
+  
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "nonStringsDP")
   public Object[][] nonStringsDataProvider() {
     return nonStringsFuzzValues;
   }
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "localizedStringsDP")
   public Object[][] localizedStringsDataProvider() {
     return localizedStringsFuzzValues;
   }
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "passiveSqlDP")
   public Object[][] passiveSQLInjectionDataProvider() {
     return passiveSQLInjectionFuzzValues;
   }
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "noSqlDP")
   public Object[][] noSQLInjectionDataProvider() {
     return noSQLInjectionFuzzValues;
   }
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "nonBooleanDP")
   public Object[][] nonBooleanDataProvider() {
     return nonBooleanFuzzValues;

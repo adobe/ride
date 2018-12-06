@@ -16,7 +16,6 @@ import com.adobe.ride.core.globals.Headers;
 import com.adobe.ride.core.globals.Headers.HeaderItem;
 import com.adobe.ride.core.types.ExpectedResponse;
 import com.adobe.ride.utilities.model.ModelObject;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
 import io.restassured.filter.log.LogDetail;
@@ -43,26 +42,56 @@ public class BoilerPlateRestController extends RestApiController {
     UNSUPPORTED, INVALID;
   }
 
+  /**
+   * Method to set the default value of to be used for a variety of headers
+   * 
+   * @param headerValue default value to be used
+   */
   public static void setDefaultHeaderValue(String headerValue) {
     DEFAULT_HEADER_VALUE = headerValue;
   }
 
+  /**
+   * Get default value to be used for a variety of headers
+   * 
+   * @return String
+   */
   public static String getDefaultHeaderValue() {
     return DEFAULT_HEADER_VALUE;
   }
 
+  /**
+   * Set the default value to be used when testing an unsupported header value
+   * 
+   * @param headerValue value to be used
+   */
   public static void setUnsupportedHeaderValue(String headerValue) {
     UNSUPPORTED_HEADER_VALUE = headerValue;
   }
 
+  /**
+   * Get default value to be used when testing unsupported header values
+   * 
+   * @return String
+   */
   public static String getUnsupportedHeaderValue() {
     return UNSUPPORTED_HEADER_VALUE;
   }
 
+  /**
+   * Set the default value to be used when testing an invalid header value.
+   * 
+   * @param headerValue value to be used.
+   */
   public static void setInvalidHeaderValue(String headerValue) {
     INVALID_HEADER_VALUE = headerValue;
   }
 
+  /**
+   * Get default value to be used when testing invalid header values
+   * 
+   * @return String
+   */
   public static String getInvalidHeaderValue() {
     return INVALID_HEADER_VALUE;
   }
@@ -70,10 +99,11 @@ public class BoilerPlateRestController extends RestApiController {
   /**
    * Method to get test-ready RequestSpecBuilder based on the header and test type passed
    * 
-   * @param builder
-   * @param header
-   * @param testType
-   * @return
+   * @param builder Rest-assured request spec builder to be used in test call.
+   * @param header name of the header to be tested
+   * @param testType type of test to be run on the header
+   * @return RequestSpecBuilder passed in reqSpec builder modified to be ready to test the given
+   *         header.
    */
   private static RequestSpecBuilder getTestReqSpecBuilder(RequestSpecBuilder builder,
       HeaderItem header, TestType testType) {
@@ -88,7 +118,7 @@ public class BoilerPlateRestController extends RestApiController {
   /**
    * Get default valid RequestSpecBuilder
    * 
-   * @return
+   * @return RequestSpecBuilder
    */
   private static RequestSpecBuilder getDefaultTestReqSpecBuilder() {
     RequestSpecBuilder builder = new RequestSpecBuilder();
@@ -103,68 +133,69 @@ public class BoilerPlateRestController extends RestApiController {
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception of the header specified and the type of negative test.
    * 
-   * @param header
-   * @param testType
-   * @param method
-   * @param service
-   * @param object
-   * @param filter
-   * @return
+   * @param header header to be tested
+   * @param testType type of test to be run
+   * @param method http action (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
    */
   public static Response negativeHeaderTest(HeaderItem header, TestType testType, Method method,
-      String service, ModelObject object, Filter... filters) {
+      String serviceName, ModelObject object, Filter... filters) {
     RequestSpecBuilder builder = getDefaultTestReqSpecBuilder();
 
-    return negativeHeaderTest(builder, header, testType, method, service, object, filters);
+    return negativeHeaderTest(builder, header, testType, method, serviceName, object, filters);
   }
 
   /**
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception of the header specified and the type of negative test.
    * 
-   * @param builder
-   * @param header
-   * @param testType
-   * @param method
-   * @param service
-   * @param object
-   * @param filter
-   * @return
+   * @param reqBuilder Rest-assured request spec builder upon which to base the test.
+   * @param header header to be tested
+   * @param testType type of test to be run
+   * @param method http action (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
    */
-  public static Response negativeHeaderTest(RequestSpecBuilder builder, HeaderItem header,
-      TestType testType, Method method, String service, ModelObject object, Filter... filters) {
+  public static Response negativeHeaderTest(RequestSpecBuilder reqBuilder, HeaderItem header,
+      TestType testType, Method method, String serviceName, ModelObject object, Filter... filters) {
 
     ResponseSpecification expResponse =
         (testType == TestType.INVALID) ? ExpectedResponse.NOT_ACCEPTABLE_RESPONSE
             : ExpectedResponse.UNSUPPORTED_MEDIA_TYPE_RESPONSE;
 
-    return negativeHeaderTest(expResponse, builder, header, testType, method, service, object, filters);
+    return negativeHeaderTest(expResponse, reqBuilder, header, testType, method, serviceName, object,
+        filters);
   }
 
   /**
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception of the header specified and the type of negative test.
    * 
-   * @param expResponse
-   * @param reqBuilder
-   * @param header
-   * @param testType
-   * @param method
-   * @param service
-   * @param object
-   * @param filter
-   * @return
+   * @param expResponse Rest-assure Response spec defining the expected response.
+   * @param reqBuilder Rest-assured request spec builder upon which to base the test.
+   * @param header header to be tested
+   * @param testType type of test to be run
+   * @param method http action (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
    */
   public static Response negativeHeaderTest(ResponseSpecification expResponse,
       RequestSpecBuilder reqBuilder, HeaderItem header, TestType testType, Method method,
-      String service, ModelObject object, Filter... filters) {
+      String serviceName, ModelObject object, Filter... filters) {
 
     // Prep the request with the test spcifications
     RequestSpecBuilder builder = getTestReqSpecBuilder(reqBuilder, header, testType);
     // validate the request has all the necessary service-specific specs to complete the call.
     RequestSpecBuilder validatedBuilder = validateBuilder(builder, object, method);
     validatedBuilder.log(LogDetail.ALL);
-    return RestApiController.fireRestCall(service, object.getObjectPath(), validatedBuilder,
+    return RestApiController.fireRestCall(serviceName, object.getObjectPath(), validatedBuilder,
         expResponse, method, filters);
   }
 
@@ -172,35 +203,35 @@ public class BoilerPlateRestController extends RestApiController {
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception excluding an Authorization header which normally contains a bearer token.
    * 
-   * @param method
-   * @param service
-   * @param object
-   * @return
+   * @param method http action (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @return Response
    */
-  public static Response negativeAuthTest(Method method, String service, ModelObject object) {
-    return negativeAuthTest(null, method, service, object);
+  public static Response negativeAuthTest(Method method, String serviceName, ModelObject object) {
+    return negativeAuthTest(null, method, serviceName, object);
   }
 
   /**
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception excluding an Authorization header which normally contains a bearer token.
    * 
-   * @param builder
-   * @param method
-   * @param service
-   * @param object
-   * @return
+   * @param reqBuilder Rest-assured request spec builder upon which to base the test.
+   * @param method http action (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @return Response
    */
-  public static Response negativeAuthTest(RequestSpecBuilder builder, Method method, String service,
+  public static Response negativeAuthTest(RequestSpecBuilder reqBuilder, Method method, String serviceName,
       ModelObject object) {
-    if (builder == null) {
-      builder = getDefaultTestReqSpecBuilder();
+    if (reqBuilder == null) {
+      reqBuilder = getDefaultTestReqSpecBuilder();
     }
 
-    RequestSpecBuilder validatedBuilder = validateBuilder(builder, object, method);
+    RequestSpecBuilder validatedBuilder = validateBuilder(reqBuilder, object, method);
     validatedBuilder.log(LogDetail.ALL);
-    Response response = RestApiController.fireRestCall(service, object.getObjectPath(),
-        validatedBuilder, ExpectedResponse.NOT_AUTH_RESPONSE, method, null);
+    Response response = RestApiController.fireRestCall(serviceName, object.getObjectPath(),
+        validatedBuilder, ExpectedResponse.NOT_AUTH_RESPONSE, method);
     return response;
   }
 
@@ -211,63 +242,131 @@ public class BoilerPlateRestController extends RestApiController {
    */
 
 
-  public static Response testGetWithInvalidAcceptHeader(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.GET, service, object, filters);
+  /**
+   * Boilerplate test for GET with invalid Accept header
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
+   */
+  public static Response testGetWithInvalidAcceptHeader(String serviceName, ModelObject object,
+      Filter... filters) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.GET, serviceName, object,
+        filters);
   }
 
-  public static Response testGetWithUnsupportedAcceptHeader(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.GET, service, object, filters);
+  /**
+   * Boilerplate test for GET with unsupported Accept header
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
+   */
+  public static Response testGetWithUnsupportedAcceptHeader(String serviceName, ModelObject object,
+      Filter... filters) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.GET, serviceName, object,
+        filters);
   }
 
-  public static Response testGetWithInvalidAPIKey(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.CLIENT_API_KEY, TestType.INVALID, Method.GET, service,
-        object, filters);
+  /**
+   * Boilerplate test for unauthenticated GET call.
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @return Response
+   */
+  public static Response testGetUnAuthenticated(String serviceName, ModelObject object) {
+    return negativeAuthTest(Method.GET, serviceName, object);
   }
 
-  public static Response testGetUnAuthenticated(String service, ModelObject object) {
-    return negativeAuthTest(Method.GET, service, object);
+  /**
+   * Boilerplate test for POST with invalid Accept header
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
+   */
+  public static Response testPostWithInvalidAcceptHeader(String serviceName, ModelObject object,
+      Filter... filters) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.POST, serviceName, object,
+        filters);
   }
 
-  public static Response testPostWithInvalidAcceptHeader(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.POST, service, object, filters);
+  /**
+   * Boilerplate test for POST with unsupported Accept header
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
+   */
+  public static Response testPostWithUnsupportedAcceptHeader(String serviceName, ModelObject object,
+      Filter... filters) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.POST, serviceName, object,
+        filters);
   }
 
-  public static Response testPostWithUnsupportedAcceptHeader(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.POST, service, object, filters);
+  /**
+   * Boilerplate test for unauthenticated POST call
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @return Response
+   */
+  public static Response testPostUnAuthenticated(String serviceName, ModelObject object) {
+    return negativeAuthTest(Method.POST, serviceName, object);
   }
 
-  public static Response testPostWithInvalidAPIKey(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.CLIENT_API_KEY, TestType.INVALID, Method.POST, service,
-        object, filters);
+  /**
+   * Boilerplate test for PUT with invalid Accept header
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
+   */
+  public static Response testPutWithInvalidAcceptHeader(String serviceName, ModelObject object,
+      Filter... filters) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.PUT, serviceName, object,
+        filters);
   }
 
-  public static Response testPostUnAuthenticated(String service, ModelObject object) {
-    return negativeAuthTest(Method.POST, service, object);
+  /**
+   * Boilerplate test for PUT with unsupported Accept header
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @param filters Any Rest-assured filters to be used in the call.
+   * @return Response
+   */
+  public static Response testPutWithUnsupportedAcceptHeader(String serviceName, ModelObject object,
+      Filter... filters) {
+    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.PUT, serviceName, object,
+        filters);
+  }
+  
+  /**
+   * Boilerplate test for unauthenticated PUT call
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @return Response
+   */
+  public static Response testPutUnAuthenticated(String serviceName, ModelObject object) {
+    return negativeAuthTest(Method.PUT, serviceName, object);
   }
 
-  public static Response testPutWithInvalidAcceptHeader(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.INVALID, Method.PUT, service, object, filters);
-  }
-
-  public static Response testPutWithUnsupportedAcceptHeader(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.PUT, service, object, filters);
-  }
-
-  public static Response testPutWithInvalidAPIKey(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.CLIENT_API_KEY, TestType.INVALID, Method.PUT, service,
-        object, filters);
-  }
-
-  public static Response testPutUnAuthenticated(String service, ModelObject object) {
-    return negativeAuthTest(Method.PUT, service, object);
-  }
-
-  public static Response testDeleteWithInvalidAPIKey(String service, ModelObject object, Filter... filters) {
-    return negativeHeaderTest(Headers.CLIENT_API_KEY, TestType.INVALID, Method.DELETE, service,
-        object, filters);
-  }
-
-  public static Response testDeleteUnAuthenticated(String service, ModelObject object) {
-    return negativeAuthTest(Method.DELETE, service, object);
+  /**
+   * Boilerplate test for unauthenticated DELETE call
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param object ModelObject used in conjunction with the call.
+   * @return Response
+   */
+  public static Response testDeleteUnAuthenticated(String serviceName, ModelObject object) {
+    return negativeAuthTest(Method.DELETE, serviceName, object);
   }
 }

@@ -39,13 +39,13 @@ import io.restassured.specification.ResponseSpecification;
  * 
  */
 public class HeaderFuzzer extends CoreEngine {
-  protected String callingService;
+  protected String serviceName;
   protected String path;
   protected Method RESTmethod;
   private RequestSpecification requestSpec;
   private String header;
   protected Filter[] filters;
-
+  
   /**
    * Constructor to be used when fuzzing a header.
    * 
@@ -53,12 +53,22 @@ public class HeaderFuzzer extends CoreEngine {
    * @param path Path to be used in the call.
    * @param headerToBeFuzzed Specific header to be targeted for fuzzing.
    * @param method Method to be used.
-   * @throws Exception
    */
-  public HeaderFuzzer(String callingService, RequestSpecBuilder reqSpec, String path,
-      Headers headerToBeFuzzed, Method method, Filter... filters) throws Exception {
+
+  /**
+   * Constructor to be used when fuzzing a header.
+   * 
+   * @param serviceName Name of the service specified in the config properties
+   * @param reqSpec RequestSpecBuilder to be used in the call.
+   * @param path Path to be used in the call.
+   * @param headerToBeFuzzed Specific header to be targeted for fuzzing.
+   * @param method Method to be used.
+   * @param filters Any Rest-assured filters to be used in the call.
+   */
+  public HeaderFuzzer(String serviceName, RequestSpecBuilder reqSpec, String path,
+      Headers headerToBeFuzzed, Method method, Filter... filters) {
     super("header", headerToBeFuzzed.toString());
-    this.callingService = callingService;
+    this.serviceName = serviceName;
     requestSpec = reqSpec.build();
     RESTmethod = method;
     header = headerToBeFuzzed.toString();
@@ -70,8 +80,7 @@ public class HeaderFuzzer extends CoreEngine {
    * Internal method to define the RequestSpecBuilder with the fuzzed header.
    * 
    * @param value fuzz Value.
-   * @return
-   * @throws UnsupportedEncodingException
+   * @return RequestSpecBuilder
    */
   private RequestSpecBuilder defineRequest(Object value) {
     RequestSpecBuilder bldr = new RequestSpecBuilder();
@@ -90,10 +99,9 @@ public class HeaderFuzzer extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param scope
-   * @param header
-   * @param value
-   * @throws UnsupportedEncodingException
+   * @param scope --
+   * @param header --
+   * @param value --
    */
   @Test(dataProvider = "nonStringsDP", groups = {"certification"}, enabled = false)
   public void fuzzHeaderWithNonStrings(String scope, String header, Object value) {
@@ -104,9 +112,9 @@ public class HeaderFuzzer extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param scope
-   * @param header
-   * @param value
+   * @param scope --
+   * @param header --
+   * @param value --
    */
   @Test(dataProvider = "localizedStringsDP", suiteName = "fuzzer", groups = "certification")
   public void fuzzHeaderWithLocalizedStrings(String scope, String header, Object value) {
@@ -117,9 +125,9 @@ public class HeaderFuzzer extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param scope
-   * @param header
-   * @param value
+   * @param scope --
+   * @param header --
+   * @param value --
    */
   @Test(dataProvider = "passiveSqlDP", suiteName = "fuzzer", groups = "certification")
   public void fuzzHeaderWithPassiveSQLInjectionStrings(String scope, String header, Object value) {
@@ -130,9 +138,9 @@ public class HeaderFuzzer extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param scope
-   * @param header
-   * @param value
+   * @param scope --
+   * @param header --
+   * @param value --
    */
   @Test(dataProvider = "sqlDP", suiteName = "fuzzer", groups = "certification")
   public void fuzzHeaderWithSQLInjectionStrings(String scope, String header, Object value) {
@@ -143,9 +151,9 @@ public class HeaderFuzzer extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param scope
-   * @param header
-   * @param value
+   * @param scope --
+   * @param header --
+   * @param value --
    */
   @Test(dataProvider = "noSqlDP", suiteName = "fuzzer", groups = "certification")
   public void fuzzHeaderWithNoSQLInjectionStrings(String scope, String header, Object value) {
@@ -155,8 +163,8 @@ public class HeaderFuzzer extends CoreEngine {
   /**
    * Method to validate a 4xx error responses for expected failures and 2xx expected successes.
    * 
-   * @param response
-   * 
+   * @param response Rest-assured Response
+   * @param expectSuccess boolean that indicate whether the call should pass or fail
    */
   public void validateResult(Response response, boolean expectSuccess) {
     int code = response.getStatusCode();
@@ -172,7 +180,7 @@ public class HeaderFuzzer extends CoreEngine {
   /**
    * Internal method to fire the REST call with the fuzzed header.
    * 
-   * @param bldr
+   * @param bldr RequestSpecBuilder
    */
   private void fireREST(RequestSpecBuilder bldr) {
     ResponseSpecBuilder expectedValues = new ResponseSpecBuilder();
@@ -180,7 +188,7 @@ public class HeaderFuzzer extends CoreEngine {
 
     ResponseSpecification expectedResponse = expectedValues.build();
     Response response =
-        RestApiController.fireRestCall(callingService, path, bldr, expectedResponse, RESTmethod, filters);
+        RestApiController.fireRestCall(serviceName, path, bldr, expectedResponse, RESTmethod, filters);
 
     validateResult(response, false);
   }
