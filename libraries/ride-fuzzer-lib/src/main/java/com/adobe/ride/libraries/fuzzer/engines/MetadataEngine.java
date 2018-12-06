@@ -69,12 +69,12 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
    * @param entityObj ModelObject to be fuzzed
-   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer.
+   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
    * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
-   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation.
+   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation
    * @param requestMethod method with which to call the api (if null, default is PUT)
    * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
@@ -89,16 +89,16 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
    * @param entityObj ModelObject to be fuzzed
-   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer.
+   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
    * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
-   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation.
+   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation
    * @param requestMethod method with which to call the api (if null, default is PUT)
    * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
-   * @param requestBuilder Rest-assured request builder
+   * @param requestBuilder Rest-Assured request builder
    */
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
@@ -111,16 +111,16 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
    * @param entityObj ModelObject to be fuzzed
-   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer.
+   * @param property key in the metadata to be fuzzed. Passed by the MetadataFuzzer
    * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
-   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation.
-   * @param requestMethod method with which to call the api (if null, default is PUT)
+   * @param value start value to be reset in the property to ensure fuzzing is done in isolation
+   * @param requestMethod http action to be invoked, i.e. POST, GET, etc.  If null, default is PUT
    * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
-   * @param requestBuilder Rest-assured request builder
+   * @param requestBuilder Rest-Assured RequestSpecBuilder
    * @param filters RestAssured Filters
    */
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
@@ -183,8 +183,8 @@ public class MetadataEngine extends CoreEngine {
    * Method to determine if node is mutable by caller or only by the server (i.e. read/write
    * property or read-only)
    * 
-   * @param nodeDef
-   * @return
+   * @param nodeDef node to be tested
+   * @return boolean
    */
   private boolean getNodeMutability(JSONObject nodeDef) {
     boolean retVal = true;
@@ -200,7 +200,7 @@ public class MetadataEngine extends CoreEngine {
   }
 
   /**
-   * Method which determines whether the fuzz data injected into the metadata node should be allowed
+   * Method which determines whether the fuzz data injected into the metadata node should be allowed.
    * 
    * @param modelDataType - {@link: ModelPropertyType} of the node being fuzzed
    * @param fuzzDataType - {@link: ModelPropertyType} of the data being injected
@@ -254,7 +254,7 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Determine, for Integer node defs, if a "null" value (i.e. -1) is allowed.
    * 
-   * @param nodeDef JSON Definition of the schema node.
+   * @param nodeDef JSON Definition of the schema node
    * @return boolean
    */
   private boolean isUnsetNumberDef(JSONObject nodeDef) {
@@ -271,8 +271,8 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Return value of boolean property in node def, if it exists.
    * 
-   * @param nodeDef full JSON schema node definition.
-   * @param key String value of the key to be looked up.
+   * @param nodeDef full JSON schema node definition
+   * @param key String value of the key to be looked up
    * @return boolean
    */
   private boolean returnBooleanKeyValue(JSONObject nodeDef, String key) {
@@ -285,11 +285,11 @@ public class MetadataEngine extends CoreEngine {
 
   /**
    * For Nodes which are of type int, determine if the fuzz int value passed conforms to the
-   * definition
+   * definition.
    * 
    * @param fuzzValue Int value
-   * @param nodeDef Full JSON schema definition for the node.
-   * @return
+   * @param nodeDef Full JSON schema definition for the node
+   * @return boolean
    */
   private boolean validateInt(int fuzzValue, JSONObject nodeDef) {
     boolean retVal = true;
@@ -315,7 +315,7 @@ public class MetadataEngine extends CoreEngine {
    * definition For memory purposes, treating all numbers as floats.
    * 
    * @param fuzzValue float value
-   * @param nodeDef Full JSON schema definition for the node.
+   * @param nodeDef Full JSON schema definition for the node
    * @return
    */
   private boolean validateFloat(float fuzzValue, JSONObject nodeDef) {
@@ -341,7 +341,7 @@ public class MetadataEngine extends CoreEngine {
    * For node types of ANYOF, loop through them to see if the fuzz data conforms any of the
    * definition types.
    * 
-   * @param dataType Type of the fuzz data being injected.
+   * @param dataType Type of the fuzz data being injected
    * @param data fuzz data
    * @return boolean
    */
@@ -370,8 +370,8 @@ public class MetadataEngine extends CoreEngine {
   /**
    * For nodes of type String, determine if the String passed in conforms to the schema definition.
    * 
-   * @param str String fuzz data.
-   * @param nodeDef Definition of the schema node.
+   * @param str String fuzz data
+   * @param nodeDef Definition of the schema node
    * @return boolean
    */
   private boolean validateStr(String str, JSONObject nodeDef) {
@@ -397,9 +397,9 @@ public class MetadataEngine extends CoreEngine {
    * Determine if a passed int value conforms to parameters passed in.
    * 
    * @param limit int limit value.
-   * @param val int value to be analyzed.
+   * @param val int value to be analyzed
    * @param max boolean indicating if the limit is an upper limit or a lower limit
-   * @param exclusive boolean indicating if the limit is inclusive or exclusive.
+   * @param exclusive boolean indicating if the limit is inclusive or exclusive
    * @return boolean
    */
   private boolean validateIntLimit(int limit, int val, boolean max, boolean exclusive) {
@@ -417,10 +417,10 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Determine if a passed float value conforms to paramters passed in.
    * 
-   * @param limit float limit value.
-   * @param val float value to be analyzed.
+   * @param limit float limit value
+   * @param val float value to be analyzed
    * @param max boolean indicating if the limit is an upper limit or a lower limit
-   * @param exclusive boolean indicating if the limit is inclusive or exclusive.
+   * @param exclusive boolean indicating if the limit is inclusive or exclusive
    * @return boolean
    */
   private boolean validateFloatLimit(float limit, float val, boolean max, boolean exclusive) {
@@ -454,8 +454,8 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Method to determine whether fuzz data conforms to the node definition
    * 
-   * @param dataType ModelPropertyType of the fuzzed data.
-   * @param data value of the fuzzed data.
+   * @param dataType ModelPropertyType of the fuzzed data
+   * @param data value of the fuzzed data
    * @return boolean
    */
   private boolean evalData(ModelPropertyType dataType, Object data) {

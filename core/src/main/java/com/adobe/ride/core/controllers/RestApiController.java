@@ -102,7 +102,7 @@ public class RestApiController extends RideCore {
    * Utility method which returns a prepared RequestSpecBuilder to the API calls if the caller
    * hasn't passed one
    *
-   * @param requestSpec Rest-assured definitions for the call.
+   * @param requestSpec Rest-Assured definitions for the call.
    * @param object name of the target REST object, usually a segment in the path
    * @param method http action to be invoked (i.e. POST, GET, etc.)
    * @return RequestSpecBuilder
@@ -125,9 +125,9 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured DELETE requests.
+   * Static method for making Rest-Assured DELETE requests.
    *
-   * @param serviceName Name mapping to the config folder in resources.
+   * @param serviceName name of the target service, which is a mapping to the config folder in resources
    * @param restAPI The specific API to test ex: "/myApi".
    * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
    * @param expectedResponse RestAssured ResponseSpecification for validating the response
@@ -140,9 +140,9 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured GET requests.
+   * Static method for making Rest-Assured GET requests.
    *
-   * @param serviceName Name mapping to the config folder in resources.
+   * @param serviceName name of the target service, which is a mapping to the config folder in resources
    * @param restAPI The specific API to test ex: "/myApi".
    * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
    * @param expectedResponse RestAssured ResponseSpecification for validating the response
@@ -155,9 +155,9 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured HEAD requests.
+   * Static method for making Rest-Assured HEAD requests.
    *
-   * @param serviceName Name mapping to the config folder in resources.
+   * @param serviceName name of the target service, which is a mapping to the config folder in resources
    * @param restAPI The specific API to test ex: "/myApi".
    * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
    * @param expectedResponse RestAssured ResponseSpecification for validating the response
@@ -170,9 +170,9 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured OPTIONS requests.
+   * Static method for making Rest-Assured OPTIONS requests.
    *
-   * @param serviceName Name mapping to the config folder in resources.
+   * @param serviceName name of the target service, which is a mapping to the config folder in resources
    * @param restAPI The specific API to test ex: "/myApi".
    * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
    * @param expectedResponse RestAssured ResponseSpecification for validating the response
@@ -185,9 +185,9 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured PATCH requests.
+   * Static method for making Rest-Assured PATCH requests.
    *
-   * @param serviceName Name mapping to the config folder in resources.
+   * @param serviceName name of the target service, which is a mapping to the config folder in resources
    * @param restAPI The specific API to test ex: "/myApi".
    * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
    * @param expectedResponse RestAssured ResponseSpecification for validating the response
@@ -200,9 +200,9 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured POST requests.
+   * Static method for making Rest-Assured POST requests.
    *
-   * @param serviceName Name mapping to the config folder in resources.
+   * @param serviceName name of the target service, which is a mapping to the config folder in resources
    * @param restAPI The specific API to test ex: "/myApi".
    * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
    * @param expectedResponse RestAssured ResponseSpecification for validating the response
@@ -215,9 +215,9 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured PUT requests.
+   * Static method for making Rest-Assured PUT requests.
    *
-   * @param serviceName Name mapping to the config folder in resources.
+   * @param serviceName name of the target service, which is a mapping to the config folder in resources
    * @param restAPI The specific API to test ex: "/myApi".
    * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
    * @param expectedResponse RestAssured ResponseSpecification for validating the response
@@ -244,7 +244,7 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured REST requests.
+   * Static method for making Rest-Assured REST requests.
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
@@ -284,7 +284,7 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured REST requests with logging disabled.
+   * Static method for making Rest-Assured REST requests with logging disabled.
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".
@@ -323,7 +323,7 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest Assured REST requests with logging disabled.
+   * Static method for making Rest-Assured REST requests with logging disabled.
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in resources.
    * @param restAPI The specific API to test ex: "/myApi".

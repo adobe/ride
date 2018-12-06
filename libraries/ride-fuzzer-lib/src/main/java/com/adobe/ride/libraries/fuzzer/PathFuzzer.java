@@ -38,9 +38,9 @@ public class PathFuzzer {
   /**
    * Constructor for the Path Fuzzer.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
-   * @param reqSpec RequestSpecBuilder to be passed in the REST call sent to the core.
+   * @param serviceName name of the target service, which is a mapping to the config folder in the
+   *        project resources
+   * @param reqSpec RequestSpecBuilder to be passed in the REST call sent to the core
    * @param pathToBeFuzzed standard REST api path
    * @param method http action to be invoked (i.e. POST, GET, etc.)
    */

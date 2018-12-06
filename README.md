@@ -115,7 +115,7 @@ One of Adobe Ride's stated goals is improved speed of rest API test development.
 As discussed above one of the main goals of the framework is to reduce the amount of code required to write tests.  Below is an example of how this is achieved:
 
 
-POST Default Service Object in prep for test in REST Assured example (partial)
+POST Default Service Object in prep for test in Rest-Assured example (partial)
 
 ```java
 JSONObject json = new JSONObject();

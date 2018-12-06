@@ -117,7 +117,7 @@ public class ModelObject {
    * Method to load the model from a file in the resourceLocation which is expected to be
    * json-schema compliant
    *
-   * @param resourceLocation The location of the json-schema file in the resources folder. Eg.
+   * @param resourceLocation the location of the json-schema file in the resources folder. Eg.
    *        /schema/TestService/profile.json
    */
   protected void loadModel(String resourceLocation) {
@@ -135,9 +135,11 @@ public class ModelObject {
   /**
    * Main Model Object Constructor
    * 
-   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart: Java Code</a>
+   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart:
+   * Java Code</a>
    * 
-   * @param serviceName Name of the service specified in the config properties
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
    * @param objectType in the default, among other things, used as a segment of the REST path
    * @param objectName in the default, among other things, used as a segment of the REST path
    * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
@@ -152,9 +154,11 @@ public class ModelObject {
    * Model Object Constructor which allows user to start with preset nodes that are not overwritten
    * on data generation
    * 
-   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart: Java Code</a>
+   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart:
+   * Java Code</a>
    * 
-   * @param serviceName Name of the service specified in the config properties
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
    * @param objectType in the default, among other things, used as a segment of the REST path
    * @param objectName in the default, among other things, used as a segment of the REST path
    * @param presetNodes set of JSON nodes and values to be used in the object, not generated
@@ -162,8 +166,8 @@ public class ModelObject {
    * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
    *        defined in the spec
    */
-  public ModelObject(String serviceName, String objectType, String objectName, JSONObject presetNodes,
-      boolean useRequiredOnly) {
+  public ModelObject(String serviceName, String objectType, String objectName,
+      JSONObject presetNodes, boolean useRequiredOnly) {
     this.presetNodes = presetNodes;
     initializeModelObject(serviceName, objectType, objectName, presetNodes, null, useRequiredOnly);
   }
@@ -173,18 +177,20 @@ public class ModelObject {
    * on data generation and also allows the user to specify nodes to be built with an array of
    * standard slash delimited paths (i.e. /this/that/theothernode)
    * 
-   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart: Java Code</a>
+   * <a href="https://github.com/adobe/ride/blob/develop/QuickStart.md#java-code">Ride Quickstart:
+   * Java Code</a>
    * 
-   * @param serviceName Name of the service specified in the config properties
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
    * @param objectType in the default, among other things, used as a segment of the REST path
    * @param objectName in the default, among other things, used as a segment of the REST path
    * @param presetNodes set of JSON nodes and values to be used in the object, not generated
    *        dynamically
    * @param nodesToBuild set of JSONnodes which are to be dynamically generated. Remaining schema
-   *        defined nodes will not be generated.
+   *        defined nodes will not be generated
    */
-  public ModelObject(String serviceName, String objectType, String objectName, JSONObject presetNodes,
-      Set<String> nodesToBuild) {
+  public ModelObject(String serviceName, String objectType, String objectName,
+      JSONObject presetNodes, Set<String> nodesToBuild) {
     this.presetNodes = presetNodes;
     initializeModelObject(serviceName, objectType, objectName, presetNodes, nodesToBuild, true);
   }
@@ -200,8 +206,8 @@ public class ModelObject {
       this.nodesToBuild = nodesToBuild;
     }
 
-    resourceLocation =
-        default_location.replace("service", serviceName.toString()).replace("objectType", objectType);
+    resourceLocation = default_location.replace("service", serviceName.toString())
+        .replace("objectType", objectType);
     this.serviceName = serviceName;
     this.objectType = objectType;
     this.setObjectName(objectName);
@@ -350,7 +356,7 @@ public class ModelObject {
    * @param propertyObject schema node which contains a definition reference
    * @return definition associated with the passed schema node
    * @throws UnexpectedModelPropertyTypeException thrown when one or more of the ModelPropertyTypes
-   *         of the nodes passed in the JSONObject cannot be determined.
+   *         of the nodes passed in the JSONObject cannot be determined
    */
   protected JSONObject getDefinitionRef(JSONObject propertyObject)
       throws UnexpectedModelPropertyTypeException {
@@ -363,7 +369,7 @@ public class ModelObject {
    * @param propertyObject JSONObject node to be analyzed
    * @return String name of the library definition associated with the node
    * @throws UnexpectedModelPropertyTypeException thrown when one or more of the ModelPropertyTypes
-   *         of the nodes passed in the JSONObject cannot be determined.
+   *         of the nodes passed in the JSONObject cannot be determined
    */
   protected String getDefinitionName(JSONObject propertyObject)
       throws UnexpectedModelPropertyTypeException {
@@ -384,9 +390,9 @@ public class ModelObject {
    * {@link UnexpectedModelPropertyTypeException} Exception.
    * 
    * @param object JSONObject node in the model from which the type is to be determined.
-   * @return ModelPropertyType One of the enumerated ModelPropertyTypes.
+   * @return ModelPropertyType One of the enumerated ModelPropertyTypes
    * @throws UnexpectedModelPropertyTypeException thrown when one or more of the ModelPropertyTypes
-   *         of the nodes passed in the JSONObject cannot be determined.
+   *         of the nodes passed in the JSONObject cannot be determined
    */
   public static ModelPropertyType getModelPropertyType(JSONObject object)
       throws UnexpectedModelPropertyTypeException {
@@ -767,9 +773,9 @@ public class ModelObject {
 
   /**
    * 
-   * @param keyPattern String value specified in the patternProperties of the custom object
+   * @param keyPattern string value specified in the patternProperties of the custom object
    *        definition
-   * @param numProps number of properties to create in the custom object.
+   * @param numProps number of properties to create in the custom object
    * @return Object
    */
   @SuppressWarnings("unchecked")
@@ -817,7 +823,7 @@ public class ModelObject {
    * Method to create an object of type "sync" which relies on the values of other nodes within the
    * instance.
    * 
-   * @param propertyDef JSON definition of the node to be built.
+   * @param propertyDef JSON definition of the node to be built
    * @return String
    * @throws InvalidSyncReferenceException
    */
@@ -872,7 +878,7 @@ public class ModelObject {
   /**
    * Method to get the value at a specific property path.
    * 
-   * @param propertyPath full standard path to the property in the json object.
+   * @param propertyPath full standard path to the property in the json object
    * @param completeBranch boolean in indicate whether to build the rest of the branch if value not
    *        present
    * @return
@@ -992,7 +998,7 @@ public class ModelObject {
    * Method to complete a branch that is referenced by another while data is being generated
    * 
    * @param propertyPath path to the property in the JSON object
-   * @return
+   * @return Object
    */
   private Object completeBranchAndReturnValue(String propertyPath) {
     Object returnValue = null;
@@ -1103,7 +1109,7 @@ public class ModelObject {
    * Alternate signature for generateNodeValue if there is no intent to assign the value anywhere in
    * the objectMetadata
    * 
-   * @param propertyDef model definition to use when building value for a node.
+   * @param propertyDef model definition to use when building value for a node
    * @return Object
    */
   public Object generateNodeValue(JSONObject propertyDef) {
@@ -1122,9 +1128,9 @@ public class ModelObject {
    * respectively. If a path to be set is passed in, this method will not overwrite an existing
    * value at that path, should it find one.
    * 
-   * @param parentPath path to the parent node of the node to be set.
+   * @param parentPath path to the parent node of the node to be set
    * @param key name of the node.
-   * @param propertyDef model definition to use when building value for a node.
+   * @param propertyDef model definition to use when building value for a node
    * @return Object
    * @throws ModelSearchException thrown when the parent path cannot be found in the model
    */
@@ -1378,7 +1384,7 @@ public class ModelObject {
   }
 
   /**
-   * method to sync the JSONObject type objectMetadata
+   * method to sync the JSONObject type objectMetadata.
    * 
    * @param dataTree
    */
@@ -1394,7 +1400,7 @@ public class ModelObject {
   }
 
   /**
-   * Method to cast and post value to json node path
+   * Method to cast and post value to json node path.
    * 
    * @param type ModelPropertyType
    * @param pathToParent String Fully qualified path to parent node of the target
@@ -1436,46 +1442,52 @@ public class ModelObject {
   }
 
   /**
+   * Returns path to the Object.
    * 
-   * @return String path to the Object
+   * @return String
    */
   public String getObjectPath() {
     return objectPath;
   }
 
   /**
+   * Sets path to the Object.
    * 
-   * @param objectPath path to the Object
+   * @param objectPath path to the object
    */
   public void setObjectPath(String objectPath) {
     this.objectPath = objectPath;
   }
 
   /**
+   * Returns reference to the data generated for an instance of the Object Type given.
    * 
-   * @return reference to the data generated for an instance of the Object Type given
+   * @return JSONObject
    */
   public JSONObject getObjectMetadata() {
     return objectMetadata;
   }
 
   /**
+   * Manually sets the metadata for an object instance.
    * 
-   * @param data manually set the metadata for the object instance
+   * @param data JSONObject 
    */
   public void setObjectMetadata(JSONObject data) {
     objectMetadata = data;
   }
 
   /**
+   * Returns items for a model of type Array
    * 
-   * @return JSONArray of items for a model of type Array
+   * @return JSONArray 
    */
   public JSONArray getObjectItems() {
     return objectItems;
   }
 
   /**
+   * Manually sets the metadata for an array instance.
    * 
    * @param data JSONArray to be used for a ModelObject instance of type Array
    */
@@ -1484,10 +1496,10 @@ public class ModelObject {
   }
 
   /**
-   * Data to be set on specified index of items on a ModelObject of type Array
+   * Data to be set on specified index of items on a ModelObject of type Array.
    * 
-   * @param index position at which the item is to be set.
-   * @param data data to be set.
+   * @param index position at which the item is to be set
+   * @param data data to be set
    */
   @SuppressWarnings("unchecked")
   public void setDataAtItemsIndex(int index, JSONObject data) {
@@ -1500,7 +1512,7 @@ public class ModelObject {
   }
 
   /**
-   * Get data at specific index of objectItems on a ModelObject of type Array
+   * Get data at specific index of objectItems on a ModelObject of type Array.
    * 
    * @param index position of the item
    * @return JSONObject
@@ -1516,14 +1528,16 @@ public class ModelObject {
   }
 
   /**
+   * Returns objectName
    * 
-   * @return String objectName
+   * @return String 
    */
   public String getObjectName() {
     return objectName;
   }
 
   /**
+   * Sets the name of the object.  This field is often used in the default for a path segment in a REST api.
    * 
    * @param objectName name to be used as a string representation of the object (often used in REST
    *        path segments)
@@ -1533,8 +1547,9 @@ public class ModelObject {
   }
 
   /**
+   * Returns type of object as defined in the ride object types.
    * 
-   * @return String type of object as defined in the ride object types.
+   * @return String 
    * @see ModelPropertyType
    */
   public String getObjectType() {
@@ -1542,15 +1557,16 @@ public class ModelObject {
   }
 
   /**
+   * Returns location of the schema in the project resources.
    * 
-   * @return String location of the schema in the project resources.
+   * @return String 
    */
   public String getModelResourceLocation() {
     return resourceLocation;
   }
 
   /**
-   * Method to set value of existing key in the metadata
+   * Method to set value of existing key in the metadata.
    * 
    * @param property name of the key to be reset
    * @param value new value of the key
@@ -1564,9 +1580,9 @@ public class ModelObject {
   }
 
   /**
-   * * Method to get value of key in the Object metadata
+   * * Method to get value of key in the Object metadata.
    * 
-   * @param property String representation of the property to be retrieved.
+   * @param property string representation of the property to be retrieved.
    * @return Object representation of the value
    */
   public Object getObjectMetadataProperty(String property) {
@@ -1574,9 +1590,9 @@ public class ModelObject {
   }
 
   /**
-   * Get value of node at given path
+   * Get value of node at given path.
    * 
-   * @param path standard path to the node in the object instance to be retrieved.
+   * @param path standard path to the node in the object instance to be retrieved
    * @return Object
    */
   public Object getObjectMetadataValueAt(String path) {
@@ -1592,10 +1608,10 @@ public class ModelObject {
   }
 
   /**
-   * Method to remove a key/value pair the Object metadata
+   * Method to remove a key/value pair the Object metadata.
    * 
-   * @param property String representation of the property to be removed.
-   * @return boolean indicator of whether the property existed previously.
+   * @param property String representation of the property to be removed
+   * @return boolean indicator of whether the property existed previously
    */
   public boolean removeObjectMetadataProperty(String property) {
     boolean existed = false;

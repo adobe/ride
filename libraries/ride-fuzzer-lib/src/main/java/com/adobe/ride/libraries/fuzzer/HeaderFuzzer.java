@@ -14,14 +14,11 @@ package com.adobe.ride.libraries.fuzzer;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.core.globals.Headers;
 import com.adobe.ride.libraries.fuzzer.engines.CoreEngine;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.Filter;
@@ -45,25 +42,25 @@ public class HeaderFuzzer extends CoreEngine {
   private RequestSpecification requestSpec;
   private String header;
   protected Filter[] filters;
-  
+
   /**
    * Constructor to be used when fuzzing a header.
    * 
-   * @param reqSpec RequestSpecBuilder to be used in the call.
-   * @param path Path to be used in the call.
-   * @param headerToBeFuzzed Specific header to be targeted for fuzzing.
-   * @param method Method to be used.
+   * @param reqSpec RequestSpecBuilder to be used in the call
+   * @param path Path to be used in the call
+   * @param headerToBeFuzzed Specific header to be targeted for fuzzing
+   * @param method Method to be used
    */
 
   /**
    * Constructor to be used when fuzzing a header.
    * 
-   * @param serviceName Name of the service specified in the config properties
-   * @param reqSpec RequestSpecBuilder to be used in the call.
-   * @param path Path to be used in the call.
-   * @param headerToBeFuzzed Specific header to be targeted for fuzzing.
-   * @param method Method to be used.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param serviceName name of the service specified in the config properties
+   * @param reqSpec RequestSpecBuilder to be used in the call
+   * @param path path to be used in the call
+   * @param headerToBeFuzzed specific header to be targeted for fuzzing
+   * @param method http action to be invoked (i.e. POST, GET, PUT, etc.)
+   * @param filters Rest-Assured Filters to be used in the call
    */
   public HeaderFuzzer(String serviceName, RequestSpecBuilder reqSpec, String path,
       Headers headerToBeFuzzed, Method method, Filter... filters) {
@@ -79,7 +76,7 @@ public class HeaderFuzzer extends CoreEngine {
   /**
    * Internal method to define the RequestSpecBuilder with the fuzzed header.
    * 
-   * @param value fuzz Value.
+   * @param value fuzz Value
    * @return RequestSpecBuilder
    */
   private RequestSpecBuilder defineRequest(Object value) {
@@ -163,7 +160,7 @@ public class HeaderFuzzer extends CoreEngine {
   /**
    * Method to validate a 4xx error responses for expected failures and 2xx expected successes.
    * 
-   * @param response Rest-assured Response
+   * @param response Rest-Assured Response
    * @param expectSuccess boolean that indicate whether the call should pass or fail
    */
   public void validateResult(Response response, boolean expectSuccess) {
@@ -180,15 +177,15 @@ public class HeaderFuzzer extends CoreEngine {
   /**
    * Internal method to fire the REST call with the fuzzed header.
    * 
-   * @param bldr RequestSpecBuilder
+   * @param bldr Rest-Assured RequestSpecBuilder defining the call
    */
   private void fireREST(RequestSpecBuilder bldr) {
     ResponseSpecBuilder expectedValues = new ResponseSpecBuilder();
     // expectedValues.expectBody(JsonSchemaValidator.matchesJsonSchema(schema));
 
     ResponseSpecification expectedResponse = expectedValues.build();
-    Response response =
-        RestApiController.fireRestCall(serviceName, path, bldr, expectedResponse, RESTmethod, filters);
+    Response response = RestApiController.fireRestCall(serviceName, path, bldr, expectedResponse,
+        RESTmethod, filters);
 
     validateResult(response, false);
   }

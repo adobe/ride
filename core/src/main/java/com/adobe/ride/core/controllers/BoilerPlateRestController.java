@@ -99,11 +99,10 @@ public class BoilerPlateRestController extends RestApiController {
   /**
    * Method to get test-ready RequestSpecBuilder based on the header and test type passed
    * 
-   * @param builder Rest-assured request spec builder to be used in test call.
+   * @param builder Rest-Assured RequestSpecBuilder builder to be used in test call.
    * @param header name of the header to be tested
    * @param testType type of test to be run on the header
-   * @return RequestSpecBuilder passed in reqSpec builder modified to be ready to test the given
-   *         header.
+   * @return RequestSpecBuilder modified specification.
    */
   private static RequestSpecBuilder getTestReqSpecBuilder(RequestSpecBuilder builder,
       HeaderItem header, TestType testType) {
@@ -135,10 +134,11 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param header header to be tested
    * @param testType type of test to be run
-   * @param method http action (i.e. POST, PUT, GET)
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param method http action to be invoked (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Any Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response negativeHeaderTest(HeaderItem header, TestType testType, Method method,
@@ -152,13 +152,14 @@ public class BoilerPlateRestController extends RestApiController {
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception of the header specified and the type of negative test.
    * 
-   * @param reqBuilder Rest-assured request spec builder upon which to base the test.
+   * @param reqBuilder Rest-Assured RequestSpecBuilder builder upon which to base the test.
    * @param header header to be tested
    * @param testType type of test to be run
-   * @param method http action (i.e. POST, PUT, GET)
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param method http action to be invoked (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response negativeHeaderTest(RequestSpecBuilder reqBuilder, HeaderItem header,
@@ -168,22 +169,23 @@ public class BoilerPlateRestController extends RestApiController {
         (testType == TestType.INVALID) ? ExpectedResponse.NOT_ACCEPTABLE_RESPONSE
             : ExpectedResponse.UNSUPPORTED_MEDIA_TYPE_RESPONSE;
 
-    return negativeHeaderTest(expResponse, reqBuilder, header, testType, method, serviceName, object,
-        filters);
+    return negativeHeaderTest(expResponse, reqBuilder, header, testType, method, serviceName,
+        object, filters);
   }
 
   /**
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception of the header specified and the type of negative test.
    * 
-   * @param expResponse Rest-assure Response spec defining the expected response.
-   * @param reqBuilder Rest-assured request spec builder upon which to base the test.
+   * @param expResponse Rest-assured ResponseSpecification defining the expected response
+   * @param reqBuilder Rest-Assured RequestSpecBuilder builder upon which to base the test
    * @param header header to be tested
    * @param testType type of test to be run
-   * @param method http action (i.e. POST, PUT, GET)
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param method http action to be invoked (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response negativeHeaderTest(ResponseSpecification expResponse,
@@ -203,9 +205,10 @@ public class BoilerPlateRestController extends RestApiController {
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception excluding an Authorization header which normally contains a bearer token.
    * 
-   * @param method http action (i.e. POST, PUT, GET)
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
+   * @param method http action to be invoked (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
    * @return Response
    */
   public static Response negativeAuthTest(Method method, String serviceName, ModelObject object) {
@@ -216,14 +219,15 @@ public class BoilerPlateRestController extends RestApiController {
    * Method to create a call and fire a call against an api which is configured correctly with the
    * exception excluding an Authorization header which normally contains a bearer token.
    * 
-   * @param reqBuilder Rest-assured request spec builder upon which to base the test.
-   * @param method http action (i.e. POST, PUT, GET)
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
+   * @param reqBuilder Rest-Assured RequestSpecBuilder builder upon which to base the test.
+   * @param method http action to be invoked (i.e. POST, PUT, GET)
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
    * @return Response
    */
-  public static Response negativeAuthTest(RequestSpecBuilder reqBuilder, Method method, String serviceName,
-      ModelObject object) {
+  public static Response negativeAuthTest(RequestSpecBuilder reqBuilder, Method method,
+      String serviceName, ModelObject object) {
     if (reqBuilder == null) {
       reqBuilder = getDefaultTestReqSpecBuilder();
     }
@@ -243,11 +247,12 @@ public class BoilerPlateRestController extends RestApiController {
 
 
   /**
-   * Boilerplate test for GET with invalid Accept header
+   * Boilerplate test for GET with invalid Accept header.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Any Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response testGetWithInvalidAcceptHeader(String serviceName, ModelObject object,
@@ -257,11 +262,12 @@ public class BoilerPlateRestController extends RestApiController {
   }
 
   /**
-   * Boilerplate test for GET with unsupported Accept header
+   * Boilerplate test for GET with unsupported Accept header.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response testGetWithUnsupportedAcceptHeader(String serviceName, ModelObject object,
@@ -273,7 +279,8 @@ public class BoilerPlateRestController extends RestApiController {
   /**
    * Boilerplate test for unauthenticated GET call.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
    * @param object ModelObject used in conjunction with the call.
    * @return Response
    */
@@ -284,9 +291,10 @@ public class BoilerPlateRestController extends RestApiController {
   /**
    * Boilerplate test for POST with invalid Accept header
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response testPostWithInvalidAcceptHeader(String serviceName, ModelObject object,
@@ -296,24 +304,26 @@ public class BoilerPlateRestController extends RestApiController {
   }
 
   /**
-   * Boilerplate test for POST with unsupported Accept header
+   * Boilerplate test for POST with unsupported Accept header.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response testPostWithUnsupportedAcceptHeader(String serviceName, ModelObject object,
       Filter... filters) {
-    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.POST, serviceName, object,
-        filters);
+    return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.POST, serviceName,
+        object, filters);
   }
 
   /**
-   * Boilerplate test for unauthenticated POST call
+   * Boilerplate test for unauthenticated POST call.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
    * @return Response
    */
   public static Response testPostUnAuthenticated(String serviceName, ModelObject object) {
@@ -321,11 +331,12 @@ public class BoilerPlateRestController extends RestApiController {
   }
 
   /**
-   * Boilerplate test for PUT with invalid Accept header
+   * Boilerplate test for PUT with invalid Accept header.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response testPutWithInvalidAcceptHeader(String serviceName, ModelObject object,
@@ -335,11 +346,12 @@ public class BoilerPlateRestController extends RestApiController {
   }
 
   /**
-   * Boilerplate test for PUT with unsupported Accept header
+   * Boilerplate test for PUT with unsupported Accept header.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
-   * @param filters Any Rest-assured filters to be used in the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
+   * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
   public static Response testPutWithUnsupportedAcceptHeader(String serviceName, ModelObject object,
@@ -347,12 +359,13 @@ public class BoilerPlateRestController extends RestApiController {
     return negativeHeaderTest(Headers.ACCEPT, TestType.UNSUPPORTED, Method.PUT, serviceName, object,
         filters);
   }
-  
+
   /**
-   * Boilerplate test for unauthenticated PUT call
+   * Boilerplate test for unauthenticated PUT call.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
    * @return Response
    */
   public static Response testPutUnAuthenticated(String serviceName, ModelObject object) {
@@ -360,10 +373,11 @@ public class BoilerPlateRestController extends RestApiController {
   }
 
   /**
-   * Boilerplate test for unauthenticated DELETE call
+   * Boilerplate test for unauthenticated DELETE call.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources
-   * @param object ModelObject used in conjunction with the call.
+   * @param serviceName name of the service, which is a mapping to the config folder in the project
+   *        resources
+   * @param object ModelObject used in conjunction with the call
    * @return Response
    */
   public static Response testDeleteUnAuthenticated(String serviceName, ModelObject object) {

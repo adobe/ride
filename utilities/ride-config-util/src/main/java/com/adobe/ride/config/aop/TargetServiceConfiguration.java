@@ -36,8 +36,7 @@ public class TargetServiceConfiguration {
    * Constructor for the TargetServiceConfiguration class. All of these arguments will be passed in
    * from the properties files as part of the config-util workflow.
    * 
-   * @param serviceName String used in config files to reference the endpoint construction and other
-   *        vars when the config util is invoked
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
    * @param schema internet protocol schema used in the endpoint (i.e. http, https, etc.)
    * @param endpoint endpoint of the service
    * @param port port the service uses (i.e. 80, 443, etc.)
@@ -54,7 +53,7 @@ public class TargetServiceConfiguration {
   }
 
   /**
-   * Return the name of the service url being constructed.
+   * Returns the name of the service url being constructed.
    * 
    * @return String
    */
@@ -63,7 +62,7 @@ public class TargetServiceConfiguration {
   }
 
   /**
-   * Return the schema of the service url being constructed.
+   * Returns the schema of the service url being constructed.
    * 
    * @return String
    */
@@ -72,7 +71,7 @@ public class TargetServiceConfiguration {
   }
 
   /**
-   * Return the endpoint of the service url being constructed.
+   * Returns the endpoint of the service url being constructed.
    * 
    * @return String
    */
@@ -81,7 +80,7 @@ public class TargetServiceConfiguration {
   }
 
   /**
-   * Return the port of the service url being constructed.
+   * Returns the port of the service url being constructed.
    * 
    * @return String
    */
@@ -90,7 +89,7 @@ public class TargetServiceConfiguration {
   }
 
   /**
-   * Return the base path of the service url being constructed.
+   * Returns the base path of the service url being constructed.
    * 
    * @return String
    */
@@ -99,7 +98,7 @@ public class TargetServiceConfiguration {
   }
 
   /**
-   * Return the base uri of the service url being constructed.
+   * Returns the base uri of the service url being constructed.
    * 
    * @return String
    */
@@ -108,7 +107,7 @@ public class TargetServiceConfiguration {
   }
 
   /**
-   * Return the full url being constructed.
+   * Returns the full url being constructed.
    * 
    * @return String
    */

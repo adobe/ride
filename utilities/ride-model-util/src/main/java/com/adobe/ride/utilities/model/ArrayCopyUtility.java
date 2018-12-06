@@ -26,7 +26,7 @@ public class ArrayCopyUtility {
    * isn't stored in an external mutable object.
    * 
    * @param source The source array to be copied
-   * @return String[] A string array containing the copied source array.
+   * @return String[] A string array containing the copied source array
    */
   public static String[] copyStringArray(String[] source) {
     if (source != null) {

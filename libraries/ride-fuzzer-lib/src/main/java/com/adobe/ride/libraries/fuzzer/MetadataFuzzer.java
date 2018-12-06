@@ -41,115 +41,105 @@ public class MetadataFuzzer {
   /** Arrays to be dynamically populated with metadata info for fuzzing **/
   private Object[][] propertiesFuzzSet;
 
-  // private Object[][] linksFuzzSet;
-  // private Object[][] totalFuzzSet;
-
   /**
-   * Method to initialize the Fuzzer factory and related engine subcomponents
+   * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
-   * @param entityToBeFuzzed ModelObject of a subclass thereof
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
+   * @param objectToBeFuzzed ModelObject or a subclass thereof
    */
-  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed) {
-    initializeFuzzer(serviceName, entityToBeFuzzed, null, null, null);
+  public MetadataFuzzer(String serviceName, ModelObject objectToBeFuzzed) {
+    initializeFuzzer(serviceName, objectToBeFuzzed, null, null, null);
   }
 
   /**
-   * Method to initialize the Fuzzer factory and related engine subcomponents
+   * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
-   * @param entityToBeFuzzed ModelObject of a subclass thereof
-   * @param builder RequestSpecBuilder custom specification to be used in the fuzzer calls. If null,
-   *        a base spec with only Authorization, Content-Type, and Accepts set. The latter two set
-   *        to a json variant,
+   * @param serviceName name of the target service, which is a mapping to the config folder in the
+   *        project resources
+   * @param objectToBeFuzzed ModelObject or a subclass thereof
+   * @param builder RequestSpecBuilder to be used in the fuzzer calls. If null, a base spec with
+   *        only Authorization, Content-Type, and Accepts set, with the latter two set to a json
+   *        variant
    */
-  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed,
+  public MetadataFuzzer(String serviceName, ModelObject objectToBeFuzzed,
       RequestSpecBuilder builder) {
-    initializeFuzzer(serviceName, entityToBeFuzzed, builder, null, null);
+    initializeFuzzer(serviceName, objectToBeFuzzed, builder, null, null);
   }
 
   /**
-   * Method to initialize the Fuzzer factory and related engine subcomponents
+   * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
-   * @param entityToBeFuzzed ModelObject of a subclass thereof
-   * @param builder RequestSpecBuilder custom specification to be used in the fuzzer calls. If null,
-   *        a base spec with only Authorization, Content-Type, and Accepts set. The latter two set
-   *        to a json variant,
-   * @param method Method http verb to be used in the call. If null, PUT is used.
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
+   * @param objectToBeFuzzed ModelObject or a subclass thereof
+   * @param builder RequestSpecBuilder to be used in the fuzzer calls. If null, a base spec with
+   *        only Authorization, Content-Type, and Accepts set, with the latter two set to a json
+   *        variant
+   * @param method Method http action to be invoked (i.e. POST, GET, etc.). If null, PUT is used.
    */
-  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed,
+  public MetadataFuzzer(String serviceName, ModelObject objectToBeFuzzed,
       RequestSpecBuilder builder, Method method) {
-    initializeFuzzer(serviceName, entityToBeFuzzed, builder, method, null);
+    initializeFuzzer(serviceName, objectToBeFuzzed, builder, method, null);
   }
 
   /**
-   * Method to initialize the Fuzzer factory and related engine subcomponents
+   * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
-   * @param entityToBeFuzzed ModelObject of a subclass thereof
-   * @param builder RequestSpecBuilder custom specification to be used in the fuzzer calls. If null,
-   *        a base spec with only Authorization, Content-Type, and Accepts set. The latter two set
-   *        to a json variant,
-   * @param method Method http verb to be used in the call. If null, PUT is used.
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
+   * @param objectToBeFuzzed ModelObject or a subclass thereof
+   * @param builder RequestSpecBuilder to be used in the fuzzer calls. If null, a base spec with
+   *        only Authorization, Content-Type, and Accepts set, with the latter two set to a json
+   *        variant
+   * @param method Method http action to be invoked (i.e. POST, GET, etc.). If null, PUT is used
    * @param contentType String content type header value (if null, default is
    *        "application/json;charset=utf-8")
    */
-  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed,
+  public MetadataFuzzer(String serviceName, ModelObject objectToBeFuzzed,
       RequestSpecBuilder builder, Method method, String contentType) {
-    initializeFuzzer(serviceName, entityToBeFuzzed, builder, method, contentType);
+    initializeFuzzer(serviceName, objectToBeFuzzed, builder, method, contentType);
   }
-  
+
   /**
-   * Method to initialize the Fuzzer factory and related engine subcomponents
+   * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
-   * @param entityToBeFuzzed ModelObject of a subclass thereof
-   * @param builder RequestSpecBuilder custom specification to be used in the fuzzer calls. If null,
-   *        a base spec with only Authorization, Content-Type, and Accepts set. The latter two set
-   *        to a json variant,
-   * @param method Method http verb to be used in the call. If null, PUT is used.
-   * @param contentType String content type header value (if null, default is
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
+   * @param objectToBeFuzzed ModelObject or a subclass thereof
+   * @param builder RequestSpecBuilder to be used in the fuzzer calls. If null, a base spec with
+   *        only Authorization, Content-Type, and Accepts set, with the latter two set to a json
+   *        variant
+   * @param method Method http action to be invoked (i.e. POST, GET, etc.). If null, PUT is used
+   * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
    * @param filter Filter to be applied to calls.
    */
-  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed,
+  public MetadataFuzzer(String serviceName, ModelObject objectToBeFuzzed,
       RequestSpecBuilder builder, Method method, String contentType, Filter filter) {
-    initializeFuzzer(serviceName, entityToBeFuzzed, builder, method, contentType, filter);
+    initializeFuzzer(serviceName, objectToBeFuzzed, builder, method, contentType, filter);
   }
-  /**
-   * Cruft method left over before streamlining. Leaving in for backwards compatibility
-   * 
-   * @param entityToBeFuzzed 
-   * @param requestMethod 
-   * @param contentType string content type header value (if null, default is
-   *        "application/json;charset=utf-8")
-   */
 
   /**
+   * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName String representation of the service name, maps back to a config file for
-   *        environment configuration
-   * @param entityToBeFuzzed ModelObject subclass instance to be fuzzed.
-   * @param method method with which to call the api (if null, default is PUT)
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
+   * @param objectToBeFuzzed ModelObject subclass instance to be fuzzed.
+   * @param method http action to be invoked (i.e. POST, GET, etc.). If null, PUT is used
    * @param contentType content type header value (if null, default is
    *        "application/json;charset=utf-8")
    */
-  public MetadataFuzzer(String serviceName, ModelObject entityToBeFuzzed, Method method,
+  public MetadataFuzzer(String serviceName, ModelObject objectToBeFuzzed, Method method,
       String contentType) {
-    initializeFuzzer(serviceName, entityToBeFuzzed, null, method, contentType);
+    initializeFuzzer(serviceName, objectToBeFuzzed, null, method, contentType);
   }
 
-  private void initializeFuzzer(String serviceName, ModelObject entityToBeFuzzed,
+  private void initializeFuzzer(String serviceName, ModelObject objectToBeFuzzed,
       RequestSpecBuilder requestBuilder, Method method, String contentType, Filter... filters) {
 
     // Populate global properties
-    this.entity = entityToBeFuzzed;
+    this.entity = objectToBeFuzzed;
     this.requestMethod = method;
     this.serviceName = serviceName;
     this.properties = this.entity.getModelProperties();
@@ -162,19 +152,14 @@ public class MetadataFuzzer {
 
     // Prep TestNG dataprovider to make reporting better.
     populateFuzzSet(properties, propertiesFuzzSet, "rootProperty");
-
-    // Join root properties set with mined _links set
-    // totalFuzzSet = joinArrays(propertiesFuzzSet, linksFuzzSet);
   }
-
-
 
   /**
    * Function which turns the properties of the model into a dataprovider for the fuzzer to use.
    * 
-   * @param set JSONObject representing a set of metadata nodes.
-   * @param fuzzSet The array in which the data will be pushed
-   * @param propertyType Indicator specifying links or root property.
+   * @param set JSONObject representing a set of metadata nodes
+   * @param fuzzSet the array in which the data will be pushed
+   * @param propertyType indicator specifying links or root property
    * @throws UnexpectedModelPropertyTypeException
    */
   private void populateFuzzSet(JSONObject set, Object[][] fuzzSet, String propertyType) {
@@ -184,13 +169,6 @@ public class MetadataFuzzer {
       for (int i = 0; i < keys.length; i++) {
         JSONObject obj = (JSONObject) set.get(keys[i]);
         ModelPropertyType type = ModelObject.getModelPropertyType(obj);
-        /*-
-        if (keys[i].equals("_links")) {
-          JSONObject linksProperties = (JSONObject) obj.get("properties");
-          linksFuzzSet = new Object[linksProperties.keySet().size()][3];
-          populateFuzzSet(linksProperties, linksFuzzSet, "linksProperty");
-        }
-        */
 
         fuzzSet[i][0] = keys[i].toString();
         fuzzSet[i][1] = (ModelPropertyType) type;
@@ -232,17 +210,12 @@ public class MetadataFuzzer {
    * @return Object[]
    */
   @Factory
-  public Object[] fuzzProperties(){
+  public Object[] fuzzProperties() {
     Object[] result = new Object[propertiesFuzzSet.length];
-    // new Object[totalFuzzSet.length]; //see note about _links properties above
-    // for (int i = 0; i < totalFuzzSet.length; i++) {
     for (int i = 0; i < propertiesFuzzSet.length; i++) {
-      // String currentkey = totalFuzzSet[i][0].toString();
       String currentkey = propertiesFuzzSet[i][0].toString();
-      // ModelPropertyType type = (ModelPropertyType) totalFuzzSet[i][1];
       ModelPropertyType type = (ModelPropertyType) propertiesFuzzSet[i][1];
       Object currentValue = instance.get(currentkey);
-      // boolean isLinksProperty = (totalFuzzSet[i][2] == "linksProperty");
 
       result[i] = new MetadataEngine(serviceName, entity, currentkey, type, currentValue,
           requestMethod, contentType, requestBuilder, filters);
