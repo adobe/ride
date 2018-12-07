@@ -13,22 +13,18 @@ governing permissions and limitations under the License.
 package com.adobe.ride.core.controllers;
 
 import static io.restassured.RestAssured.given;
-
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import com.adobe.ride.config.aop.TargetServiceConfiguration;
 import com.adobe.ride.config.management.TestProperties;
 import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.globals.Headers;
 import com.adobe.ride.utilities.model.ModelObject;
-
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.ConnectionConfig;
@@ -60,8 +56,8 @@ public class RestApiController extends RideCore {
   /**
    * Use to ensure logging is always enabled for RA requests.
    *
-   * @param useDefaultHeaders If true, enables default content-type, accept, and client headers.
-   * @param filters The custom Rest-Assured filter to apply to the request.
+   * @param useDefaultHeaders If true, enables default content-type, accept, and client headers
+   * @param filters The custom Rest-Assured filter to apply to the request
    * @return RequestSpecBuilder
    */
   public static RequestSpecBuilder getRequestBuilder(boolean useDefaultHeaders, Filter... filters) {
@@ -100,9 +96,9 @@ public class RestApiController extends RideCore {
 
   /**
    * Utility method which returns a prepared RequestSpecBuilder to the API calls if the caller
-   * hasn't passed one
+   * hasn't passed one.
    *
-   * @param requestSpec Rest-Assured definitions for the call.
+   * @param requestSpec Rest-Assured definitions for the call
    * @param object name of the target REST object, usually a segment in the path
    * @param method http action to be invoked (i.e. POST, GET, etc.)
    * @return RequestSpecBuilder
@@ -127,11 +123,12 @@ public class RestApiController extends RideCore {
   /**
    * Static method for making Rest-Assured DELETE requests.
    *
-   * @param serviceName name of the target service, which is a mapping to the config folder in resources
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
-   * @param filters RestAssured Filters
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response delete(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
@@ -142,11 +139,12 @@ public class RestApiController extends RideCore {
   /**
    * Static method for making Rest-Assured GET requests.
    *
-   * @param serviceName name of the target service, which is a mapping to the config folder in resources
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
-   * @param filters RestAssured Filters
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response get(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
@@ -157,11 +155,12 @@ public class RestApiController extends RideCore {
   /**
    * Static method for making Rest-Assured HEAD requests.
    *
-   * @param serviceName name of the target service, which is a mapping to the config folder in resources
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
-   * @param filters RestAssured Filters
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response head(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
@@ -172,26 +171,29 @@ public class RestApiController extends RideCore {
   /**
    * Static method for making Rest-Assured OPTIONS requests.
    *
-   * @param serviceName name of the target service, which is a mapping to the config folder in resources
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
-   * @param filters RestAssured Filters
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response options(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
       ResponseSpecification expectedResponse, Filter... filters) {
-    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.OPTIONS, filters);
+    return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.OPTIONS,
+        filters);
   }
 
   /**
    * Static method for making Rest-Assured PATCH requests.
    *
-   * @param serviceName name of the target service, which is a mapping to the config folder in resources
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
-   * @param filters RestAssured Filters
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response patch(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
@@ -202,11 +204,12 @@ public class RestApiController extends RideCore {
   /**
    * Static method for making Rest-Assured POST requests.
    *
-   * @param serviceName name of the target service, which is a mapping to the config folder in resources
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
-   * @param filters RestAssured Filters
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response post(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
@@ -217,11 +220,12 @@ public class RestApiController extends RideCore {
   /**
    * Static method for making Rest-Assured PUT requests.
    *
-   * @param serviceName name of the target service, which is a mapping to the config folder in resources
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
-   * @param filters RestAssured Filters
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response put(String serviceName, String restAPI, RequestSpecBuilder reqBuilder,
@@ -229,8 +233,8 @@ public class RestApiController extends RideCore {
     return fireRestCall(serviceName, restAPI, reqBuilder, expectedResponse, Method.PUT, filters);
   }
 
-  private static RequestSpecification prepRequest(String serviceName,
-      RequestSpecBuilder reqBuilder, Filter... filters) {
+  private static RequestSpecification prepRequest(String serviceName, RequestSpecBuilder reqBuilder,
+      Filter... filters) {
     RequestSpecification req;
     TestProperties tp = TestProperties.getInstance();
     TargetServiceConfiguration targetService = tp.getTargetServiceConfig(serviceName);
@@ -246,12 +250,12 @@ public class RestApiController extends RideCore {
   /**
    * Static method for making Rest-Assured REST requests.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources.
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
    * @param method http action to be invoked (i.e. POST, GET, etc.)
-   * @param filters RestAssured Filters
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response fireRestCall(String serviceName, String restAPI,
@@ -287,11 +291,11 @@ public class RestApiController extends RideCore {
    * Static method for making Rest-Assured REST requests with logging disabled.
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in resources.
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
    * @param method http action to be invoked (i.e. POST, GET, etc.)
-   * @param filters RestAssured Filters
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static Response fireRestCallWithNoLogging(String serviceName, String restAPI,
@@ -323,14 +327,14 @@ public class RestApiController extends RideCore {
   }
 
   /**
-   * Static method for making Rest-Assured REST requests with logging disabled.
+   * Static method for making opening a REST input stream.
    * 
-   * @param serviceName name of the service, which is a mapping to the config folder in resources.
-   * @param restAPI The specific API to test ex: "/myApi".
-   * @param reqBuilder RestAssured RequestSpecBuilder for constructing RA request.
-   * @param expectedResponse RestAssured ResponseSpecification for validating the response
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param restAPI The specific API to test ex: "/myApi"
+   * @param reqBuilder Rest-Assured RequestSpecBuilder for constructing RA request
+   * @param expectedResponse Rest-Assured ResponseSpecification for validating the response
    * @param method http action to be invoked (i.e. POST, GET, etc.)
-   * @param filters RestAssured Filters
+   * @param filters Rest-Assured Filters
    * @return Response
    */
   public static InputStream openRestStream(String serviceName, String restAPI,

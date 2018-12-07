@@ -275,7 +275,7 @@ public class ModelObject {
   /**
    * Constructor to initialize with a JSON schema string
    * 
-   * @param modelString string which conforms to JSON schema standards.
+   * @param modelString string which conforms to JSON schema standards
    * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
    *        defined in the spec
    */
@@ -389,7 +389,7 @@ public class ModelObject {
    * to. If it encounters a type that is not enumerated, it throws the
    * {@link UnexpectedModelPropertyTypeException} Exception.
    * 
-   * @param object JSONObject node in the model from which the type is to be determined.
+   * @param object JSONObject node in the model from which the type is to be determined
    * @return ModelPropertyType One of the enumerated ModelPropertyTypes
    * @throws UnexpectedModelPropertyTypeException thrown when one or more of the ModelPropertyTypes
    *         of the nodes passed in the JSONObject cannot be determined
@@ -478,7 +478,7 @@ public class ModelObject {
    * model doesn't have that property, or that property doesn't not have a 'pattern' key, it throws
    * a {@link ModelSearchException}.
    * 
-   * @param property model node from which the RegEx pattern specification is to be returned.
+   * @param property model node from which the RegEx pattern specification is to be returned
    * @return String
    * @throws ModelSearchException Exception thrown when function cannot find the property associated
    *         with the property parameter
@@ -1471,7 +1471,7 @@ public class ModelObject {
   /**
    * Manually sets the metadata for an object instance.
    * 
-   * @param data JSONObject 
+   * @param data JSONObject
    */
   public void setObjectMetadata(JSONObject data) {
     objectMetadata = data;
@@ -1480,7 +1480,7 @@ public class ModelObject {
   /**
    * Returns items for a model of type Array
    * 
-   * @return JSONArray 
+   * @return JSONArray
    */
   public JSONArray getObjectItems() {
     return objectItems;
@@ -1530,14 +1530,15 @@ public class ModelObject {
   /**
    * Returns objectName
    * 
-   * @return String 
+   * @return String
    */
   public String getObjectName() {
     return objectName;
   }
 
   /**
-   * Sets the name of the object.  This field is often used in the default for a path segment in a REST api.
+   * Sets the name of the object. This field is often used in the default for a path segment in a
+   * REST api.
    * 
    * @param objectName name to be used as a string representation of the object (often used in REST
    *        path segments)
@@ -1549,7 +1550,7 @@ public class ModelObject {
   /**
    * Returns type of object as defined in the ride object types.
    * 
-   * @return String 
+   * @return String
    * @see ModelPropertyType
    */
   public String getObjectType() {
@@ -1559,7 +1560,7 @@ public class ModelObject {
   /**
    * Returns location of the schema in the project resources.
    * 
-   * @return String 
+   * @return String
    */
   public String getModelResourceLocation() {
     return resourceLocation;
@@ -1582,7 +1583,7 @@ public class ModelObject {
   /**
    * * Method to get value of key in the Object metadata.
    * 
-   * @param property string representation of the property to be retrieved.
+   * @param property string representation of the property to be retrieved
    * @return Object representation of the value
    */
   public Object getObjectMetadataProperty(String property) {
