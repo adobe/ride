@@ -155,7 +155,7 @@ public class MetadataFuzzer {
   }
 
   /**
-   * Function which turns the properties of the model into a dataprovider for the fuzzer to use.
+   * Method which turns the properties of the model into a dataprovider for the fuzzer to use.
    * 
    * @param set JSONObject representing a set of metadata nodes
    * @param fuzzSet the array in which the data will be pushed

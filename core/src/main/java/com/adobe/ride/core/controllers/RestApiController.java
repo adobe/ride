@@ -57,7 +57,7 @@ public class RestApiController extends RideCore {
    * Use to ensure logging is always enabled for RA requests.
    *
    * @param useDefaultHeaders If true, enables default content-type, accept, and client headers
-   * @param filters The custom Rest-Assured filter to apply to the request
+   * @param filters Rest-Assured filters to apply to the request
    * @return RequestSpecBuilder
    */
   public static RequestSpecBuilder getRequestBuilder(boolean useDefaultHeaders, Filter... filters) {
@@ -99,7 +99,7 @@ public class RestApiController extends RideCore {
    * hasn't passed one.
    *
    * @param requestSpec Rest-Assured definitions for the call
-   * @param object name of the target REST object, usually a segment in the path
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param method http action to be invoked (i.e. POST, GET, etc.)
    * @return RequestSpecBuilder
    */

@@ -161,7 +161,7 @@ public class HeaderFuzzer extends CoreEngine {
    * Method to validate a 4xx error responses for expected failures and 2xx expected successes.
    * 
    * @param response Rest-Assured Response
-   * @param expectSuccess boolean that indicate whether the call should pass or fail
+   * @param expectSuccess boolean that indicates whether the call should pass or fail
    */
   public void validateResult(Response response, boolean expectSuccess) {
     int code = response.getStatusCode();

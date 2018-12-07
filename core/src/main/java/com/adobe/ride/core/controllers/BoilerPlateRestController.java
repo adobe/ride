@@ -137,7 +137,7 @@ public class BoilerPlateRestController extends RestApiController {
    * @param method http action to be invoked (i.e. POST, PUT, GET)
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Any Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -158,7 +158,7 @@ public class BoilerPlateRestController extends RestApiController {
    * @param method http action to be invoked (i.e. POST, PUT, GET)
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -184,7 +184,7 @@ public class BoilerPlateRestController extends RestApiController {
    * @param method http action to be invoked (i.e. POST, PUT, GET)
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -208,7 +208,7 @@ public class BoilerPlateRestController extends RestApiController {
    * @param method http action to be invoked (i.e. POST, PUT, GET)
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @return Response
    */
   public static Response negativeAuthTest(Method method, String serviceName, ModelObject object) {
@@ -223,7 +223,7 @@ public class BoilerPlateRestController extends RestApiController {
    * @param method http action to be invoked (i.e. POST, PUT, GET)
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @return Response
    */
   public static Response negativeAuthTest(RequestSpecBuilder reqBuilder, Method method,
@@ -251,7 +251,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Any Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -266,7 +266,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -281,7 +281,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call.
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call.
    * @return Response
    */
   public static Response testGetUnAuthenticated(String serviceName, ModelObject object) {
@@ -293,7 +293,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -308,7 +308,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -323,7 +323,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @return Response
    */
   public static Response testPostUnAuthenticated(String serviceName, ModelObject object) {
@@ -335,7 +335,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -350,7 +350,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @param filters Rest-Assured filters to be used in the call
    * @return Response
    */
@@ -365,7 +365,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @return Response
    */
   public static Response testPutUnAuthenticated(String serviceName, ModelObject object) {
@@ -377,7 +377,7 @@ public class BoilerPlateRestController extends RestApiController {
    * 
    * @param serviceName name of the service, which is a mapping to the config folder in the project
    *        resources
-   * @param object ModelObject used in conjunction with the call
+   * @param object ModelObject, or a subclass thereof, used in conjunction with the call
    * @return Response
    */
   public static Response testDeleteUnAuthenticated(String serviceName, ModelObject object) {

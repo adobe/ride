@@ -1384,7 +1384,7 @@ public class ModelObject {
   }
 
   /**
-   * method to sync the JSONObject type objectMetadata.
+   * Method to sync the JSONObject type objectMetadata.
    * 
    * @param dataTree
    */

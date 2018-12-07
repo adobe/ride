@@ -13,23 +13,19 @@ governing permissions and limitations under the License.
 package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.net.URI;
-
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 // import java.util.UUID;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
-
 import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.utilities.model.ModelObject;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
 import com.adobe.ride.utilities.model.types.ModelPropertyType;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.Filter;

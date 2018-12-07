@@ -96,9 +96,10 @@ public class TestNGReporterLogFilter implements Filter {
   }
 
   /**
-   * construction method for getting a serialized list of the the headers used in the call.
+   * Construction method for getting a serialized list of the the params and their values used in
+   * the call.
    * 
-   * @param reqParams query params used in the call.
+   * @param reqParams query params used in the call
    * @return String
    */
   private String getParamsString(Object reqParams) {
@@ -114,7 +115,7 @@ public class TestNGReporterLogFilter implements Filter {
   /**
    * Construction method for getting a string rep of the call body.
    * 
-   * @param body body of the call.
+   * @param body body of the call
    * @return
    */
   private String getBodyString(Object body, String type) {
