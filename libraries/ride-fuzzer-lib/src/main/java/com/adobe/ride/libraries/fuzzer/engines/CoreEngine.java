@@ -14,13 +14,10 @@ package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.io.IOException;
 import java.util.logging.Level;
-
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
-
 import com.adobe.ride.core.RideCore;
-
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.ResponseSpecification;
@@ -50,11 +47,10 @@ public class CoreEngine extends RideCore {
   /**
    * Constructor for the core engine which initializes key members for subclasses.
    * 
-   * @param scope String used to specify the scope of the testing for reporting (for example
-   *        "article" in the metadata fuzzer).
-   * @param target Target field to be fuzzed (for example a part of of a path or a metadata
-   *        property).
-   * @throws IOException
+   * @param scope string used to specify the scope of the testing for reporting (for example
+   *        "article" in the metadata fuzzer)
+   * @param target target field to be fuzzed (for example a part of of a path or a metadata
+   *        property)
    */
   public CoreEngine(String scope, String target) {
     try {
@@ -77,7 +73,10 @@ public class CoreEngine extends RideCore {
   /**
    * Method to validate a 4xx error responses for expected failures and 2xx expected successes.
    * 
-   * @param response
+   * @param property JSON key to be tested
+   * @param testedValue value passed
+   * @param response Rest-Assured representation of the response the call returned
+   * @param expectSuccess boolean indicating whether the call should pass or fail
    */
   public void validateResult(String property, Object testedValue, Response response,
       boolean expectSuccess) {
@@ -101,10 +100,10 @@ public class CoreEngine extends RideCore {
   /**
    * Method to combine data for use in the dataProvider for reporting.
    * 
-   * @param valuesArray Fuzz values to be added to the DP
-   * @param scope Scope of the fuzz tests (i.e. "article" for MetadataFuzzer enabled tests).
-   * @param target Field to be fuzzed (i.e. a metadata node in the MetadataFuzzer tests).
-   * @return
+   * @param valuesArray fuzz values to be added to the DP
+   * @param scope scope of the fuzz tests (i.e. "article" for MetadataFuzzer enabled tests)
+   * @param target field to be fuzzed (i.e. a metadata node in the MetadataFuzzer tests)
+   * @return Object[][]
    */
   private Object[][] prepDP(Object[] valuesArray, String scope, String target) {
     Object[][] dpArray = new Object[valuesArray.length][3];
@@ -129,26 +128,46 @@ public class CoreEngine extends RideCore {
    * Methods to provide dataproviders for Fuzz test methods.
    */
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "nonStringsDP")
   public Object[][] nonStringsDataProvider() {
     return nonStringsFuzzValues;
   }
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "localizedStringsDP")
   public Object[][] localizedStringsDataProvider() {
     return localizedStringsFuzzValues;
   }
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "passiveSqlDP")
   public Object[][] passiveSQLInjectionDataProvider() {
     return passiveSQLInjectionFuzzValues;
   }
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "noSqlDP")
   public Object[][] noSQLInjectionDataProvider() {
     return noSQLInjectionFuzzValues;
   }
 
+  /**
+   * 
+   * @return Object[][]
+   */
   @DataProvider(name = "nonBooleanDP")
   public Object[][] nonBooleanDataProvider() {
     return nonBooleanFuzzValues;

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.adobe.ride</groupId>
@@ -7,6 +8,35 @@
   <packaging>pom</packaging>
   <name>ride-parent</name>
   <description>Adobe Ride Parent Pom</description>
+  <url>https://github.com/adobe/ride/</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Ted Casey</name>
+      <email>tedcasey@adobe.com</email>
+      <organization>Adobe, Inc.</organization>
+      <organizationUrl>http://www.adobe.com</organizationUrl>
+    </developer>
+    <developer>
+      <name>Erica Norton</name>
+      <email>enorton@adobe.com</email>
+      <organization>Adobe, Inc.</organization>
+      <organizationUrl>http://www.adobe.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/adobe/ride.git</connection>
+    <developerConnection>scm:git:ssh://github.com:adobe/ride.git</developerConnection>
+    <url>https://github.com/adobe/ride/tree/develop</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,8 +46,8 @@
     <rest-assured.version>3.0.6</rest-assured.version>
     <jackson.version>2.9.6</jackson.version>
   </properties>
-  
-  <distributionManagement> 
+
+  <distributionManagement>
     <repository>
       <id>sonatype-adobe-release</id>
       <name>sonatype-adobe-release</name>
@@ -56,7 +86,7 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.testng</groupId>
@@ -121,6 +151,37 @@
       <version>${jackson.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <modules>
     <module>../utilities/ride-model-util</module>

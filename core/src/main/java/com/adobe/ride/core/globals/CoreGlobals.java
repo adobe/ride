@@ -44,7 +44,7 @@ public class CoreGlobals {
       APIKey = Headers.CLIENT_API_KEY.defaultValue();
     }
 
-    // set Rest-assured loging to "all" if not specified
+    // set Rest-Assured loging to "all" if not specified
     if (System.getProperty(COMMAND_LINE_PROPERTY_LOG_LEVEL) != null) {
       if (null != LogLevel.valueOf(System.getProperty(COMMAND_LINE_PROPERTY_LOG_LEVEL))) {
         setLogLevel(LogLevel.valueOf(System.getProperty(COMMAND_LINE_PROPERTY_LOG_LEVEL)));

@@ -33,7 +33,14 @@ public class TargetServiceConfiguration {
   private final String serviceURL;
 
   /**
-   * Constructor
+   * Constructor for the TargetServiceConfiguration class. All of these arguments will be passed in
+   * from the properties files as part of the config-util workflow.
+   * 
+   * @param serviceName name of the service, which is a mapping to the config folder in resources
+   * @param schema internet protocol schema used in the endpoint (i.e. http, https, etc.)
+   * @param endpoint endpoint of the service
+   * @param port port the service uses (i.e. 80, 443, etc.)
+   * @param basePath if warranted ("/" for no base path)
    */
   public TargetServiceConfiguration(String serviceName, String schema, String endpoint, String port,
       String basePath) {
@@ -45,30 +52,65 @@ public class TargetServiceConfiguration {
     this.serviceURL = schema + "://" + endpoint + ":" + port + basePath;
   }
 
+  /**
+   * Returns the name of the service url being constructed.
+   * 
+   * @return String
+   */
   public String serviceName() {
     return serviceName;
   }
 
+  /**
+   * Returns the schema of the service url being constructed.
+   * 
+   * @return String
+   */
   public String schema() {
     return schema;
   }
 
+  /**
+   * Returns the endpoint of the service url being constructed.
+   * 
+   * @return String
+   */
   public String endpoint() {
     return endpoint;
   }
 
+  /**
+   * Returns the port of the service url being constructed.
+   * 
+   * @return String
+   */
   public int port() {
     return port;
   }
 
+  /**
+   * Returns the base path of the service url being constructed.
+   * 
+   * @return String
+   */
   public String basePath() {
     return basePath;
   }
 
+  /**
+   * Returns the base uri of the service url being constructed.
+   * 
+   * @return String
+   */
   public String getBaseURI() {
     return schema + "://" + endpoint;
   }
 
+  /**
+   * Returns the full url being constructed.
+   * 
+   * @return String
+   */
   public String getURL() {
     return serviceURL;
   }

@@ -13,23 +13,19 @@ governing permissions and limitations under the License.
 package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.net.URI;
-
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 // import java.util.UUID;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
-
 import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.utilities.model.ModelObject;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
 import com.adobe.ride.utilities.model.types.ModelPropertyType;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.Filter;
@@ -69,30 +65,60 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param entityObj {@link: EntityObject} to be fuzzed
-   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer.
-   * @param type {@link: ModelPropertyType} to be used in more fine grained fuzzing - TBD
-   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation.
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
+   * @param entityObj ModelObject to be fuzzed
+   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
+   * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
+   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation
    * @param requestMethod method with which to call the api (if null, default is PUT)
    * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
-   * @throws UnexpectedModelPropertyTypeException
    */
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType) {
     super(entityObj.getModelString(), property);
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        null, null);
+        null);
   }
 
+  /**
+   * Constructor for the class from which all of the fuzz target data is derived.
+   * 
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
+   * @param entityObj ModelObject to be fuzzed
+   * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
+   * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
+   * @param value Start value to be reset in the property to ensure fuzzing is done in isolation
+   * @param requestMethod method with which to call the api (if null, default is PUT)
+   * @param contentType string content type header value (if null, default is
+   *        "application/json;charset=utf-8")
+   * @param requestBuilder Rest-Assured request builder
+   */
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder) {
     super(entityObj.getModelString(), property);
     initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
-        requestBuilder, null);
+        requestBuilder);
   }
 
+  /**
+   * Constructor for the class from which all of the fuzz target data is derived.
+   * 
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
+   * @param entityObj ModelObject to be fuzzed
+   * @param property key in the metadata to be fuzzed. Passed by the MetadataFuzzer
+   * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
+   * @param value start value to be reset in the property to ensure fuzzing is done in isolation
+   * @param requestMethod http action to be invoked, i.e. POST, GET, etc.  If null, default is PUT
+   * @param contentType string content type header value (if null, default is
+   *        "application/json;charset=utf-8")
+   * @param requestBuilder Rest-Assured RequestSpecBuilder
+   * @param filters RestAssured Filters
+   */
   public MetadataEngine(String serviceName, ModelObject entityObj, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder, Filter... filters) {
@@ -153,8 +179,8 @@ public class MetadataEngine extends CoreEngine {
    * Method to determine if node is mutable by caller or only by the server (i.e. read/write
    * property or read-only)
    * 
-   * @param nodeDef
-   * @return
+   * @param nodeDef node to be tested
+   * @return boolean
    */
   private boolean getNodeMutability(JSONObject nodeDef) {
     boolean retVal = true;
@@ -170,7 +196,7 @@ public class MetadataEngine extends CoreEngine {
   }
 
   /**
-   * Method which determines whether the fuzz data injected into the metadata node should be allowed
+   * Method which determines whether the fuzz data injected into the metadata node should be allowed.
    * 
    * @param modelDataType - {@link: ModelPropertyType} of the node being fuzzed
    * @param fuzzDataType - {@link: ModelPropertyType} of the data being injected
@@ -224,7 +250,7 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Determine, for Integer node defs, if a "null" value (i.e. -1) is allowed.
    * 
-   * @param nodeDef JSON Definition of the schema node.
+   * @param nodeDef JSON Definition of the schema node
    * @return boolean
    */
   private boolean isUnsetNumberDef(JSONObject nodeDef) {
@@ -241,8 +267,8 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Return value of boolean property in node def, if it exists.
    * 
-   * @param nodeDef full JSON schema node definition.
-   * @param key String value of the key to be looked up.
+   * @param nodeDef full JSON schema node definition
+   * @param key String value of the key to be looked up
    * @return boolean
    */
   private boolean returnBooleanKeyValue(JSONObject nodeDef, String key) {
@@ -255,11 +281,11 @@ public class MetadataEngine extends CoreEngine {
 
   /**
    * For Nodes which are of type int, determine if the fuzz int value passed conforms to the
-   * definition
+   * definition.
    * 
    * @param fuzzValue Int value
-   * @param nodeDef Full JSON schema definition for the node.
-   * @return
+   * @param nodeDef Full JSON schema definition for the node
+   * @return boolean
    */
   private boolean validateInt(int fuzzValue, JSONObject nodeDef) {
     boolean retVal = true;
@@ -285,7 +311,7 @@ public class MetadataEngine extends CoreEngine {
    * definition For memory purposes, treating all numbers as floats.
    * 
    * @param fuzzValue float value
-   * @param nodeDef Full JSON schema definition for the node.
+   * @param nodeDef Full JSON schema definition for the node
    * @return
    */
   private boolean validateFloat(float fuzzValue, JSONObject nodeDef) {
@@ -311,10 +337,9 @@ public class MetadataEngine extends CoreEngine {
    * For node types of ANYOF, loop through them to see if the fuzz data conforms any of the
    * definition types.
    * 
-   * @param dataType Type of the fuzz data being injected.
+   * @param dataType Type of the fuzz data being injected
    * @param data fuzz data
    * @return boolean
-   * @throws UnexpectedModelPropertyTypeException
    */
   private boolean loopAnyOf(ModelPropertyType dataType, Object data) {
     boolean retVal = true;
@@ -341,9 +366,9 @@ public class MetadataEngine extends CoreEngine {
   /**
    * For nodes of type String, determine if the String passed in conforms to the schema definition.
    * 
-   * @param str String fuzz data.
-   * @param nodeDef Definition of the schema node.
-   * @return Boolean
+   * @param str String fuzz data
+   * @param nodeDef Definition of the schema node
+   * @return boolean
    */
   private boolean validateStr(String str, JSONObject nodeDef) {
     boolean retVal = true;
@@ -368,9 +393,9 @@ public class MetadataEngine extends CoreEngine {
    * Determine if a passed int value conforms to parameters passed in.
    * 
    * @param limit int limit value.
-   * @param val int value to be analyzed.
+   * @param val int value to be analyzed
    * @param max boolean indicating if the limit is an upper limit or a lower limit
-   * @param exclusive boolean indicating if the limit is inclusive or exclusive.
+   * @param exclusive boolean indicating if the limit is inclusive or exclusive
    * @return boolean
    */
   private boolean validateIntLimit(int limit, int val, boolean max, boolean exclusive) {
@@ -388,10 +413,10 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Determine if a passed float value conforms to paramters passed in.
    * 
-   * @param limit float limit value.
-   * @param val float value to be analyzed.
+   * @param limit float limit value
+   * @param val float value to be analyzed
    * @param max boolean indicating if the limit is an upper limit or a lower limit
-   * @param exclusive boolean indicating if the limit is inclusive or exclusive.
+   * @param exclusive boolean indicating if the limit is inclusive or exclusive
    * @return boolean
    */
   private boolean validateFloatLimit(float limit, float val, boolean max, boolean exclusive) {
@@ -425,8 +450,8 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Method to determine whether fuzz data conforms to the node definition
    * 
-   * @param dataType ModelPropertyType of the fuzzed data.
-   * @param data value of the fuzzed data.
+   * @param dataType ModelPropertyType of the fuzzed data
+   * @param data value of the fuzzed data
    * @return boolean
    */
   private boolean evalData(ModelPropertyType dataType, Object data) {
@@ -499,7 +524,7 @@ public class MetadataEngine extends CoreEngine {
     Method method = (requestMethod != null) ? requestMethod : Method.PUT;
 
     return RestApiController.fireRestCall(serviceName, currentPath, requestBuilder,
-        expectedResponse, method, null);
+        expectedResponse, method);
   }
 
   /**
@@ -520,9 +545,9 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType
-   * @param property property being fuzzed
-   * @param propertyValue fuzz data injected
+   * @param entityType --
+   * @param property --
+   * @param propertyValue --
    */
   @Test(dataProvider = "nonStringsDP", suiteName = "fuzzer", groups = "fuzz", enabled = false,
       singleThreaded = true)
@@ -545,9 +570,9 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType
-   * @param property
-   * @param propertyValue
+   * @param entityType --
+   * @param property --
+   * @param propertyValue --
    */
   @Test(dataProvider = "localizedStringsDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
@@ -562,9 +587,9 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType
-   * @param property
-   * @param propertyValue
+   * @param entityType --
+   * @param property --
+   * @param propertyValue --
    */
   @Test(dataProvider = "passiveSqlDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
@@ -579,9 +604,9 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType
-   * @param property
-   * @param propertyValue
+   * @param entityType --
+   * @param property --
+   * @param propertyValue --
    */
   @Test(dataProvider = "noSqlDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
@@ -595,14 +620,10 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Resets the start value for the fuzzed property before moving on the the next property to be
    * fuzzed.
-   * 
-   * @throws UnexpectedModelPropertyTypeException
-   * 
-   * @throws ParseException
    */
   @SuppressWarnings("unchecked")
   @AfterMethod
-  private void resetValue() throws UnexpectedModelPropertyTypeException {
+  private void resetValue(){
 
     if (propertyStartValue != null) {
       modelInstance.remove(modelProperty);

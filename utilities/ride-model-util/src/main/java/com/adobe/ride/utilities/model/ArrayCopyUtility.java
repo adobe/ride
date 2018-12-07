@@ -25,8 +25,8 @@ public class ArrayCopyUtility {
    * Copies an array using an interim temporary array so that the original internal representation
    * isn't stored in an external mutable object.
    * 
-   * @return A string array containing the copied source array.
-   * @param String[] = the source array to be copied
+   * @param source The source array to be copied
+   * @return String[] A string array containing the copied source array
    */
   public static String[] copyStringArray(String[] source) {
     if (source != null) {
@@ -41,8 +41,8 @@ public class ArrayCopyUtility {
    * Copies a byte array using an interim temporary array so that the original internal
    * representation isn't stored in an external mutable object.
    * 
-   * @return A byte array containing the copied source array.
-   * @param String[] = the source array to be copied
+   * @param source The source array to be copied
+   * @return byte[] A byte array containing the copied source array
    */
   public static byte[] copyArray(byte[] source) {
     if (source != null) {

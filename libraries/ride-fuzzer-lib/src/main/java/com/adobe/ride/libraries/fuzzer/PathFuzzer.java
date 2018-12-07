@@ -12,13 +12,9 @@ governing permissions and limitations under the License.
 
 package com.adobe.ride.libraries.fuzzer;
 
-import java.io.IOException;
-
 import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
-
 import com.adobe.ride.libraries.fuzzer.engines.PathEngine;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.Method;
 
@@ -42,10 +38,11 @@ public class PathFuzzer {
   /**
    * Constructor for the Path Fuzzer.
    * 
-   * @param reqSpec RequestSpecBuilder to be passed in the REST call sent to the core.
-   * @param pathToBeFuzzed String
-   * @param method HTTP method to be used
-   * @throws Exception
+   * @param serviceName name of the target service, which is a mapping to the config folder in the
+   *        project resources
+   * @param reqSpec RequestSpecBuilder to be passed in the REST call sent to the core
+   * @param pathToBeFuzzed standard REST api path
+   * @param method http action to be invoked (i.e. POST, GET, etc.)
    */
   public PathFuzzer(String serviceName, RequestSpecBuilder reqSpec, String pathToBeFuzzed,
       Method method) {
@@ -82,8 +79,7 @@ public class PathFuzzer {
   /**
    * Method with drives the data to the engine.
    * 
-   * @return TestNG Object[]
-   * @throws IOException
+   * @return Object[]
    */
   @Factory
   public Object[] fuzzPath() {

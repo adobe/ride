@@ -15,9 +15,7 @@ package com.adobe.ride.libraries.fuzzer.engines;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 import com.adobe.ride.core.controllers.RestApiController;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.Filter;
@@ -44,24 +42,24 @@ public class PathEngine extends CoreEngine {
    * Constructor
    * 
    * @param reqSpec RequestSpecBuilder to be used in the call to the core controller. Usually these
-   *        are control values, not test values.
-   * @param path String path to be fuzzed.
-   * @param target String part of the target to be fuzzed
-   * @param rESTmethod HTTP method call to be used.
+   *        are control values, not test values
+   * @param path string path to be fuzzed
+   * @param target string part of the target to be fuzzed
+   * @param method http action to be invoked (i.e. POST, GET, etc.)
    */
   public PathEngine(String serviceName, RequestSpecBuilder reqSpec, String path, String target,
-      Method RESTmethod, Filter... filters) {
+      Method method, Filter... filters) {
     super(path, target);
     this.serviceName = serviceName;
     this.filters = filters;
-    httpMethod = RESTmethod;
+    httpMethod = method;
   }
 
   /**
    * Method to validate a 4xx error responses for expected failures and 2xx expected successes.
    * 
-   * @param response
-   * @override
+   * @param response Rest-Assured Response to call
+   * @param expectSuccess boolean indicating whether the call should pass or fail
    */
   public void validateResult(Response response, boolean expectSuccess) {
     int code = response.getStatusCode();
@@ -76,9 +74,9 @@ public class PathEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param path
-   * @param pathTarget
-   * @param value
+   * @param path --
+   * @param pathTarget --
+   * @param value --
    */
   @Test(dataProvider = "nonStringsDP", suiteName = "fuzzer", groups = "certification",
       singleThreaded = true)
@@ -91,9 +89,9 @@ public class PathEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param path
-   * @param pathTarget
-   * @param value]
+   * @param path --
+   * @param pathTarget --
+   * @param value --
    */
   @Test(dataProvider = "localizedStringsDP", suiteName = "fuzzer", groups = "certification",
       singleThreaded = true)
@@ -106,9 +104,9 @@ public class PathEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param path
-   * @param pathTarget
-   * @param value
+   * @param path --
+   * @param pathTarget --
+   * @param value --
    */
   @Test(dataProvider = "passiveSqlDP", suiteName = "fuzzer", groups = "certification",
       singleThreaded = true)
@@ -121,9 +119,9 @@ public class PathEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param path
-   * @param pathTarget
-   * @param value
+   * @param path --
+   * @param pathTarget --
+   * @param value --
    */
   @Test(dataProvider = "sqlDP", suiteName = "fuzzer", groups = "certification",
       singleThreaded = true)
@@ -136,9 +134,9 @@ public class PathEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param path
-   * @param pathTarget
-   * @param value
+   * @param path --
+   * @param pathTarget --
+   * @param value --
    */
   @Test(dataProvider = "noSqlDP", suiteName = "fuzzer", groups = "certification",
       singleThreaded = true)
@@ -160,7 +158,8 @@ public class PathEngine extends CoreEngine {
     expectedValues.expectBody(JsonSchemaValidator.matchesJsonSchema(errorSchema));
 
     ResponseSpecification expectedResponse = expectedValues.build();
-    Response response = RestApiController.fireRestCall(serviceName, path, reqSpecBldr, expectedResponse, httpMethod, filters);
+    Response response = RestApiController.fireRestCall(serviceName, path, reqSpecBldr,
+        expectedResponse, httpMethod, filters);
 
     validateResult(response, false);
   }

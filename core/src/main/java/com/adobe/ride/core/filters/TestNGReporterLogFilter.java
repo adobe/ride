@@ -16,14 +16,11 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 // import java.net.URLEncoder;
 import java.util.Map;
-
 import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.testng.Reporter;
-
 import com.adobe.ride.config.aop.TargetService;
 import com.cedarsoftware.util.io.JsonWriter;
-
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
 import io.restassured.http.Header;
@@ -48,7 +45,7 @@ public class TestNGReporterLogFilter implements Filter {
   /**
    * Report filter used by the framework core.
    * 
-   * @param t
+   * @param t the target service for which the report is being logged
    * @throws UnsupportedEncodingException
    */
   public TestNGReporterLogFilter(TargetService t) throws UnsupportedEncodingException {
@@ -56,9 +53,10 @@ public class TestNGReporterLogFilter implements Filter {
   }
 
   /**
-   * Returns a string formatted for splunk for the current test based on request Id
+   * Returns a string formatted for splunk for the current test based on request Id.
    * 
-   * @param reqId
+   * @param splunkEndPoint url for the splunk instance to which the service is logging
+   * @param reqId request id to be search in splunk
    * @return
    */
   private String getSplunkSearchString(String splunkEndPoint, String reqId) {
@@ -79,8 +77,9 @@ public class TestNGReporterLogFilter implements Filter {
   /**
    * Parses the headers returned in the call and formats them for reporting.
    * 
-   * @param headers
-   * @return
+   * @param headers construction method for getting a serialized list of the the headers used in the
+   *        call
+   * @return String
    */
   private String getHeaderString(Headers headers) {
     String returnString = "";
@@ -97,10 +96,11 @@ public class TestNGReporterLogFilter implements Filter {
   }
 
   /**
-   * Formats a variety of request params for reporting.
+   * Construction method for getting a serialized list of the the params and their values used in
+   * the call.
    * 
-   * @param reqParams
-   * @return
+   * @param reqParams query params used in the call
+   * @return String
    */
   private String getParamsString(Object reqParams) {
     @SuppressWarnings("unchecked")
@@ -113,9 +113,9 @@ public class TestNGReporterLogFilter implements Filter {
   }
 
   /**
-   * Return string usable in the log
+   * Construction method for getting a string rep of the call body.
    * 
-   * @param body
+   * @param body body of the call
    * @return
    */
   private String getBodyString(Object body, String type) {
