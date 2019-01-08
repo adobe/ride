@@ -1,7 +1,7 @@
 ![Adobe Ride Logo](images/RideLogo.jpg)
 
 * [Overview](#overview)
-* [Related documents](#related-documents)
+* [Related Links](#related-links)
  * [Repositories](#repositories)
  * [Settings](#settings)
 * [Modules](#modules)
@@ -37,15 +37,24 @@ There are additional test options avaialble as well:
 * Use the fuzzer-lib to quickly run tedious negative testing against the nodes in your JSON payload.
 * Use the performance-lib to quickly gather metrics on calls to your service and across services.
 
-## Related documents
+Architect/Driver: [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/) 
 
-| Document   | Link |
-| -------------  | ------------- |
-| Main Git Repository | [https://github.com/adobe/ride](https://github.com/adobe/ride) |
-| Sample Target Server location	| In provisioning  |
-| Snapshot and Release Artifacts	| https://oss.sonatype.org/content/groups/public/com/adobe/ride  |
-| Dependency Repository	| [Maven Central](https://oss.sonatype.org/content/groups/public)  |
-| Architect/Driver | [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/) |
+
+## Related Links
+
+| Document   |
+| -------------  |
+| [Main Git Repository](https://github.com/adobe/ride) |
+| Sample Target Server location - In provisioning  |
+| [Location in Maven Central](https://oss.sonatype.org/content/groups/public/com/adobe/ride)  |
+| [Dependency Repository])(https://oss.sonatype.org/content/groups/public)  |
+| [Building Ride / Running the Samples](https://github.com/adobe/ride/blob/develop/build/README.md)  |
+| [QuickStart](https://github.com/adobe/ride/blob/develop/QuickStart.md)  |
+| [In Depth Ride Usage and Extension Creation](https://github.com/adobe/ride/blob/develop/Usage.md)  |
+| [Using the Fuzzer](https://github.com/adobe/ride/tree/develop/libraries/ride-fuzzer-lib)  |
+| [Using the Performance Library](https://github.com/adobe/ride/tree/develop/libraries/ride-performance-lib)  |
+| [Using Authentication with Ride](https://github.com/adobe/ride/blob/develop/UsingAuthentication.md)  |
+
 
 ## Repositories
 When extending Adobe Ride, these settings need to be added to the repository node of your project(s) (or parent project) in order to post your extension to your internal artifact management system.
