@@ -27,7 +27,7 @@ Once you have verified that, place the WAR file that was created from build samp
 
 ## Integration Tests
 
-To run the tests against the core functionality, open terminal in the sample-service-tests an run ```mvn clean verify```.  If you are running a localhost instance of the sample server, you do not need to specify a target server.  If you are running against a server based elsewhere, you'll need to specify it like any other test in Ride (```mvn clean verify -Dtarget=a_config_file_in_project_resources). You can read more about resources in the Ride Quickstart guide: see [Ride Extension Resources](https://github.com/adobe/ride/blob/develop/QuickStart.md#resource-code)
+To run the tests against the core functionality, open terminal in the sample-service-tests an run ```mvn clean verify```.  If you are running a localhost instance of the sample server, you do not need to specify a target server.  If you are running against a server based elsewhere, you'll need to specify it like any other test in Ride (```mvn clean verify -Dtarget=a_config_file_in_project_resources```). You can read more about resources in the Ride Quickstart guide: see [Ride Extension Resources](https://github.com/adobe/ride/blob/develop/QuickStart.md#resource-code)
 
 
 
