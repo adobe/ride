@@ -47,7 +47,7 @@ Architect/Driver: [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/)
 | [Main Git Repository](https://github.com/adobe/ride) |
 | Sample Target Server location - In provisioning  |
 | [Location in Maven Central](https://oss.sonatype.org/content/groups/public/com/adobe/ride)  |
-| [Dependency Repository])(https://oss.sonatype.org/content/groups/public)  |
+| [Dependency Repository](https://oss.sonatype.org/content/groups/public)  |
 | [Building Ride / Running the Samples](https://github.com/adobe/ride/blob/develop/build/README.md)  |
 | [QuickStart](https://github.com/adobe/ride/blob/develop/QuickStart.md)  |
 | [In Depth Ride Usage and Extension Creation](https://github.com/adobe/ride/blob/develop/Usage.md)  |
