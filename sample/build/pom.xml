@@ -40,7 +40,5 @@
     <module>../sample-product-group-shared-resources</module>
     <module>../sample-service-extension</module>
     <module>../sample-service-server</module>
-    <module>../sample-service-tests</module>
-    <module>../sample-service-performance-tests</module>
   </modules>
 </project>
