@@ -1,7 +1,7 @@
 ![Adobe Ride Logo](images/RideLogo.jpg)
 
 * [Overview](#overview)
-* [Related documents](#related-documents)
+* [Related Links](#related-links)
  * [Repositories](#repositories)
  * [Settings](#settings)
 * [Modules](#modules)
@@ -20,13 +20,9 @@
 
 # Overview
 
-Adobe Ride is a service-agnostic, modular, extensible REST API Test Automation Framework built on top of already industry-standard test frameworks and tools such as [Rest-Assured](http://rest-assured.io/), [TestNG](https://testng.org/doc/index.html), [Everit](https://github.com/everit-org/json-schema), and [Gatling](https://gatling.io/).  The goal of the framework is to speed development of tests and validation of services across the REST testing spectrum by a number of means:
-* Abstracting repetitive code
-* Standardizing calls within the framework
-* Modular and Extensible design
-* Common source base for updates that can be leveraged among tests across products. 
+Adobe Ride is a REST API Java test automation framework.  It is service-agnostic, modular and extensible, and built on top of industry-standard tools such as [Rest-Assured](http://rest-assured.io/), [TestNG](https://testng.org/doc/index.html), [Everit](https://github.com/everit-org/json-schema), and [Gatling](https://gatling.io/).  The goal of the framework is to speed development of tests and validation of APIs by abstracting repetitive code and standardizing calls for easier functional and end-to-end testing across micro-services 
 
-Adobe Ride has already seen heavy use in a previous Adobe projects, and the intent is to utilize the experience there, leverage lessons learned, and allow the community to in turn help develop it to make it more robust.
+Adobe Ride has already seen heavy use in a previous Adobe projects, and the intent is to utilize the experience there, leverage lessons learned, and allow the open-source community to in turn help develop it to make it more robust.
 
 You use Adobe ride by extending it in three primary ways:
 * Extending it's model-util to model rapidly generate and easily manipulate call payload data.
@@ -37,15 +33,24 @@ There are additional test options avaialble as well:
 * Use the fuzzer-lib to quickly run tedious negative testing against the nodes in your JSON payload.
 * Use the performance-lib to quickly gather metrics on calls to your service and across services.
 
-## Related documents
+Architect/Driver: [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/) 
 
-| Document   | Link |
-| -------------  | ------------- |
-| Main Git Repository | [https://github.com/adobe/ride](https://github.com/adobe/ride) |
-| Sample Target Server location	| In provisioning  |
-| Snapshot and Release Artifacts	| https://oss.sonatype.org/content/groups/public/com/adobe/ride  |
-| Dependency Repository	| [Maven Central](https://oss.sonatype.org/content/groups/public)  |
-| Architect/Driver | [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/) |
+
+## Related Links
+
+| Document   |
+| -------------  |
+| [Main Git Repository](https://github.com/adobe/ride) |
+| Sample Target Server location - In provisioning  |
+| [Location in Maven Central](https://oss.sonatype.org/content/groups/public/com/adobe/ride)  |
+| [Dependency Repository](https://oss.sonatype.org/content/groups/public)  |
+| [Building Ride / Running the Samples](https://github.com/adobe/ride/blob/develop/build/README.md)  |
+| [QuickStart](https://github.com/adobe/ride/blob/develop/QuickStart.md)  |
+| [In Depth Ride Usage and Extension Creation](https://github.com/adobe/ride/blob/develop/Usage.md)  |
+| [Using the Fuzzer](https://github.com/adobe/ride/tree/develop/libraries/ride-fuzzer-lib)  |
+| [Using the Performance Library](https://github.com/adobe/ride/tree/develop/libraries/ride-performance-lib)  |
+| [Using Authentication with Ride](https://github.com/adobe/ride/blob/develop/UsingAuthentication.md)  |
+
 
 ## Repositories
 When extending Adobe Ride, these settings need to be added to the repository node of your project(s) (or parent project) in order to post your extension to your internal artifact management system.
