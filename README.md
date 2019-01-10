@@ -20,13 +20,9 @@
 
 # Overview
 
-Adobe Ride is a REST API Java automation framework.  It is service-agnostic, modular and extensible, and built on top of already industry-standard tools such as [Rest-Assured](http://rest-assured.io/), [TestNG](https://testng.org/doc/index.html), [Everit](https://github.com/everit-org/json-schema), and [Gatling](https://gatling.io/).  The goal of the framework is to speed development of tests and validation of services across the REST testing spectrum by a number of means:
-* Abstracting repetitive code
-* Standardizing calls within the framework
-* Modular and Extensible design
-* Common source base for updates that can be leveraged among tests across products. 
+Adobe Ride is a REST API Java test automation framework.  It is service-agnostic, modular and extensible, and built on top of industry-standard tools such as [Rest-Assured](http://rest-assured.io/), [TestNG](https://testng.org/doc/index.html), [Everit](https://github.com/everit-org/json-schema), and [Gatling](https://gatling.io/).  The goal of the framework is to speed development of tests and validation of APIs by abstracting repetitive code and standardizing calls for easier functional and end-to-end testing across micro-services 
 
-Adobe Ride has already seen heavy use in a previous Adobe projects, and the intent is to utilize the experience there, leverage lessons learned, and allow the community to in turn help develop it to make it more robust.
+Adobe Ride has already seen heavy use in a previous Adobe projects, and the intent is to utilize the experience there, leverage lessons learned, and allow the open-source community to in turn help develop it to make it more robust.
 
 You use Adobe ride by extending it in three primary ways:
 * Extending it's model-util to model rapidly generate and easily manipulate call payload data.
