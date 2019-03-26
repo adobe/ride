@@ -253,7 +253,7 @@ public class ModelObject {
    */
   public ModelObject(String resourceLocation, JSONObject presetNodes, Set<String> nodesToBuild,
       boolean useRequiredOnly) {
-    initializeModelObject(resourceLocation, presetNodes, nodesToBuild, true);
+    initializeModelObject(resourceLocation, presetNodes, nodesToBuild, useRequiredOnly);
   }
 
   private void initializeModelObject(String resourceLocation, JSONObject presetNodes,
