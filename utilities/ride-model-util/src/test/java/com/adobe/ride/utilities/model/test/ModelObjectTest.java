@@ -26,6 +26,8 @@ import org.testng.annotations.Test;
 
 import com.adobe.ride.utilities.model.ModelObject;
 import com.adobe.ride.utilities.model.exceptions.ModelSearchException;
+import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
+import com.adobe.ride.utilities.model.types.ModelPropertyType;
 
 /**
  * 
@@ -206,6 +208,27 @@ public class ModelObjectTest {
     JSONArray objects = testObj.generateModelInstances(10);
     ModelObject.prettyPrintToConsole(objects);
   }
+  
+	@Test(suiteName = "smoke", groups = "integration", enabled = true)
+	public void testPrimitiveSchemaDefinitionModelInstance() {
+		final String schema = "{\"type\":\"integer\", \"format\":\"int32\"}";
+		final ModelObject modelObject = new ModelObject(schema, false);
+		final Object modelInstance = modelObject.buildValidModelInstance();
+		Assert.assertNotNull(modelInstance);
+	}
+
+	@Test(suiteName = "smoke", groups = "integration", enabled = true)
+	public void testFallBackToSchemaTypeIfFormatCannotBeIdentified() throws UnexpectedModelPropertyTypeException {
+		String schema = "{\"type\":\"integer\", \"format\":\"int32\"}";
+		ModelObject modelObject = new ModelObject(schema, false);
+		JSONObject model = modelObject.getModel();
+		Assert.assertEquals(ModelObject.getModelPropertyType(model), ModelPropertyType.INTEGER);
+
+		schema = "{\"type\":\"string\", \"format\":\"binary\"}";
+		modelObject = new ModelObject(schema, false);
+		model = modelObject.getModel();
+		Assert.assertEquals(ModelObject.getModelPropertyType(model), ModelPropertyType.STRING);
+	}
 
   // TODO: Implement this test
   /*-
