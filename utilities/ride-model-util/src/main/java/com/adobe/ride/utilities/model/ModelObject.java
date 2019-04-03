@@ -96,17 +96,22 @@ public class ModelObject {
       if (modelType == ModelPropertyType.OBJECT) {
         modelProperties = (JSONObject) model.get("properties");
         requiredModelProperties = (JSONArray) model.get("required");
-      } else {
+        modelDefinitions = (JSONObject) model.get("definitions");
+        try {
+        	modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
+        } catch (IOException e) {
+        	logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
+        }
+      } else if (modelType == ModelPropertyType.ARRAY) {
         JSONObject arrayDef = ((JSONObject) model.get("items"));
         modelProperties = ((JSONObject) arrayDef.get("properties"));
         requiredModelProperties = (JSONArray) arrayDef.get("required");
-      }
-      modelDefinitions = (JSONObject) model.get("definitions");
-
-      try {
-        modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
-      } catch (IOException e) {
-        e.printStackTrace();
+        modelDefinitions = (JSONObject) model.get("definitions");
+        try {
+        	modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
+        } catch (IOException e) {
+        	logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
+        }
       }
     } catch (ParseException e) {
       logger.log(Level.SEVERE, "A Parse exception was thrown", e);
@@ -436,16 +441,15 @@ public class ModelObject {
         returnValue = ModelPropertyType.URI;
       } else if (format.equals("uri-reference")) {
         returnValue = ModelPropertyType.URI_REF;
-      } else if (object.containsKey("pattern")) {
-        returnValue = ModelPropertyType.PATTERN;
-      } else if (type.equals("string")) {
-        returnValue = ModelPropertyType.eval(format);
-      }
+      } 
     } else if (object.containsKey("pattern")) {
       returnValue = ModelPropertyType.PATTERN;
-    } else {
-      returnValue = ModelPropertyType.eval(object.get("type").toString());
+    } 
+    	
+    if (returnValue == null && !"noType".equals(type)) {
+    	returnValue = ModelPropertyType.eval(type);
     }
+    
     if (returnValue == null) {
       throw new UnexpectedModelPropertyTypeException(object);
     }
@@ -511,7 +515,7 @@ public class ModelObject {
         JSONObject modelSet = (requiredOnly) ? getRequiredOnlyDefs(model) : modelProperties;
         return buildModelInstance(modelSet);
       }
-    } else {
+    } else if (modelType == ModelPropertyType.ARRAY) {
       try {
         ArrayNode generatedItems = buildArrayNode(model);
         String itemsString = generatedItems.toString();
@@ -520,6 +524,8 @@ public class ModelObject {
         logger.log(Level.SEVERE, e.getMessage());
       }
       return objectItems;
+    } else {
+    	return generateNodeValue(model);
     }
   }
 
@@ -1116,7 +1122,7 @@ public class ModelObject {
     try {
       return generateNodeValue(null, null, propertyDef);
     } catch (ModelSearchException e) {
-      e.printStackTrace();
+    	logger.log(Level.SEVERE, e.getMessage());
     }
     return null;
   }
