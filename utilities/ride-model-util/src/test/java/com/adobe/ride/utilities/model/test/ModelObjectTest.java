@@ -214,7 +214,7 @@ public class ModelObjectTest {
 		final String schema = "{\"type\":\"integer\", \"format\":\"int32\"}";
 		final ModelObject modelObject = new ModelObject(schema, false);
 		final Object modelInstance = modelObject.buildValidModelInstance();
-		Assert.assertNotNull(modelInstance);
+		Assert.assertTrue(modelInstance instanceof Long);
 	}
 
 	@Test(suiteName = "smoke", groups = "integration", enabled = true)

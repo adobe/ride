@@ -525,6 +525,7 @@ public class ModelObject {
       }
       return objectItems;
     } else {
+    	// Handling Primitive type schemas
     	return generateNodeValue(model);
     }
   }
