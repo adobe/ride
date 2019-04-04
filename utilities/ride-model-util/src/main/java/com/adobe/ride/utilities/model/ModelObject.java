@@ -98,9 +98,9 @@ public class ModelObject {
         requiredModelProperties = (JSONArray) model.get("required");
         modelDefinitions = (JSONObject) model.get("definitions");
         try {
-        	modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
+          modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
         } catch (IOException e) {
-        	logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
+          logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
         }
       } else if (modelType == ModelPropertyType.ARRAY) {
         JSONObject arrayDef = ((JSONObject) model.get("items"));
@@ -108,9 +108,9 @@ public class ModelObject {
         requiredModelProperties = (JSONArray) arrayDef.get("required");
         modelDefinitions = (JSONObject) model.get("definitions");
         try {
-        	modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
+          modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
         } catch (IOException e) {
-        	logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
+          logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
         }
       }
     } catch (ParseException e) {
@@ -441,15 +441,15 @@ public class ModelObject {
         returnValue = ModelPropertyType.URI;
       } else if (format.equals("uri-reference")) {
         returnValue = ModelPropertyType.URI_REF;
-      } 
+      }
     } else if (object.containsKey("pattern")) {
       returnValue = ModelPropertyType.PATTERN;
-    } 
-    	
-    if (returnValue == null && !"noType".equals(type)) {
-    	returnValue = ModelPropertyType.eval(type);
     }
-    
+
+    if (returnValue == null && !"noType".equals(type)) {
+      returnValue = ModelPropertyType.eval(type);
+    }
+
     if (returnValue == null) {
       throw new UnexpectedModelPropertyTypeException(object);
     }
@@ -525,8 +525,8 @@ public class ModelObject {
       }
       return objectItems;
     } else {
-    	// Handling Primitive type schemas
-    	return generateNodeValue(model);
+      // Handling Primitive type schemas
+      return generateNodeValue(model);
     }
   }
 
@@ -1123,7 +1123,7 @@ public class ModelObject {
     try {
       return generateNodeValue(null, null, propertyDef);
     } catch (ModelSearchException e) {
-    	logger.log(Level.SEVERE, e.getMessage());
+      logger.log(Level.SEVERE, e.getMessage());
     }
     return null;
   }
