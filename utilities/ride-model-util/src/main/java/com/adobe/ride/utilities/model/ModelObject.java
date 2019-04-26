@@ -1339,7 +1339,7 @@ public class ModelObject {
           returnValue = alphaNum;
           break;
         case URI:
-          String uri = DataGenerator.generateURI();
+          String uri = DataGenerator.generateRandomURIRef();
           returnValue = uri;
           break;
         case URI_REF:

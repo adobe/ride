@@ -38,6 +38,8 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
+
+import com.google.common.net.InetAddresses;
 import com.mifmif.common.regex.Generex;
 
 /**
@@ -158,8 +160,7 @@ public abstract class DataGenerator {
    * @return String
    */
   public static String generateIPv4() {
-    return generateRegexValue(IPV4_REGEX);
-    // "25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]");
+    return InetAddresses.fromInteger(randomGen.nextInt()).getHostAddress();
   }
 
   /**
