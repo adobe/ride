@@ -547,9 +547,9 @@ public class ModelObject {
    */
   public Object buildNewModelInstance() {
     if (presetNodes != null) {
-      objectMetadata = new JSONObject();
-    } else {
       objectMetadata = presetNodes;
+    } else {
+      objectMetadata = new JSONObject();
     }
     return buildValidModelInstance();
   }
