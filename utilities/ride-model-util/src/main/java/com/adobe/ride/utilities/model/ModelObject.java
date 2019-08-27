@@ -736,8 +736,8 @@ public class ModelObject {
           Object genValue = null;
           try {
             genValue = generateNodeValue(null, currentkey, propertyDef);
-          } catch (ModelSearchException e) {
-            e.printStackTrace();
+          } catch (ModelSearchException e1) {
+            e1.printStackTrace();
           }
           returnObj.put(currentkey, genValue);
         } else {
@@ -749,8 +749,8 @@ public class ModelObject {
             }else {
               returnObj.put(currentkey, existingValue);
             }
-          } catch (UnexpectedModelPropertyTypeException e) {
-            e.printStackTrace();
+          } catch (UnexpectedModelPropertyTypeException e2) {
+            e2.printStackTrace();
           }
         }
       }
