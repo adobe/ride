@@ -124,7 +124,7 @@ public class ModelObjectTest {
     Set<String> control = testObj.getModelProperties().keySet();
     Assert.assertTrue(test.containsAll(control));
   }
-  
+
   @SuppressWarnings("unchecked")
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testBuildNewInstance() throws ModelSearchException {
