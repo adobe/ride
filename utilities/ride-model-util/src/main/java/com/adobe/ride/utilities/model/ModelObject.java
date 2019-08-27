@@ -41,9 +41,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
 
 /**
- * Class useful for loading JSON schema and creating json object instance which adhere to the
+ * Class useful for loading JSON schema and creating json object instance which adheres to the
  * definitions of the schema.
  * 
  * @author tedcasey
@@ -730,6 +731,7 @@ public class ModelObject {
         JSONObject propertyDef = e.getValue();
         String currentkey = e.getKey();
         Object existingValue = checkForExisitingValue(pathToParent, currentkey);
+
         if (existingValue == null) {
           Object genValue = null;
           try {
@@ -739,7 +741,17 @@ public class ModelObject {
           }
           returnObj.put(currentkey, genValue);
         } else {
-          returnObj.put(currentkey, existingValue);
+          try {
+            ModelPropertyType type = getModelPropertyType(propertyDef);
+            if (type == ModelPropertyType.OBJECT) {
+              Object newValue = buildObjectNode(pathToParent + "/" + currentkey, propertyDef);
+              returnObj.put(currentkey, newValue);
+            } else {
+              returnObj.put(currentkey, existingValue);
+            }
+          } catch (UnexpectedModelPropertyTypeException e2) {
+            e2.printStackTrace();
+          }
         }
       }
     } else {
@@ -1143,6 +1155,7 @@ public class ModelObject {
    */
   public Object generateNodeValue(String parentPath, String key, JSONObject propertyDef)
       throws ModelSearchException {
+
     String nodePath = "";
     Object returnValue = null;
     JsonNode dataTree = null;
@@ -1179,16 +1192,19 @@ public class ModelObject {
 
     JsonNode existingParentValue = dataTree.at(parentPath);
 
-    if (exisitingValue != null && !dataTree.at(nodePath).isMissingNode()) {
+    if (exisitingValue != null && !dataTree.at(nodePath).isMissingNode()
+        && type != ModelPropertyType.OBJECT && type != ModelPropertyType.REF_DEFINITION
+        && type != ModelPropertyType.REF_SCHEMA) {
 
       return dataTree.at(parentPath).get(key);
 
     } else {
       // create empty node, if not working with Root Array
       if (parentPath != null && !existingParentValue.isNull()) {
-        if (parentPath == "/") {
+        if (parentPath == "/"
+            && ((dataTree.at(nodePath).isMissingNode()) || (dataTree.at(nodePath) == null))) {
           ((ObjectNode) dataTree).putObject(key);
-        } else {
+        } else if ((dataTree.at(nodePath).isMissingNode()) || (dataTree.at(nodePath) == null)) {
           ((ObjectNode) dataTree.at(parentPath)).putObject(key);
         }
         refreshMetadata(dataTree);
