@@ -731,7 +731,7 @@ public class ModelObject {
         JSONObject propertyDef = e.getValue();
         String currentkey = e.getKey();
         Object existingValue = checkForExisitingValue(pathToParent, currentkey);
-        
+
         if (existingValue == null) {
           Object genValue = null;
           try {
@@ -743,10 +743,10 @@ public class ModelObject {
         } else {
           try {
             ModelPropertyType type = getModelPropertyType(propertyDef);
-            if(type == ModelPropertyType.OBJECT){
-              Object newValue = buildObjectNode(pathToParent+"/"+currentkey, propertyDef);
+            if (type == ModelPropertyType.OBJECT) {
+              Object newValue = buildObjectNode(pathToParent + "/" + currentkey, propertyDef);
               returnObj.put(currentkey, newValue);
-            }else {
+            } else {
               returnObj.put(currentkey, existingValue);
             }
           } catch (UnexpectedModelPropertyTypeException e2) {
@@ -1155,7 +1155,7 @@ public class ModelObject {
    */
   public Object generateNodeValue(String parentPath, String key, JSONObject propertyDef)
       throws ModelSearchException {
-    
+
     String nodePath = "";
     Object returnValue = null;
     JsonNode dataTree = null;
@@ -1192,16 +1192,19 @@ public class ModelObject {
 
     JsonNode existingParentValue = dataTree.at(parentPath);
 
-    if (exisitingValue != null && !dataTree.at(nodePath).isMissingNode() && type != ModelPropertyType.OBJECT && type != ModelPropertyType.REF_DEFINITION && type != ModelPropertyType.REF_SCHEMA) {
+    if (exisitingValue != null && !dataTree.at(nodePath).isMissingNode()
+        && type != ModelPropertyType.OBJECT && type != ModelPropertyType.REF_DEFINITION
+        && type != ModelPropertyType.REF_SCHEMA) {
 
       return dataTree.at(parentPath).get(key);
 
     } else {
       // create empty node, if not working with Root Array
       if (parentPath != null && !existingParentValue.isNull()) {
-        if (parentPath == "/" && ((dataTree.at(nodePath).isMissingNode()) || (dataTree.at(nodePath) == null))) {
+        if (parentPath == "/"
+            && ((dataTree.at(nodePath).isMissingNode()) || (dataTree.at(nodePath) == null))) {
           ((ObjectNode) dataTree).putObject(key);
-        } else if((dataTree.at(nodePath).isMissingNode()) || (dataTree.at(nodePath) == null)){
+        } else if ((dataTree.at(nodePath).isMissingNode()) || (dataTree.at(nodePath) == null)) {
           ((ObjectNode) dataTree.at(parentPath)).putObject(key);
         }
         refreshMetadata(dataTree);
