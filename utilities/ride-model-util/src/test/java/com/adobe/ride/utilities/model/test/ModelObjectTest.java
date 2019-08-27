@@ -114,6 +114,7 @@ public class ModelObjectTest {
     JSONObject presets = new JSONObject();
     JSONObject authorInfo = new JSONObject();
     authorInfo.put("name", "Gladys Phillips");
+    authorInfo.put("authorUrl", "www.gladysphillips.com");
     presets.put("authorInfo", authorInfo);
     ModelObject testObj =
         new ModelObject("TestService", "article", null, presets, false);

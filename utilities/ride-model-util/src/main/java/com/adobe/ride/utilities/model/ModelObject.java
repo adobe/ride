@@ -736,24 +736,21 @@ public class ModelObject {
           Object genValue = null;
           try {
             genValue = generateNodeValue(null, currentkey, propertyDef);
-          } catch (ModelSearchException e1) {
-            e1.printStackTrace();
+          } catch (ModelSearchException e) {
+            e.printStackTrace();
           }
           returnObj.put(currentkey, genValue);
         } else {
           try {
             ModelPropertyType type = getModelPropertyType(propertyDef);
             if(type == ModelPropertyType.OBJECT){
-              String subPath = pathToParent+"/"+currentkey;
-              System.out.println("Subpath: "+subPath);
-              Object newValue = buildObjectNode(subPath, propertyDef);
+              Object newValue = buildObjectNode(pathToParent+"/"+currentkey, propertyDef);
               returnObj.put(currentkey, newValue);
             }else {
               returnObj.put(currentkey, existingValue);
             }
-          } catch (UnexpectedModelPropertyTypeException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+          } catch (UnexpectedModelPropertyTypeException e) {
+            e.printStackTrace();
           }
         }
       }
