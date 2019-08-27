@@ -88,10 +88,12 @@ public class SampleServiceController extends RestApiController {
   private static Response callCore(ObjectType type, String objectPath, ModelObject object,
       ResponseSpecification expectedResponse, Method method, boolean addAuthorization) {
     RequestSpecBuilder reqBuilder = getDefaultReqSpecBuilder();
-    if (type == ObjectType.OBJECT) {
-      reqBuilder.setBody(object.getObjectMetadata());
-    } else {
-      reqBuilder.setBody(object.getObjectItems());
+    if (method != Method.GET) {
+      if (type == ObjectType.OBJECT) {
+        reqBuilder.setBody(object.getObjectMetadata());
+      } else {
+        reqBuilder.setBody(object.getObjectItems());
+      }
     }
     Response response = null;
     if (addAuthorization) {
