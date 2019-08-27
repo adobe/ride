@@ -124,6 +124,22 @@ public class ModelObjectTest {
     Set<String> control = testObj.getModelProperties().keySet();
     Assert.assertTrue(test.containsAll(control));
   }
+  
+  @SuppressWarnings("unchecked")
+  @Test(suiteName = "smoke", groups = "integration", enabled = true)
+  public void testBuildNewInstance() throws ModelSearchException {
+    JSONObject presets = new JSONObject();
+    JSONObject authorInfo = new JSONObject();
+    authorInfo.put("name", "James Gosling");
+    authorInfo.put("authorUrl", "http://nighthacks.com");
+    presets.put("authorInfo", authorInfo);
+    ModelObject testObj = new ModelObject("TestService", "article", null, presets, false);
+    JSONObject newObject = (JSONObject) testObj.buildNewModelInstance();
+    ModelObject.prettyPrintToConsole(newObject);
+    Set<String> test = newObject.keySet();
+    Set<String> control = testObj.getModelProperties().keySet();
+    Assert.assertTrue(test.containsAll(control));
+  }
 
   @SuppressWarnings("unchecked")
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
