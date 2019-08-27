@@ -38,7 +38,7 @@ public class BasicTest_IT {
     SampleServiceObject1 testObject = new SampleServiceObject1(itemName, false);
 
     // Send Object To Server. "true" here indicates that we want Ride to attempt to use the
-    // CheckAuthFilter in the core and invoke any authentication library to attach an
+    // CheckAuthFilter in the core and invoke any authentication library to attach a
     // valid credentials token.
     SampleServiceController.createOrUpdateObject(testObject.getObjectPath(), testObject,
         ExpectedResponse.CREATED_RESPONSE, true);

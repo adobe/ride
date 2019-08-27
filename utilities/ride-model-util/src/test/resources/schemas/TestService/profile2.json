@@ -1,0 +1,1531 @@
+{
+    "type": "object",
+    "title": "E2E-Composed-Profile1",
+    "meta:immutableTags": [
+        "union"
+    ],
+    "description": "E2E-Composed-Profile1",
+    "meta:class": "https://ns.adobe.com/xdm/context/profile",
+    "meta:abstract": false,
+    "meta:extensible": false,
+    "meta:extends": [
+        "https://ns.adobe.com/xdm/context/profile",
+        "https://ns.adobe.com/xdm/data/record",
+        "https://ns.adobe.com/xdm/context/identitymap",
+        "https://ns.adobe.com/xdm/common/extensible",
+        "https://ns.adobe.com/xdm/common/auditable",
+        "https://ns.adobe.com/xdm/context/profile-person-details",
+        "https://ns.adobe.com/xdm/context/profile-personal-details",
+        "https://ns.adobe.com/xdm/context/profile-work-details",
+        "https://ns.adobe.com/acpq/mixins/2ae8188f95843a45ff8509afec00f673",
+        "https://ns.adobe.com/xdm/context/profile-preferences-details"
+    ],
+    "meta:containerId": "tenant",
+    "imsOrg": "DFAD7C0A5A20380B0A495ECB@AdobeOrg",
+    "meta:altId": "_acpq.schemas.1f909cc1a835e7600888312503ac74b5",
+    "meta:xdmType": "object",
+    "properties": {
+        "person": {
+            "title": "Person",
+            "description": "An individual actor, contact, or owner.",
+            "meta:xdmField": "xdm:person",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/context/person",
+            "properties": {
+                "name": {
+                    "title": "Full name",
+                    "description": "The person's full name",
+                    "meta:xdmField": "xdm:name",
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "meta:referencedFrom": "https://ns.adobe.com/xdm/context/person-name",
+                    "properties": {
+                        "firstName": {
+                            "title": "First name",
+                            "type": "string",
+                            "description": "The first segment of the name in the writing order most commonly accepted in the language of the name. In many cultures this is the preferred personal or given name.\n\nThe `firstName` and `lastName` properties have been introduced to maintain compatibility with existing systems that model names in a simplified, non-semantic, and non-internationalizable way. Using `xdm:fullName` is always preferable.",
+                            "meta:xdmField": "xdm:firstName",
+                            "meta:xdmType": "string"
+                        },
+                        "lastName": {
+                            "title": "Last name",
+                            "type": "string",
+                            "description": "The last segment of the name in the writing order most commonly accepted in the language of the name. In many cultures this is the inherited family name, surname, patronymic, or matronymic name.\n\nThe `firstName` and `lastName` properties have been introduced to maintain compatibility with existing systems that model names in a simplified, non-semantic, and non-internationalizable way. Using `xdm:fullName` is always preferable.",
+                            "meta:xdmField": "xdm:lastName",
+                            "meta:xdmType": "string"
+                        },
+                        "middleName": {
+                            "title": "Middle name",
+                            "type": "string",
+                            "description": "Middle, alternative, or additional names supplied between the first name and last name.",
+                            "meta:xdmField": "xdm:middleName",
+                            "meta:xdmType": "string"
+                        },
+                        "courtesyTitle": {
+                            "title": "Courtesy title",
+                            "type": "string",
+                            "description": "Normally an abbreviation of a persons *title*, *honorific*, or *salutation*.\nThe `courtesyTitle` is used in front of full or last name in opening texts.\ne.g Mr. Miss. or Dr J. Smith.\n",
+                            "meta:xdmField": "xdm:courtesyTitle",
+                            "meta:xdmType": "string"
+                        },
+                        "fullName": {
+                            "title": "Full name",
+                            "type": "string",
+                            "description": "The full name of the person, in writing order most commonly accepted in the language of the name.",
+                            "meta:xdmField": "xdm:fullName",
+                            "meta:xdmType": "string"
+                        }
+                    }
+                },
+                "birthDate": {
+                    "title": "Birth Date",
+                    "type": "string",
+                    "format": "date",
+                    "description": "The full date a person was born.",
+                    "meta:xdmField": "xdm:birthDate",
+                    "meta:xdmType": "date"
+                },
+                "birthDayAndMonth": {
+                    "title": "Birth Date",
+                    "type": "string",
+                    "pattern": "[0-1][0-9]-[0-9][0-9]",
+                    "description": "The day and month a person was born, in the format MM-DD. This field should be used when the day and month of a person's birth is known, but not the year.",
+                    "meta:xdmField": "xdm:birthDayAndMonth",
+                    "meta:xdmType": "string"
+                },
+                "birthYear": {
+                    "title": "Birth year",
+                    "type": "integer",
+                    "description": "The year a person was born including the century (yyyy, e.g 1983).  This field should be used when only the person's age is known, not the full birth date.",
+                    "minimum": 1,
+                    "maximum": 32767,
+                    "meta:xdmField": "xdm:birthYear",
+                    "meta:xdmType": "short"
+                },
+                "gender": {
+                    "title": "Gender",
+                    "type": "string",
+                    "enum": [
+                        "male",
+                        "female",
+                        "not_specified",
+                        "non_specific"
+                    ],
+                    "meta:enum": {
+                        "male": "Male",
+                        "female": "Female",
+                        "not_specified": "Not Specified",
+                        "non_specific": "Nonspecific"
+                    },
+                    "description": "Gender identity of the person.\n",
+                    "default": "not_specified",
+                    "meta:xdmField": "xdm:gender",
+                    "meta:xdmType": "string"
+                },
+                "repositoryCreatedBy": {
+                    "title": "Created by User Identifier",
+                    "type": "string",
+                    "description": "User id who has created the entity.",
+                    "meta:xdmField": "xdm:repositoryCreatedBy",
+                    "meta:xdmType": "string"
+                },
+                "repositoryLastModifiedBy": {
+                    "title": "Modified by User Identifier",
+                    "type": "string",
+                    "description": "User id who last modified the entity. At creation time, `modifiedByUser` is set as `createdByUser`.",
+                    "meta:xdmField": "xdm:repositoryLastModifiedBy",
+                    "meta:xdmType": "string"
+                },
+                "createdByBatchID": {
+                    "title": "Created by Batch Identifier",
+                    "type": "string",
+                    "format": "uri-reference",
+                    "description": "The Data Set Files in Catalog Services which has been originating the creation of the entity.",
+                    "meta:xdmField": "xdm:createdByBatchID",
+                    "meta:xdmType": "string"
+                },
+                "modifiedByBatchID": {
+                    "title": "Modified by Batch Identifier",
+                    "type": "string",
+                    "format": "uri-reference",
+                    "description": "The last Data Set Files in Catalog Services which has modified the entity. At creation time, `modifiedByBatchID` is set as `createdByBatchID`.",
+                    "meta:xdmField": "xdm:modifiedByBatchID",
+                    "meta:xdmType": "string"
+                },
+                "_repo": {
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "properties": {
+                        "createDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "meta:immutable": true,
+                            "meta:usereditable": false,
+                            "examples": [
+                                "2004-10-23T12:00:00-06:00"
+                            ],
+                            "description": "The server date and time when the resource was created in the repository, such as when an asset file is first uploaded or a directory is created by the server as the parent of a new asset. The Date Time property should conform to ISO 8601 standard. An example form is \"2004-10-23T12:00:00-06:00\".",
+                            "meta:xdmField": "repo:createDate",
+                            "meta:xdmType": "date-time"
+                        },
+                        "modifyDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "meta:usereditable": false,
+                            "examples": [
+                                "2004-10-23T12:00:00-06:00"
+                            ],
+                            "description": "The server date and time when the resource was last modified in the repository, such as when a new version of an asset is uploaded or a directory's child resource is added or removed. The Date Time property should conform to ISO 8601 standard. An example form is \"2004-10-23T12:00:00-06:00\".",
+                            "meta:xdmField": "repo:modifyDate",
+                            "meta:xdmType": "date-time"
+                        }
+                    }
+                }
+            }
+        },
+        "homeAddress": {
+            "title": "Home Address",
+            "description": "A home postal address.",
+            "meta:xdmField": "xdm:homeAddress",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/common/address",
+            "properties": {
+                "_id": {
+                    "title": "Coordinates ID",
+                    "type": "string",
+                    "format": "uri-reference",
+                    "description": "The unique identifier of the coordinates.",
+                    "meta:xdmField": "@id",
+                    "meta:xdmType": "string"
+                },
+                "_schema": {
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "properties": {
+                        "description": {
+                            "title": "Description",
+                            "type": "string",
+                            "description": "A description of what the coordinates identify.",
+                            "meta:xdmField": "schema:description",
+                            "meta:xdmType": "string"
+                        },
+                        "latitude": {
+                            "title": "Latitude",
+                            "type": "number",
+                            "minimum": -90,
+                            "maximum": 90,
+                            "description": "The signed vertical coordinate of a geographic point.",
+                            "meta:xdmField": "schema:latitude",
+                            "meta:xdmType": "number"
+                        },
+                        "longitude": {
+                            "title": "Longitude",
+                            "type": "number",
+                            "minimum": -180,
+                            "maximum": 180,
+                            "description": "The signed horizontal coordinate of a geographic point.",
+                            "meta:xdmField": "schema:longitude",
+                            "meta:xdmType": "number"
+                        },
+                        "elevation": {
+                            "title": "Elevation",
+                            "type": "number",
+                            "description": "The specific elevation of the defined coordinate. The value conforms to the [WGS84](http://gisgeography.com/wgs84-world-geodetic-system/) datum and is measured in meters.",
+                            "meta:xdmField": "schema:elevation",
+                            "meta:xdmType": "number"
+                        }
+                    }
+                },
+                "countryCode": {
+                    "title": "Country code",
+                    "type": "string",
+                    "pattern": "^[A-Z]{2}$",
+                    "description": "The two-character [ISO 3166-1 alpha-2](https://datahub.io/core/country-list) code for the country.",
+                    "meta:xdmField": "xdm:countryCode",
+                    "meta:xdmType": "string"
+                },
+                "stateProvince": {
+                    "title": "State or province",
+                    "type": "string",
+                    "description": "The state, or province portion of the observation. The format follows the [ISO 3166-2 (country and subdivision)][http://www.unece.org/cefact/locode/subdivisions.html] standard.",
+                    "examples": [
+                        "US-CA",
+                        "DE-BB",
+                        "JP-13"
+                    ],
+                    "tryin": "([A-Z]{2}-[A-Z0-9]{1,3})",
+                    "meta:xdmField": "xdm:stateProvince",
+                    "meta:xdmType": "string"
+                },
+                "city": {
+                    "title": "City",
+                    "type": "string",
+                    "description": "The name of the city.",
+                    "meta:xdmField": "xdm:city",
+                    "meta:xdmType": "string"
+                },
+                "postalCode": {
+                    "title": "Postal code",
+                    "type": "string",
+                    "description": "The postal code of the location. Postal codes are not available for all countries. In some countries, this will only contain part of the postal code.",
+                    "meta:xdmField": "xdm:postalCode",
+                    "meta:xdmType": "string"
+                },
+                "dmaID": {
+                    "title": "Designated Market Area",
+                    "type": "integer",
+                    "description": "The Nielsen Media Research designated market area.",
+                    "meta:xdmField": "xdm:dmaID",
+                    "meta:xdmType": "int"
+                },
+                "msaID": {
+                    "title": "Metropolitan Statistical Area",
+                    "type": "integer",
+                    "description": "The Metropolitan Statistical Area in the USA where the observation occurred.",
+                    "meta:xdmField": "xdm:msaID",
+                    "meta:xdmType": "int"
+                },
+                "repositoryCreatedBy": {
+                    "title": "Created by User Identifier",
+                    "type": "string",
+                    "description": "User id who has created the entity.",
+                    "meta:xdmField": "xdm:repositoryCreatedBy",
+                    "meta:xdmType": "string"
+                },
+                "repositoryLastModifiedBy": {
+                    "title": "Modified by User Identifier",
+                    "type": "string",
+                    "description": "User id who last modified the entity. At creation time, `modifiedByUser` is set as `createdByUser`.",
+                    "meta:xdmField": "xdm:repositoryLastModifiedBy",
+                    "meta:xdmType": "string"
+                },
+                "createdByBatchID": {
+                    "title": "Created by Batch Identifier",
+                    "type": "string",
+                    "format": "uri-reference",
+                    "description": "The Data Set Files in Catalog Services which has been originating the creation of the entity.",
+                    "meta:xdmField": "xdm:createdByBatchID",
+                    "meta:xdmType": "string"
+                },
+                "modifiedByBatchID": {
+                    "title": "Modified by Batch Identifier",
+                    "type": "string",
+                    "format": "uri-reference",
+                    "description": "The last Data Set Files in Catalog Services which has modified the entity. At creation time, `modifiedByBatchID` is set as `createdByBatchID`.",
+                    "meta:xdmField": "xdm:modifiedByBatchID",
+                    "meta:xdmType": "string"
+                },
+                "_repo": {
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "properties": {
+                        "createDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "meta:immutable": true,
+                            "meta:usereditable": false,
+                            "examples": [
+                                "2004-10-23T12:00:00-06:00"
+                            ],
+                            "description": "The server date and time when the resource was created in the repository, such as when an asset file is first uploaded or a directory is created by the server as the parent of a new asset. The Date Time property should conform to ISO 8601 standard. An example form is \"2004-10-23T12:00:00-06:00\".",
+                            "meta:xdmField": "repo:createDate",
+                            "meta:xdmType": "date-time"
+                        },
+                        "modifyDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "meta:usereditable": false,
+                            "examples": [
+                                "2004-10-23T12:00:00-06:00"
+                            ],
+                            "description": "The server date and time when the resource was last modified in the repository, such as when a new version of an asset is uploaded or a directory's child resource is added or removed. The Date Time property should conform to ISO 8601 standard. An example form is \"2004-10-23T12:00:00-06:00\".",
+                            "meta:xdmField": "repo:modifyDate",
+                            "meta:xdmType": "date-time"
+                        }
+                    }
+                },
+                "primary": {
+                    "title": "Primary",
+                    "type": "boolean",
+                    "description": "Primary address indicator. A Profile can have only one `primary` address at a given point of time.\n",
+                    "meta:xdmField": "xdm:primary",
+                    "meta:xdmType": "boolean"
+                },
+                "label": {
+                    "title": "Label",
+                    "type": "string",
+                    "description": "Free form name of the address.",
+                    "meta:xdmField": "xdm:label",
+                    "meta:xdmType": "string"
+                },
+                "street1": {
+                    "title": "Street 1",
+                    "type": "string",
+                    "description": "Primary Street level information, apartment number, street number and street name.",
+                    "meta:xdmField": "xdm:street1",
+                    "meta:xdmType": "string"
+                },
+                "street2": {
+                    "title": "Street 2",
+                    "type": "string",
+                    "description": "Optional street information second line.",
+                    "meta:xdmField": "xdm:street2",
+                    "meta:xdmType": "string"
+                },
+                "street3": {
+                    "title": "Street 3",
+                    "type": "string",
+                    "description": "Optional street information third line.",
+                    "meta:xdmField": "xdm:street3",
+                    "meta:xdmType": "string"
+                },
+                "street4": {
+                    "title": "Street 4",
+                    "type": "string",
+                    "description": "Optional street information fourth line.",
+                    "meta:xdmField": "xdm:street4",
+                    "meta:xdmType": "string"
+                },
+                "region": {
+                    "title": "Region",
+                    "type": "string",
+                    "description": "The region, county, or district portion of the address.",
+                    "meta:xdmField": "xdm:region",
+                    "meta:xdmType": "string"
+                },
+                "postOfficeBox": {
+                    "title": "Post Office Box",
+                    "type": "string",
+                    "description": "Post office box of the address.",
+                    "maxLength": 20,
+                    "meta:xdmField": "xdm:postOfficeBox",
+                    "meta:xdmType": "string"
+                },
+                "country": {
+                    "title": "Country",
+                    "type": "string",
+                    "description": "The name of the government-administered territory. Other than `xdm:countryCode`, this is a free-form field that can have the country name in any language.",
+                    "meta:xdmField": "xdm:country",
+                    "meta:xdmType": "string"
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "description": "An indication as to the ability to use the address.",
+                    "default": "active",
+                    "meta:enum": {
+                        "active": "Active",
+                        "incomplete": "Incomplete",
+                        "pending_verification": "Pending Verification",
+                        "blacklisted": "Blacklisted",
+                        "blocked": "Blocked"
+                    },
+                    "meta:xdmField": "xdm:status",
+                    "meta:xdmType": "string"
+                },
+                "statusReason": {
+                    "title": "Status Reason",
+                    "type": "string",
+                    "description": "A description of the current status.",
+                    "meta:xdmField": "xdm:statusReason",
+                    "meta:xdmType": "string"
+                },
+                "lastVerifiedDate": {
+                    "title": "Last Verified Date",
+                    "type": "string",
+                    "format": "date",
+                    "description": "The date that the address was last verified as still belonging to the person.",
+                    "meta:xdmField": "xdm:lastVerifiedDate",
+                    "meta:xdmType": "date"
+                }
+            }
+        },
+        "personalEmail": {
+            "title": "Personal Email",
+            "description": "A personal email address.",
+            "meta:xdmField": "xdm:personalEmail",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/context/emailaddress",
+            "properties": {
+                "primary": {
+                    "title": "Primary",
+                    "type": "boolean",
+                    "description": "Primary email indicator.\n\nA Profile can have only one `primary` email address at a given point of time.\n",
+                    "meta:xdmField": "xdm:primary",
+                    "meta:xdmType": "boolean"
+                },
+                "address": {
+                    "title": "Address",
+                    "type": "string",
+                    "format": "email",
+                    "description": "The technical address, e.g 'name@domain.com' as commonly defined in RFC2822 and subsequent standards.",
+                    "meta:xdmField": "xdm:address",
+                    "meta:xdmType": "string"
+                },
+                "label": {
+                    "title": "Label",
+                    "type": "string",
+                    "description": "Additional display information that maybe available, e.g MS Outlook rich address controls display 'John Smith smithjr@company.uk', the 'John Smith' part is data that would be placed in the label.",
+                    "meta:xdmField": "xdm:label",
+                    "meta:xdmType": "string"
+                },
+                "type": {
+                    "title": "Type",
+                    "type": "string",
+                    "description": "The way the account relates to the person. e.g 'work' or 'personal'",
+                    "meta:enum": {
+                        "unknown": "Unknown",
+                        "personal": "Personal",
+                        "work": "Work",
+                        "education": "Education"
+                    },
+                    "meta:xdmField": "xdm:type",
+                    "meta:xdmType": "string"
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "description": "An indication as to the ability to use the email address.",
+                    "default": "active",
+                    "meta:enum": {
+                        "active": "Active",
+                        "incomplete": "Incomplete",
+                        "pending_verification": "Pending Verification",
+                        "blacklisted": "Blacklisted",
+                        "blocked": "Blocked"
+                    },
+                    "meta:xdmField": "xdm:status",
+                    "meta:xdmType": "string"
+                },
+                "statusReason": {
+                    "title": "Status Reason",
+                    "type": "string",
+                    "description": "A description of the current status.",
+                    "meta:xdmField": "xdm:statusReason",
+                    "meta:xdmType": "string"
+                }
+            }
+        },
+        "homePhone": {
+            "title": "Home Phone",
+            "description": "Home phone number.",
+            "meta:xdmField": "xdm:homePhone",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/context/phonenumber",
+            "properties": {
+                "primary": {
+                    "title": "Primary",
+                    "type": "boolean",
+                    "description": "Primary phone number indicator.\n\nUnlike for Address or EmailAddress, there can be multiple primary phone numbers; one per communication channel.\nThe communication channel is defined by the type:\n\n* `textMessaging`: type = `mobile`\n* `phone`: type = `home` | `work` | `unknown`\n* `fax`: type = `fax`\n",
+                    "meta:xdmField": "xdm:primary",
+                    "meta:xdmType": "boolean"
+                },
+                "number": {
+                    "title": "Number",
+                    "type": "string",
+                    "description": "The phone number. Note the phone number is a string and may include meaningful characters such as brackets (), hyphens - or characters to indicate sub dialing identifiers like extensions x. E.g 1-353(0)18391111 or +613 9403600x1234.",
+                    "meta:xdmField": "xdm:number",
+                    "meta:xdmType": "string"
+                },
+                "extension": {
+                    "title": "Extension",
+                    "type": "string",
+                    "description": "The internal dialing number used to call from a private exchange, operator or switchboard.",
+                    "meta:xdmField": "xdm:extension",
+                    "meta:xdmType": "string"
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "description": "An indication as to the ability to use the phone number.",
+                    "default": "active",
+                    "meta:enum": {
+                        "active": "Active",
+                        "incomplete": "Incomplete",
+                        "blacklisted": "Blacklisted",
+                        "blocked": "Blocked"
+                    },
+                    "meta:xdmField": "xdm:status",
+                    "meta:xdmType": "string"
+                },
+                "statusReason": {
+                    "title": "Status Reason",
+                    "type": "string",
+                    "description": "A description of the current status.",
+                    "meta:xdmField": "xdm:statusReason",
+                    "meta:xdmType": "string"
+                },
+                "validity": {
+                    "title": "Validity",
+                    "type": "string",
+                    "description": "A level of technical correctness of the phone number.",
+                    "meta:enum": {
+                        "consistent": "Consistent",
+                        "inconsistent": "Inconsistent",
+                        "incomplete": "Incomplete",
+                        "successfullyUsed": "Successfully Used"
+                    },
+                    "meta:xdmField": "xdm:validity",
+                    "meta:xdmType": "string"
+                }
+            }
+        },
+        "mobilePhone": {
+            "title": "Mobile Phone",
+            "description": "Mobile phone number.",
+            "meta:xdmField": "xdm:mobilePhone",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/context/phonenumber",
+            "properties": {
+                "primary": {
+                    "title": "Primary",
+                    "type": "boolean",
+                    "description": "Primary phone number indicator.\n\nUnlike for Address or EmailAddress, there can be multiple primary phone numbers; one per communication channel.\nThe communication channel is defined by the type:\n\n* `textMessaging`: type = `mobile`\n* `phone`: type = `home` | `work` | `unknown`\n* `fax`: type = `fax`\n",
+                    "meta:xdmField": "xdm:primary",
+                    "meta:xdmType": "boolean"
+                },
+                "number": {
+                    "title": "Number",
+                    "type": "string",
+                    "description": "The phone number. Note the phone number is a string and may include meaningful characters such as brackets (), hyphens - or characters to indicate sub dialing identifiers like extensions x. E.g 1-353(0)18391111 or +613 9403600x1234.",
+                    "meta:xdmField": "xdm:number",
+                    "meta:xdmType": "string"
+                },
+                "extension": {
+                    "title": "Extension",
+                    "type": "string",
+                    "description": "The internal dialing number used to call from a private exchange, operator or switchboard.",
+                    "meta:xdmField": "xdm:extension",
+                    "meta:xdmType": "string"
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "description": "An indication as to the ability to use the phone number.",
+                    "default": "active",
+                    "meta:enum": {
+                        "active": "Active",
+                        "incomplete": "Incomplete",
+                        "blacklisted": "Blacklisted",
+                        "blocked": "Blocked"
+                    },
+                    "meta:xdmField": "xdm:status",
+                    "meta:xdmType": "string"
+                },
+                "statusReason": {
+                    "title": "Status Reason",
+                    "type": "string",
+                    "description": "A description of the current status.",
+                    "meta:xdmField": "xdm:statusReason",
+                    "meta:xdmType": "string"
+                },
+                "validity": {
+                    "title": "Validity",
+                    "type": "string",
+                    "description": "A level of technical correctness of the phone number.",
+                    "meta:enum": {
+                        "consistent": "Consistent",
+                        "inconsistent": "Inconsistent",
+                        "incomplete": "Incomplete",
+                        "successfullyUsed": "Successfully Used"
+                    },
+                    "meta:xdmField": "xdm:validity",
+                    "meta:xdmType": "string"
+                }
+            }
+        },
+        "faxPhone": {
+            "title": "Fax Phone",
+            "description": "Fax phone number.",
+            "meta:xdmField": "xdm:faxPhone",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/context/phonenumber",
+            "properties": {
+                "primary": {
+                    "title": "Primary",
+                    "type": "boolean",
+                    "description": "Primary phone number indicator.\n\nUnlike for Address or EmailAddress, there can be multiple primary phone numbers; one per communication channel.\nThe communication channel is defined by the type:\n\n* `textMessaging`: type = `mobile`\n* `phone`: type = `home` | `work` | `unknown`\n* `fax`: type = `fax`\n",
+                    "meta:xdmField": "xdm:primary",
+                    "meta:xdmType": "boolean"
+                },
+                "number": {
+                    "title": "Number",
+                    "type": "string",
+                    "description": "The phone number. Note the phone number is a string and may include meaningful characters such as brackets (), hyphens - or characters to indicate sub dialing identifiers like extensions x. E.g 1-353(0)18391111 or +613 9403600x1234.",
+                    "meta:xdmField": "xdm:number",
+                    "meta:xdmType": "string"
+                },
+                "extension": {
+                    "title": "Extension",
+                    "type": "string",
+                    "description": "The internal dialing number used to call from a private exchange, operator or switchboard.",
+                    "meta:xdmField": "xdm:extension",
+                    "meta:xdmType": "string"
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "description": "An indication as to the ability to use the phone number.",
+                    "default": "active",
+                    "meta:enum": {
+                        "active": "Active",
+                        "incomplete": "Incomplete",
+                        "blacklisted": "Blacklisted",
+                        "blocked": "Blocked"
+                    },
+                    "meta:xdmField": "xdm:status",
+                    "meta:xdmType": "string"
+                },
+                "statusReason": {
+                    "title": "Status Reason",
+                    "type": "string",
+                    "description": "A description of the current status.",
+                    "meta:xdmField": "xdm:statusReason",
+                    "meta:xdmType": "string"
+                },
+                "validity": {
+                    "title": "Validity",
+                    "type": "string",
+                    "description": "A level of technical correctness of the phone number.",
+                    "meta:enum": {
+                        "consistent": "Consistent",
+                        "inconsistent": "Inconsistent",
+                        "incomplete": "Incomplete",
+                        "successfullyUsed": "Successfully Used"
+                    },
+                    "meta:xdmField": "xdm:validity",
+                    "meta:xdmType": "string"
+                }
+            }
+        },
+        "workAddress": {
+            "title": "Work Address",
+            "description": "A work postal address.",
+            "meta:xdmField": "xdm:workAddress",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/common/address",
+            "properties": {
+                "_id": {
+                    "title": "Coordinates ID",
+                    "type": "string",
+                    "format": "uri-reference",
+                    "description": "The unique identifier of the coordinates.",
+                    "meta:xdmField": "@id",
+                    "meta:xdmType": "string"
+                },
+                "_schema": {
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "properties": {
+                        "description": {
+                            "title": "Description",
+                            "type": "string",
+                            "description": "A description of what the coordinates identify.",
+                            "meta:xdmField": "schema:description",
+                            "meta:xdmType": "string"
+                        },
+                        "latitude": {
+                            "title": "Latitude",
+                            "type": "number",
+                            "minimum": -90,
+                            "maximum": 90,
+                            "description": "The signed vertical coordinate of a geographic point.",
+                            "meta:xdmField": "schema:latitude",
+                            "meta:xdmType": "number"
+                        },
+                        "longitude": {
+                            "title": "Longitude",
+                            "type": "number",
+                            "minimum": -180,
+                            "maximum": 180,
+                            "description": "The signed horizontal coordinate of a geographic point.",
+                            "meta:xdmField": "schema:longitude",
+                            "meta:xdmType": "number"
+                        },
+                        "elevation": {
+                            "title": "Elevation",
+                            "type": "number",
+                            "description": "The specific elevation of the defined coordinate. The value conforms to the [WGS84](http://gisgeography.com/wgs84-world-geodetic-system/) datum and is measured in meters.",
+                            "meta:xdmField": "schema:elevation",
+                            "meta:xdmType": "number"
+                        }
+                    }
+                },
+                "countryCode": {
+                    "title": "Country code",
+                    "type": "string",
+                    "pattern": "^[A-Z]{2}$",
+                    "description": "The two-character [ISO 3166-1 alpha-2](https://datahub.io/core/country-list) code for the country.",
+                    "meta:xdmField": "xdm:countryCode",
+                    "meta:xdmType": "string"
+                },
+                "stateProvince": {
+                    "title": "State or province",
+                    "type": "string",
+                    "description": "The state, or province portion of the observation. The format follows the [ISO 3166-2 (country and subdivision)][http://www.unece.org/cefact/locode/subdivisions.html] standard.",
+                    "examples": [
+                        "US-CA",
+                        "DE-BB",
+                        "JP-13"
+                    ],
+                    "pattern": "([A-Z]{2}-[A-Z0-9]{1,3})",
+                    "meta:xdmField": "xdm:stateProvince",
+                    "meta:xdmType": "string"
+                },
+                "city": {
+                    "title": "City",
+                    "type": "string",
+                    "description": "The name of the city.",
+                    "meta:xdmField": "xdm:city",
+                    "meta:xdmType": "string"
+                },
+                "postalCode": {
+                    "title": "Postal code",
+                    "type": "string",
+                    "description": "The postal code of the location. Postal codes are not available for all countries. In some countries, this will only contain part of the postal code.",
+                    "meta:xdmField": "xdm:postalCode",
+                    "meta:xdmType": "string"
+                },
+                "dmaID": {
+                    "title": "Designated Market Area",
+                    "type": "integer",
+                    "description": "The Nielsen Media Research designated market area.",
+                    "meta:xdmField": "xdm:dmaID",
+                    "meta:xdmType": "int"
+                },
+                "msaID": {
+                    "title": "Metropolitan Statistical Area",
+                    "type": "integer",
+                    "description": "The Metropolitan Statistical Area in the USA where the observation occurred.",
+                    "meta:xdmField": "xdm:msaID",
+                    "meta:xdmType": "int"
+                },
+                "repositoryCreatedBy": {
+                    "title": "Created by User Identifier",
+                    "type": "string",
+                    "description": "User id who has created the entity.",
+                    "meta:xdmField": "xdm:repositoryCreatedBy",
+                    "meta:xdmType": "string"
+                },
+                "repositoryLastModifiedBy": {
+                    "title": "Modified by User Identifier",
+                    "type": "string",
+                    "description": "User id who last modified the entity. At creation time, `modifiedByUser` is set as `createdByUser`.",
+                    "meta:xdmField": "xdm:repositoryLastModifiedBy",
+                    "meta:xdmType": "string"
+                },
+                "createdByBatchID": {
+                    "title": "Created by Batch Identifier",
+                    "type": "string",
+                    "format": "uri-reference",
+                    "description": "The Data Set Files in Catalog Services which has been originating the creation of the entity.",
+                    "meta:xdmField": "xdm:createdByBatchID",
+                    "meta:xdmType": "string"
+                },
+                "modifiedByBatchID": {
+                    "title": "Modified by Batch Identifier",
+                    "type": "string",
+                    "format": "uri-reference",
+                    "description": "The last Data Set Files in Catalog Services which has modified the entity. At creation time, `modifiedByBatchID` is set as `createdByBatchID`.",
+                    "meta:xdmField": "xdm:modifiedByBatchID",
+                    "meta:xdmType": "string"
+                },
+                "_repo": {
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "properties": {
+                        "createDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "meta:immutable": true,
+                            "meta:usereditable": false,
+                            "examples": [
+                                "2004-10-23T12:00:00-06:00"
+                            ],
+                            "description": "The server date and time when the resource was created in the repository, such as when an asset file is first uploaded or a directory is created by the server as the parent of a new asset. The Date Time property should conform to ISO 8601 standard. An example form is \"2004-10-23T12:00:00-06:00\".",
+                            "meta:xdmField": "repo:createDate",
+                            "meta:xdmType": "date-time"
+                        },
+                        "modifyDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "meta:usereditable": false,
+                            "examples": [
+                                "2004-10-23T12:00:00-06:00"
+                            ],
+                            "description": "The server date and time when the resource was last modified in the repository, such as when a new version of an asset is uploaded or a directory's child resource is added or removed. The Date Time property should conform to ISO 8601 standard. An example form is \"2004-10-23T12:00:00-06:00\".",
+                            "meta:xdmField": "repo:modifyDate",
+                            "meta:xdmType": "date-time"
+                        }
+                    }
+                },
+                "primary": {
+                    "title": "Primary",
+                    "type": "boolean",
+                    "description": "Primary address indicator. A Profile can have only one `primary` address at a given point of time.\n",
+                    "meta:xdmField": "xdm:primary",
+                    "meta:xdmType": "boolean"
+                },
+                "label": {
+                    "title": "Label",
+                    "type": "string",
+                    "description": "Free form name of the address.",
+                    "meta:xdmField": "xdm:label",
+                    "meta:xdmType": "string"
+                },
+                "street1": {
+                    "title": "Street 1",
+                    "type": "string",
+                    "description": "Primary Street level information, apartment number, street number and street name.",
+                    "meta:xdmField": "xdm:street1",
+                    "meta:xdmType": "string"
+                },
+                "street2": {
+                    "title": "Street 2",
+                    "type": "string",
+                    "description": "Optional street information second line.",
+                    "meta:xdmField": "xdm:street2",
+                    "meta:xdmType": "string"
+                },
+                "street3": {
+                    "title": "Street 3",
+                    "type": "string",
+                    "description": "Optional street information third line.",
+                    "meta:xdmField": "xdm:street3",
+                    "meta:xdmType": "string"
+                },
+                "street4": {
+                    "title": "Street 4",
+                    "type": "string",
+                    "description": "Optional street information fourth line.",
+                    "meta:xdmField": "xdm:street4",
+                    "meta:xdmType": "string"
+                },
+                "region": {
+                    "title": "Region",
+                    "type": "string",
+                    "description": "The region, county, or district portion of the address.",
+                    "meta:xdmField": "xdm:region",
+                    "meta:xdmType": "string"
+                },
+                "postOfficeBox": {
+                    "title": "Post Office Box",
+                    "type": "string",
+                    "description": "Post office box of the address.",
+                    "maxLength": 20,
+                    "meta:xdmField": "xdm:postOfficeBox",
+                    "meta:xdmType": "string"
+                },
+                "country": {
+                    "title": "Country",
+                    "type": "string",
+                    "description": "The name of the government-administered territory. Other than `xdm:countryCode`, this is a free-form field that can have the country name in any language.",
+                    "meta:xdmField": "xdm:country",
+                    "meta:xdmType": "string"
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "description": "An indication as to the ability to use the address.",
+                    "default": "active",
+                    "meta:enum": {
+                        "active": "Active",
+                        "incomplete": "Incomplete",
+                        "pending_verification": "Pending Verification",
+                        "blacklisted": "Blacklisted",
+                        "blocked": "Blocked"
+                    },
+                    "meta:xdmField": "xdm:status",
+                    "meta:xdmType": "string"
+                },
+                "statusReason": {
+                    "title": "Status Reason",
+                    "type": "string",
+                    "description": "A description of the current status.",
+                    "meta:xdmField": "xdm:statusReason",
+                    "meta:xdmType": "string"
+                },
+                "lastVerifiedDate": {
+                    "title": "Last Verified Date",
+                    "type": "string",
+                    "format": "date",
+                    "description": "The date that the address was last verified as still belonging to the person.",
+                    "meta:xdmField": "xdm:lastVerifiedDate",
+                    "meta:xdmType": "date"
+                }
+            }
+        },
+        "workEmail": {
+            "title": "Work Email",
+            "description": "A work email address.",
+            "meta:xdmField": "xdm:workEmail",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/context/emailaddress",
+            "properties": {
+                "primary": {
+                    "title": "Primary",
+                    "type": "boolean",
+                    "description": "Primary email indicator.\n\nA Profile can have only one `primary` email address at a given point of time.\n",
+                    "meta:xdmField": "xdm:primary",
+                    "meta:xdmType": "boolean"
+                },
+                "address": {
+                    "title": "Address",
+                    "type": "string",
+                    "format": "email",
+                    "description": "The technical address, e.g 'name@domain.com' as commonly defined in RFC2822 and subsequent standards.",
+                    "meta:xdmField": "xdm:address",
+                    "meta:xdmType": "string"
+                },
+                "label": {
+                    "title": "Label",
+                    "type": "string",
+                    "description": "Additional display information that maybe available, e.g MS Outlook rich address controls display 'John Smith smithjr@company.uk', the 'John Smith' part is data that would be placed in the label.",
+                    "meta:xdmField": "xdm:label",
+                    "meta:xdmType": "string"
+                },
+                "type": {
+                    "title": "Type",
+                    "type": "string",
+                    "description": "The way the account relates to the person. e.g 'work' or 'personal'",
+                    "meta:enum": {
+                        "unknown": "Unknown",
+                        "personal": "Personal",
+                        "work": "Work",
+                        "education": "Education"
+                    },
+                    "meta:xdmField": "xdm:type",
+                    "meta:xdmType": "string"
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "description": "An indication as to the ability to use the email address.",
+                    "default": "active",
+                    "meta:enum": {
+                        "active": "Active",
+                        "incomplete": "Incomplete",
+                        "pending_verification": "Pending Verification",
+                        "blacklisted": "Blacklisted",
+                        "blocked": "Blocked"
+                    },
+                    "meta:xdmField": "xdm:status",
+                    "meta:xdmType": "string"
+                },
+                "statusReason": {
+                    "title": "Status Reason",
+                    "type": "string",
+                    "description": "A description of the current status.",
+                    "meta:xdmField": "xdm:statusReason",
+                    "meta:xdmType": "string"
+                }
+            }
+        },
+        "workPhone": {
+            "title": "Work Phone",
+            "description": "Work phone number.",
+            "meta:xdmField": "xdm:workPhone",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/context/phonenumber",
+            "properties": {
+                "primary": {
+                    "title": "Primary",
+                    "type": "boolean",
+                    "description": "Primary phone number indicator.\n\nUnlike for Address or EmailAddress, there can be multiple primary phone numbers; one per communication channel.\nThe communication channel is defined by the type:\n\n* `textMessaging`: type = `mobile`\n* `phone`: type = `home` | `work` | `unknown`\n* `fax`: type = `fax`\n",
+                    "meta:xdmField": "xdm:primary",
+                    "meta:xdmType": "boolean"
+                },
+                "number": {
+                    "title": "Number",
+                    "type": "string",
+                    "description": "The phone number. Note the phone number is a string and may include meaningful characters such as brackets (), hyphens - or characters to indicate sub dialing identifiers like extensions x. E.g 1-353(0)18391111 or +613 9403600x1234.",
+                    "meta:xdmField": "xdm:number",
+                    "meta:xdmType": "string"
+                },
+                "extension": {
+                    "title": "Extension",
+                    "type": "string",
+                    "description": "The internal dialing number used to call from a private exchange, operator or switchboard.",
+                    "meta:xdmField": "xdm:extension",
+                    "meta:xdmType": "string"
+                },
+                "status": {
+                    "title": "Status",
+                    "type": "string",
+                    "description": "An indication as to the ability to use the phone number.",
+                    "default": "active",
+                    "meta:enum": {
+                        "active": "Active",
+                        "incomplete": "Incomplete",
+                        "blacklisted": "Blacklisted",
+                        "blocked": "Blocked"
+                    },
+                    "meta:xdmField": "xdm:status",
+                    "meta:xdmType": "string"
+                },
+                "statusReason": {
+                    "title": "Status Reason",
+                    "type": "string",
+                    "description": "A description of the current status.",
+                    "meta:xdmField": "xdm:statusReason",
+                    "meta:xdmType": "string"
+                },
+                "validity": {
+                    "title": "Validity",
+                    "type": "string",
+                    "description": "A level of technical correctness of the phone number.",
+                    "meta:enum": {
+                        "consistent": "Consistent",
+                        "inconsistent": "Inconsistent",
+                        "incomplete": "Incomplete",
+                        "successfullyUsed": "Successfully Used"
+                    },
+                    "meta:xdmField": "xdm:validity",
+                    "meta:xdmType": "string"
+                }
+            }
+        },
+        "organizations": {
+            "title": "Organizations",
+            "type": "array",
+            "meta:xdmField": "xdm:organizations",
+            "meta:xdmType": "array",
+            "items": {
+                "type": "string",
+                "meta:xdmType": "string"
+            }
+        },
+        "_unqualified": {
+            "type": "object",
+            "meta:xdmType": "object",
+            "properties": {
+                "e2ecustomfields": {
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "properties": {
+                        "customField1": {
+                            "xdm:metaType": "string",
+                            "id": "customField1",
+                            "type": "string",
+                            "title": "customField1",
+                            "meta:xdmType": "string"
+                        },
+                        "customField2": {
+                            "xdm:metaType": "string",
+                            "id": "customField2",
+                            "type": "string",
+                            "title": "customField2",
+                            "meta:xdmType": "string"
+                        },
+                        "customField3": {
+                            "xdm:metaType": "string",
+                            "id": "customField3",
+                            "type": "string",
+                            "title": "customField3",
+                            "meta:xdmType": "string"
+                        },
+                        "customField4": {
+                            "xdm:metaType": "boolean",
+                            "id": "customField4",
+                            "type": "boolean",
+                            "title": "customField4",
+                            "meta:xdmType": "boolean"
+                        },
+                        "customField5": {
+                            "xdm:metaType": "string",
+                            "id": "customField5",
+                            "type": "string",
+                            "title": "customField5",
+                            "meta:xdmType": "string"
+                        },
+                        "customField6": {
+                            "xdm:metaType": "integer",
+                            "id": "customField6",
+                            "type": "integer",
+                            "title": "customField6",
+                            "meta:xdmType": "int"
+                        }
+                    }
+                },
+                "identitydesc": {
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "properties": {
+                        "ECID": {
+                            "xdm:metaType": "string",
+                            "id": "ECID",
+                            "type": "string",
+                            "title": "ECID field",
+                            "meta:xdmType": "string"
+                        },
+                        "CRMID": {
+                            "xdm:metaType": "string",
+                            "id": "CRMID",
+                            "type": "string",
+                            "title": "CRMID field",
+                            "meta:xdmType": "string"
+                        },
+                        "Phone": {
+                            "xdm:metaType": "string",
+                            "id": "Phone",
+                            "type": "string",
+                            "title": "Phone field",
+                            "meta:xdmType": "string"
+                        },
+                        "Email": {
+                            "xdm:metaType": "string",
+                            "id": "Email",
+                            "type": "string",
+                            "title": "Email field",
+                            "meta:xdmType": "string"
+                        },
+                        "AAID": {
+                            "xdm:metaType": "string",
+                            "id": "AAID",
+                            "type": "string",
+                            "title": "AAID field",
+                            "meta:xdmType": "string"
+                        },
+                        "userGUID": {
+                            "xdm:metaType": "string",
+                            "id": "userGUID",
+                            "type": "string",
+                            "title": "userGUID field",
+                            "meta:xdmType": "string"
+                        },
+                        "TNTID": {
+                            "xdm:metaType": "string",
+                            "id": "TNTID",
+                            "type": "string",
+                            "title": "TNTID field",
+                            "meta:xdmType": "string"
+                        }
+                    }
+                },
+                "web": {
+                    "type": "object",
+                    "meta:xdmType": "object"
+                }
+            }
+        },
+        "preferredLanguage": {
+            "title": "Preferred Language",
+            "type": "string",
+            "pattern": "^(((([A-Za-z]{2,3}(-([A-Za-z]{3}(-[A-Za-z]{3}){0,2}))?)|[A-Za-z]{4}|[A-Za-z]{5,8})(-([A-Za-z]{4}))?(-([A-Za-z]{2}|[0-9]{3}))?(-([A-Za-z0-9]{5,8}|[0-9][A-Za-z0-9]{3}))*(-([0-9A-WY-Za-wy-z](-[A-Za-z0-9]{2,8})+))*(-(x(-[A-Za-z0-9]{1,8})+))?)|(x(-[A-Za-z0-9]{1,8})+)|((en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang)))$",
+            "examples": [
+                "en-GB",
+                "de-DE",
+                "yue-HK"
+            ],
+            "description": "Describes the preferred system of communication used by the profile. Language codes are expressed in BCP 47 format.",
+            "meta:xdmField": "xdm:preferredLanguage",
+            "meta:xdmType": "string"
+        },
+        "profilePictureLink": {
+            "title": "Profile Picture Link",
+            "type": "string",
+            "description": "Link to profile's picture",
+            "meta:xdmField": "xdm:profilePictureLink",
+            "meta:xdmType": "string"
+        },
+        "emailFormat": {
+            "title": "Email Format",
+            "type": "string",
+            "description": "Email format preferred by the profile. This can be rich text/plain text",
+            "meta:enum": {
+                "html": "Rich text",
+                "plaintext": "Plain text"
+            },
+            "meta:xdmField": "xdm:emailFormat",
+            "meta:xdmType": "string"
+        },
+        "timeZone": {
+            "title": "Time Zone",
+            "type": "string",
+            "examples": [
+                "America/Barbados",
+                "Antarctica/Davis",
+                "Asia/Calcutta"
+            ],
+            "description": "Describes which time zone the profile is present in, most frequently/the time zone preferred by the profile. Time zones are expressed according to the IETF tz database: https://www.ietf.org/timezones/tzdb-2016i/tz-link.htm",
+            "meta:xdmField": "xdm:timeZone",
+            "meta:xdmType": "string"
+        },
+        "optInOut": {
+            "title": "OptInOut",
+            "description": "Describes a users opting in and out preferences for communication by medium and communication type.",
+            "meta:xdmField": "xdm:optInOut",
+            "type": "object",
+            "meta:xdmType": "object",
+            "meta:referencedFrom": "https://ns.adobe.com/xdm/context/optinout",
+            "properties": {
+                "_channels": {
+                    "type": "object",
+                    "meta:xdmType": "object",
+                    "properties": {
+                        "email": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "phone": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "sms": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "fax": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "directMail": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "adm": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "apns": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "baidu": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "gcm": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "line": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "mpns": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "wechat": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        },
+                        "wns": {
+                            "description": "Communication preference for the outbound channel identified through its URL by the name of the property.",
+                            "type": "string",
+                            "default": "not_provided",
+                            "enum": [
+                                "not_provided",
+                                "pending",
+                                "in",
+                                "out"
+                            ],
+                            "meta:enum": {
+                                "not_provided": "Not Provided",
+                                "pending": "Pending Verification",
+                                "in": "Opt-In: the user explicitly consents to receiving messages.",
+                                "out": "Opt-Out: the user declines to receive any messages on this channel"
+                            },
+                            "meta:xdmType": "string"
+                        }
+                    }
+                },
+                "globalOptout": {
+                    "title": "Global Opt-out",
+                    "type": "boolean",
+                    "description": "Do not contact this profile on any outbound channel.",
+                    "default": false,
+                    "meta:xdmField": "xdm:globalOptout",
+                    "meta:xdmType": "boolean"
+                }
+            }
+        }
+    },
+    "$id": "https://ns.adobe.com/acpq/schemas/1f909cc1a835e7600888312503ac74b5",
+    "version": "1.1",
+    "meta:resourceType": "schemas",
+    "meta:registryMetadata": {
+        "repo:createDate": 1552413183419,
+        "repo:lastModifiedDate": 1552413426989,
+        "xdm:createdClientId": "acp_foundation_quality",
+        "xdm:repositoryCreatedBy": "55A76D3E5A20740B0A495D25@AdobeID"
+    }
+}
