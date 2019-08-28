@@ -37,7 +37,7 @@ public class ModelObjectTest {
 
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testInstantiateModel() {
-    testObj = new ModelObject("TestService", "article", "pathToObject/objectName", false) {};
+    testObj = new ModelObject("TestService", "article", null, false) {};
     JSONObject model = testObj.getModel();
     Assert.assertTrue(model.containsKey("properties"));
   }
@@ -71,8 +71,7 @@ public class ModelObjectTest {
   @SuppressWarnings("unchecked")
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testBuildArraySchemaDefinitionModelInstance() throws ModelSearchException {
-    ModelObject responseObj =
-        new ModelObject("TestService", "response_error", "pathToObject/objectName", false);
+    ModelObject responseObj = new ModelObject("TestService", "response_error", null, false);
     JSONObject model = responseObj.getModel();
     Assert.assertTrue(model.containsKey("properties"));
     responseObj.buildValidModelInstance();

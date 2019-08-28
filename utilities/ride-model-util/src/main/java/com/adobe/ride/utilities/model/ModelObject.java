@@ -657,21 +657,24 @@ public class ModelObject {
    * @return JSONObject instance which conforms to the definition passed
    */
   @SuppressWarnings("unchecked")
-  protected JSONObject buildDefinedObjectNode(String pathToParent, JSONObject obj) {
-    JSONObject returnObj = new JSONObject();
+  protected Object buildDefinedObjectNode(String pathToParent, JSONObject obj) {
+    Object returnObj = null;
     try {
       String key = "";
       JSONObject definition = getDefinitionRef(obj);
       if (definition.containsKey("patternProperties")) {
+        JSONObject instance = new JSONObject();
         JSONObject patternProps = (JSONObject) definition.get("patternProperties");
 
         Set<Entry<String, JSONObject>> set = patternProps.entrySet();
 
         for (Entry<String, JSONObject> e : set) {
           key = DataGenerator.generateRegexValue(e.getKey());
-          returnObj.put(key, generateNodeValue(null, key, e.getValue()));
+          instance.put(key, generateNodeValue(null, key, e.getValue()));
         }
+        returnObj = instance;
       } else if (definition.containsKey("properties")) {
+        JSONObject instance = new JSONObject();
         JSONObject props = (requiredOnly) ? getRequiredOnlyDefs(definition)
             : (JSONObject) definition.get("properties");
 
@@ -682,27 +685,28 @@ public class ModelObject {
           Object existingValue = checkForExisitingValue(pathToParent, key);
           if (existingValue == null) {
             JSONObject propertyDef = e.getValue();
-            returnObj.put(key, generateNodeValue(null, key, propertyDef));
+            instance.put(key, generateNodeValue(null, key, propertyDef));
           } else {
-            returnObj.put(key, existingValue);
+            instance.put(key, existingValue);
           }
         }
+        returnObj = instance;
       } else if (definition.containsKey("items")) {
         ArrayNode arrayObj = buildArrayNode(definition);
-        returnObj.put(key, arrayObj);
+        returnObj = arrayObj;
       } else {
         try {
           throw new UnexpectedModelDefinitionException(definition);
         } catch (UnexpectedModelDefinitionException e) {
           logger.log(Level.SEVERE, e.getMessage());
         }
-        return null;
       }
     } catch (UnexpectedModelPropertyTypeException e) {
       logger.log(Level.SEVERE, "An Unexpected Model type was encountered", e);
     } catch (ModelSearchException mse) {
       mse.printStackTrace();
     }
+
     return returnObj;
   }
 
@@ -735,6 +739,9 @@ public class ModelObject {
         if (existingValue == null) {
           Object genValue = null;
           try {
+            if (currentkey.equals("otherArticles")) {
+              System.out.println("Debug");
+            }
             genValue = generateNodeValue(null, currentkey, propertyDef);
           } catch (ModelSearchException e1) {
             e1.printStackTrace();
@@ -846,14 +853,20 @@ public class ModelObject {
    * @return String
    * @throws InvalidSyncReferenceException
    */
-  private String createSyncdValue(JSONObject propertyDef) throws InvalidSyncReferenceException {
+  private Object getSyncdValue(JSONObject propertyDef) throws InvalidSyncReferenceException {
     String pattern = propertyDef.get("sync").toString();
+    int patternLen = pattern.length();
     String startStr = "{$path:";
     int startSearchStringLength = startStr.length();
     String endStr = "}";
     int endSearchStringLength = endStr.length();
-    int endStringIndex = 0;
+    int endStringIndex = pattern.indexOf(endStr);
     String returnValue = "";
+
+    if (endStringIndex + 1 == patternLen) {
+      String propertyPath = pattern.substring(startSearchStringLength, patternLen - 1);
+      return getMappedValue(propertyPath, true);
+    }
 
     while (endStringIndex != -1) {
       // find start index of path reference
@@ -880,13 +893,12 @@ public class ModelObject {
           String propertyPath =
               pattern.substring(startStringIndex + startSearchStringLength, endStringIndex);
 
-          String syncVal = getMappedValue(propertyPath, true);
+          Object syncVal = getMappedValue(propertyPath, true);
           returnValue += syncVal;
         } else {
           throw new InvalidSyncReferenceException(model, pattern);
         }
       } else {
-        int patternLen = pattern.length();
         int stringEndIndex = endStringIndex + 1;
         if (stringEndIndex > patternLen) {
           String remainder = DataGenerator
@@ -908,7 +920,7 @@ public class ModelObject {
    *        present
    * @return
    */
-  private String getMappedValue(String propertyPath, boolean completeBranch) {
+  private Object getMappedValue(String propertyPath, boolean completeBranch) {
 
     JsonNode node = null;
     try {
@@ -927,7 +939,7 @@ public class ModelObject {
         return null;
       }
     } else {
-      return value.toString();
+      return value;
     }
   }
 
@@ -1226,7 +1238,7 @@ public class ModelObject {
       switch (type) {
         case SYNC:
           try {
-            returnValue = createSyncdValue(propertyDef);
+            returnValue = getSyncdValue(propertyDef);
           } catch (InvalidSyncReferenceException e) {
             logger.log(Level.SEVERE, e.getMessage());
           }
@@ -1287,8 +1299,7 @@ public class ModelObject {
           returnValue = ipv6;
           break;
         case REF_DEFINITION:
-          JSONObject obj = buildDefinedObjectNode(nodePath, propertyDef);
-          returnValue = obj;
+          returnValue = buildDefinedObjectNode(nodePath, propertyDef);
           break;
         case REF_SCHEMA:
           ModelObject newObj;
