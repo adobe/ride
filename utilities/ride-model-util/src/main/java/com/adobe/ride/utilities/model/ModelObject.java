@@ -1191,12 +1191,6 @@ public class ModelObject {
       nodePath = "/" + key;
     }
 
-    if (key != null) {
-      if (key.equals("authorUrl")) {
-        System.out.println("Debug");
-      }
-    }
-
     ModelPropertyType type = ModelPropertyType.NULL;
 
     try {
