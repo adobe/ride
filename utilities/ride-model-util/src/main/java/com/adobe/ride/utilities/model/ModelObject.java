@@ -867,9 +867,11 @@ public class ModelObject {
         }
 
         // generate value between last sync value and this
-        String nonSyncVal =
-            DataGenerator.generateRegexValue(pattern.substring(endStringIndex, startStringIndex));
-        returnValue += nonSyncVal;
+        if (endStringIndex > startStringIndex) {
+          String nonSyncVal =
+              DataGenerator.generateRegexValue(pattern.substring(endStringIndex, startStringIndex));
+          returnValue += nonSyncVal;
+        }
 
         // find end index of path reference
         endStringIndex = pattern.indexOf(endStr, startStringIndex);
@@ -884,9 +886,13 @@ public class ModelObject {
           throw new InvalidSyncReferenceException(model, pattern);
         }
       } else {
-        String remainder = DataGenerator
-            .generateRegexValue(pattern.substring(endStringIndex + 1, pattern.length())).toString();
-        returnValue += remainder;
+        int patternLen = pattern.length();
+        int stringEndIndex = endStringIndex + 1;
+        if (stringEndIndex > patternLen) {
+          String remainder = DataGenerator
+              .generateRegexValue(pattern.substring(stringEndIndex, patternLen)).toString();
+          returnValue += remainder;
+        }
         endStringIndex = -1;
       }
     }
@@ -1412,12 +1418,10 @@ public class ModelObject {
    * @param dataTree
    */
   private void refreshMetadata(JsonNode dataTree) {
-    String treeDump = dataTree.toString().replace("\\", "").replace("\"[", "[").replace("]\"", "]");
-    // strip backslashes and format arrays. A problem caused by the JsonNode string
-    // dump.
     try {
-      objectMetadata = (JSONObject) parser.parse(treeDump);
-    } catch (ParseException e) {
+      String treeString = mapper.writeValueAsString(dataTree);
+      objectMetadata = (JSONObject) parser.parse(treeString);
+    } catch (ParseException | JsonProcessingException e) {
       logger.log(Level.SEVERE, e.getMessage());
     }
   }
@@ -1447,7 +1451,7 @@ public class ModelObject {
     } else if (type == ModelPropertyType.NUMBER) {
       ((ObjectNode) tree.at(pathToParent)).put(key, Double.parseDouble(value.toString()));
     } else if (type == ModelPropertyType.OBJECT || type == ModelPropertyType.REF_DEFINITION
-        || type == ModelPropertyType.REF_SCHEMA) {
+        || type == ModelPropertyType.REF_SCHEMA || type == ModelPropertyType.ARRAY) {
       try {
         String stringValue = value.toString();
         JsonNode node = mapper.readTree(stringValue);
