@@ -108,6 +108,19 @@ public class ModelObjectTest {
 
   @SuppressWarnings("unchecked")
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
+  public void testBuildComplexObjectInstance() throws ModelSearchException {
+    ModelObject testObj = new ModelObject("TestService", "article", null, false);
+    JSONObject model = testObj.getModel();
+    Assert.assertTrue(model.containsKey("properties"));
+    testObj.buildValidModelInstance();
+    ModelObject.prettyPrintToConsole(testObj.getObjectMetadata());
+    Set<String> test = testObj.getObjectMetadata().keySet();
+    Set<String> control = testObj.getModelProperties().keySet();
+    Assert.assertTrue(test.containsAll(control));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testPresetsAndBuildObjectInstance() throws ModelSearchException {
     JSONObject presets = new JSONObject();
     JSONObject authorInfo = new JSONObject();

@@ -860,10 +860,10 @@ public class ModelObject {
     int startSearchStringLength = startStr.length();
     String endStr = "}";
     int endSearchStringLength = endStr.length();
-    int endStringIndex = pattern.indexOf(endStr);
+    int endStringIndex = 0;
     String returnValue = "";
 
-    if (endStringIndex + 1 == patternLen) {
+    if (pattern.indexOf(endStr) + 1 == patternLen) {
       String propertyPath = pattern.substring(startSearchStringLength, patternLen - 1);
       return getMappedValue(propertyPath, true);
     }
@@ -875,15 +875,15 @@ public class ModelObject {
       // check to see if there is path ref beyond the last check
       if (startStringIndex != -1) {
 
-        if (startStringIndex != 0 && endStringIndex != 0) {
-          endStringIndex += endSearchStringLength;
+        // generate value between last sync value and this
+        if (startStringIndex > endStringIndex) {
+          String nonSyncVal = DataGenerator.generateRegexValue(
+              pattern.substring(endStringIndex + endSearchStringLength, startStringIndex));
+          returnValue += nonSyncVal;
         }
 
-        // generate value between last sync value and this
-        if (endStringIndex > startStringIndex) {
-          String nonSyncVal =
-              DataGenerator.generateRegexValue(pattern.substring(endStringIndex, startStringIndex));
-          returnValue += nonSyncVal;
+        if (startStringIndex != 0 && endStringIndex != 0) {
+          endStringIndex += endSearchStringLength;
         }
 
         // find end index of path reference
@@ -894,7 +894,7 @@ public class ModelObject {
               pattern.substring(startStringIndex + startSearchStringLength, endStringIndex);
 
           Object syncVal = getMappedValue(propertyPath, true);
-          returnValue += syncVal;
+          returnValue += syncVal.toString();
         } else {
           throw new InvalidSyncReferenceException(model, pattern);
         }
@@ -1189,6 +1189,12 @@ public class ModelObject {
       nodePath += parentPath + "/" + key;
     } else {
       nodePath = "/" + key;
+    }
+
+    if (key != null) {
+      if (key.equals("authorUrl")) {
+        System.out.println("Debug");
+      }
     }
 
     ModelPropertyType type = ModelPropertyType.NULL;
