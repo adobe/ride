@@ -37,7 +37,7 @@ public class ModelObjectTest {
 
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testInstantiateModel() {
-    testObj = new ModelObject("TestService", "article", "pathToObject/objectName", false) {};
+    testObj = new ModelObject("TestService", "article", null, false) {};
     JSONObject model = testObj.getModel();
     Assert.assertTrue(model.containsKey("properties"));
   }
@@ -59,8 +59,7 @@ public class ModelObjectTest {
   @Test(suiteName = "smoke", groups = "integration", enabled = true,
       dependsOnMethods = {"testInstantiateModel"})
   public void testBuildArrayInstance() throws ModelSearchException {
-    ModelObject testArray =
-        new ModelObject("TestService", "profile", "pathToObject/objectName", false);
+    ModelObject testArray = new ModelObject("TestService", "profile", null, false);
     JSONArray items = (JSONArray) testArray.buildValidModelInstance();
     ModelObject.prettyPrintToConsole(items);
     JSONArray objectItems = testArray.getObjectItems();
@@ -72,8 +71,7 @@ public class ModelObjectTest {
   @SuppressWarnings("unchecked")
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testBuildArraySchemaDefinitionModelInstance() throws ModelSearchException {
-    ModelObject responseObj =
-        new ModelObject("TestService", "response_error", "pathToObject/objectName", false);
+    ModelObject responseObj = new ModelObject("TestService", "response_error", null, false);
     JSONObject model = responseObj.getModel();
     Assert.assertTrue(model.containsKey("properties"));
     responseObj.buildValidModelInstance();
@@ -110,14 +108,61 @@ public class ModelObjectTest {
 
   @SuppressWarnings("unchecked")
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
+  public void testBuildComplexObjectInstance() throws ModelSearchException {
+    ModelObject testObj = new ModelObject("TestService", "article", null, false);
+    JSONObject model = testObj.getModel();
+    Assert.assertTrue(model.containsKey("properties"));
+    testObj.buildValidModelInstance();
+    ModelObject.prettyPrintToConsole(testObj.getObjectMetadata());
+    Set<String> test = testObj.getObjectMetadata().keySet();
+    Set<String> control = testObj.getModelProperties().keySet();
+    Assert.assertTrue(test.containsAll(control));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testPresetsAndBuildObjectInstance() throws ModelSearchException {
     JSONObject presets = new JSONObject();
     JSONObject authorInfo = new JSONObject();
     authorInfo.put("name", "Gladys Phillips");
     authorInfo.put("authorUrl", "www.gladysphillips.com");
     presets.put("authorInfo", authorInfo);
-    ModelObject testObj =
-        new ModelObject("TestService", "article", "pathToObject/objectName", presets, false);
+    ModelObject testObj = new ModelObject("TestService", "article", null, presets, false);
+    JSONObject model = testObj.getModel();
+    Assert.assertTrue(model.containsKey("properties"));
+    testObj.buildValidModelInstance();
+    ModelObject.prettyPrintToConsole(testObj.getObjectMetadata());
+    Set<String> test = testObj.getObjectMetadata().keySet();
+    Set<String> control = testObj.getModelProperties().keySet();
+    Assert.assertTrue(test.containsAll(control));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test(suiteName = "smoke", groups = "integration", enabled = true)
+  public void testBuildNewInstance() throws ModelSearchException {
+    JSONObject presets = new JSONObject();
+    JSONObject authorInfo = new JSONObject();
+    authorInfo.put("name", "James Gosling");
+    authorInfo.put("authorUrl", "http://nighthacks.com");
+    presets.put("authorInfo", authorInfo);
+    ModelObject testObj = new ModelObject("TestService", "article", null, presets, false);
+    JSONObject newObject = (JSONObject) testObj.buildNewModelInstance();
+    ModelObject.prettyPrintToConsole(newObject);
+    Set<String> test = newObject.keySet();
+    Set<String> control = testObj.getModelProperties().keySet();
+    Assert.assertTrue(test.containsAll(control));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test(suiteName = "smoke", groups = "integration", enabled = true)
+  public void testPresetsAndBuildProfile2Object() throws ModelSearchException {
+    JSONObject presets = new JSONObject();
+    JSONObject firstNameObject = new JSONObject();
+    firstNameObject.put("firstName", "user1");
+    JSONObject nameObject = new JSONObject();
+    nameObject.put("name", firstNameObject);
+    presets.put("person", nameObject);
+    ModelObject testObj = new ModelObject("TestService", "profile2", null, presets, false);
     JSONObject model = testObj.getModel();
     Assert.assertTrue(model.containsKey("properties"));
     testObj.buildValidModelInstance();
@@ -136,8 +181,7 @@ public class ModelObjectTest {
     authorInfo.put("name", "Gladys Phillips");
     authorInfo.put("authorUrl", "www.gladysphillips.com");
     presets.put("authorInfo", authorInfo);
-    ModelObject testObj =
-        new ModelObject("TestService", "article", "pathToObject/objectName", presets, false);
+    ModelObject testObj = new ModelObject("TestService", "article", null, presets, false);
     JSONObject model = testObj.getModel();
     Assert.assertTrue(model.containsKey("properties"));
     testObj.buildValidModelInstance();
@@ -165,8 +209,7 @@ public class ModelObjectTest {
     targetNodes.add("/language");
 
     // Instantiate
-    ModelObject testObj =
-        new ModelObject("TestService", "article", "pathToObject/objectName", presets, targetNodes);
+    ModelObject testObj = new ModelObject("TestService", "article", null, presets, targetNodes);
     JSONObject model = testObj.getModel();
     Assert.assertTrue(model.containsKey("properties"));
 
@@ -199,8 +242,7 @@ public class ModelObjectTest {
     targetNodes.add("/language");
 
     // Instantiate
-    ModelObject testObj =
-        new ModelObject("TestService", "article", "pathToObject/objectName", presets, targetNodes);
+    ModelObject testObj = new ModelObject("TestService", "article", null, presets, targetNodes);
     JSONObject model = testObj.getModel();
     Assert.assertTrue(model.containsKey("properties"));
     JSONArray objects = testObj.generateModelInstances(10);

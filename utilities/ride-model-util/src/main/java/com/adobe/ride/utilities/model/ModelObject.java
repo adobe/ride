@@ -41,9 +41,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
 
 /**
- * Class useful for loading JSON schema and creating json object instance which adhere to the
+ * Class useful for loading JSON schema and creating json object instance which adheres to the
  * definitions of the schema.
  * 
  * @author tedcasey
@@ -546,9 +547,9 @@ public class ModelObject {
    */
   public Object buildNewModelInstance() {
     if (presetNodes != null) {
-      objectMetadata = new JSONObject();
-    } else {
       objectMetadata = presetNodes;
+    } else {
+      objectMetadata = new JSONObject();
     }
     return buildValidModelInstance();
   }
@@ -656,21 +657,24 @@ public class ModelObject {
    * @return JSONObject instance which conforms to the definition passed
    */
   @SuppressWarnings("unchecked")
-  protected JSONObject buildDefinedObjectNode(String pathToParent, JSONObject obj) {
-    JSONObject returnObj = new JSONObject();
+  protected Object buildDefinedObjectNode(String pathToParent, JSONObject obj) {
+    Object returnObj = null;
     try {
       String key = "";
       JSONObject definition = getDefinitionRef(obj);
       if (definition.containsKey("patternProperties")) {
+        JSONObject instance = new JSONObject();
         JSONObject patternProps = (JSONObject) definition.get("patternProperties");
 
         Set<Entry<String, JSONObject>> set = patternProps.entrySet();
 
         for (Entry<String, JSONObject> e : set) {
           key = DataGenerator.generateRegexValue(e.getKey());
-          returnObj.put(key, generateNodeValue(null, key, e.getValue()));
+          instance.put(key, generateNodeValue(null, key, e.getValue()));
         }
+        returnObj = instance;
       } else if (definition.containsKey("properties")) {
+        JSONObject instance = new JSONObject();
         JSONObject props = (requiredOnly) ? getRequiredOnlyDefs(definition)
             : (JSONObject) definition.get("properties");
 
@@ -681,27 +685,28 @@ public class ModelObject {
           Object existingValue = checkForExisitingValue(pathToParent, key);
           if (existingValue == null) {
             JSONObject propertyDef = e.getValue();
-            returnObj.put(key, generateNodeValue(null, key, propertyDef));
+            instance.put(key, generateNodeValue(null, key, propertyDef));
           } else {
-            returnObj.put(key, existingValue);
+            instance.put(key, existingValue);
           }
         }
+        returnObj = instance;
       } else if (definition.containsKey("items")) {
         ArrayNode arrayObj = buildArrayNode(definition);
-        returnObj.put(key, arrayObj);
+        returnObj = arrayObj;
       } else {
         try {
           throw new UnexpectedModelDefinitionException(definition);
         } catch (UnexpectedModelDefinitionException e) {
           logger.log(Level.SEVERE, e.getMessage());
         }
-        return null;
       }
     } catch (UnexpectedModelPropertyTypeException e) {
       logger.log(Level.SEVERE, "An Unexpected Model type was encountered", e);
     } catch (ModelSearchException mse) {
       mse.printStackTrace();
     }
+
     return returnObj;
   }
 
@@ -730,16 +735,30 @@ public class ModelObject {
         JSONObject propertyDef = e.getValue();
         String currentkey = e.getKey();
         Object existingValue = checkForExisitingValue(pathToParent, currentkey);
+
         if (existingValue == null) {
           Object genValue = null;
           try {
+            if (currentkey.equals("otherArticles")) {
+              System.out.println("Debug");
+            }
             genValue = generateNodeValue(null, currentkey, propertyDef);
           } catch (ModelSearchException e1) {
             e1.printStackTrace();
           }
           returnObj.put(currentkey, genValue);
         } else {
-          returnObj.put(currentkey, existingValue);
+          try {
+            ModelPropertyType type = getModelPropertyType(propertyDef);
+            if (type == ModelPropertyType.OBJECT) {
+              Object newValue = buildObjectNode(pathToParent + "/" + currentkey, propertyDef);
+              returnObj.put(currentkey, newValue);
+            } else {
+              returnObj.put(currentkey, existingValue);
+            }
+          } catch (UnexpectedModelPropertyTypeException e2) {
+            e2.printStackTrace();
+          }
         }
       }
     } else {
@@ -834,14 +853,20 @@ public class ModelObject {
    * @return String
    * @throws InvalidSyncReferenceException
    */
-  private String createSyncdValue(JSONObject propertyDef) throws InvalidSyncReferenceException {
+  private Object getSyncdValue(JSONObject propertyDef) throws InvalidSyncReferenceException {
     String pattern = propertyDef.get("sync").toString();
+    int patternLen = pattern.length();
     String startStr = "{$path:";
     int startSearchStringLength = startStr.length();
     String endStr = "}";
     int endSearchStringLength = endStr.length();
     int endStringIndex = 0;
     String returnValue = "";
+
+    if (pattern.indexOf(endStr) + 1 == patternLen) {
+      String propertyPath = pattern.substring(startSearchStringLength, patternLen - 1);
+      return getMappedValue(propertyPath, true);
+    }
 
     while (endStringIndex != -1) {
       // find start index of path reference
@@ -850,14 +875,16 @@ public class ModelObject {
       // check to see if there is path ref beyond the last check
       if (startStringIndex != -1) {
 
+        // generate value between last sync value and this
+        if (startStringIndex > endStringIndex) {
+          String nonSyncVal = DataGenerator.generateRegexValue(
+              pattern.substring(endStringIndex + endSearchStringLength, startStringIndex));
+          returnValue += nonSyncVal;
+        }
+
         if (startStringIndex != 0 && endStringIndex != 0) {
           endStringIndex += endSearchStringLength;
         }
-
-        // generate value between last sync value and this
-        String nonSyncVal =
-            DataGenerator.generateRegexValue(pattern.substring(endStringIndex, startStringIndex));
-        returnValue += nonSyncVal;
 
         // find end index of path reference
         endStringIndex = pattern.indexOf(endStr, startStringIndex);
@@ -866,15 +893,18 @@ public class ModelObject {
           String propertyPath =
               pattern.substring(startStringIndex + startSearchStringLength, endStringIndex);
 
-          String syncVal = getMappedValue(propertyPath, true);
-          returnValue += syncVal;
+          Object syncVal = getMappedValue(propertyPath, true);
+          returnValue += syncVal.toString();
         } else {
           throw new InvalidSyncReferenceException(model, pattern);
         }
       } else {
-        String remainder = DataGenerator
-            .generateRegexValue(pattern.substring(endStringIndex + 1, pattern.length())).toString();
-        returnValue += remainder;
+        int stringEndIndex = endStringIndex + 1;
+        if (stringEndIndex > patternLen) {
+          String remainder = DataGenerator
+              .generateRegexValue(pattern.substring(stringEndIndex, patternLen)).toString();
+          returnValue += remainder;
+        }
         endStringIndex = -1;
       }
     }
@@ -890,7 +920,7 @@ public class ModelObject {
    *        present
    * @return
    */
-  private String getMappedValue(String propertyPath, boolean completeBranch) {
+  private Object getMappedValue(String propertyPath, boolean completeBranch) {
 
     JsonNode node = null;
     try {
@@ -909,7 +939,7 @@ public class ModelObject {
         return null;
       }
     } else {
-      return value.toString();
+      return value;
     }
   }
 
@@ -1143,6 +1173,7 @@ public class ModelObject {
    */
   public Object generateNodeValue(String parentPath, String key, JSONObject propertyDef)
       throws ModelSearchException {
+
     String nodePath = "";
     Object returnValue = null;
     JsonNode dataTree = null;
@@ -1179,16 +1210,19 @@ public class ModelObject {
 
     JsonNode existingParentValue = dataTree.at(parentPath);
 
-    if (exisitingValue != null && !dataTree.at(nodePath).isMissingNode()) {
+    if (exisitingValue != null && !dataTree.at(nodePath).isMissingNode()
+        && type != ModelPropertyType.OBJECT && type != ModelPropertyType.REF_DEFINITION
+        && type != ModelPropertyType.REF_SCHEMA) {
 
       return dataTree.at(parentPath).get(key);
 
     } else {
       // create empty node, if not working with Root Array
       if (parentPath != null && !existingParentValue.isNull()) {
-        if (parentPath == "/") {
+        if (parentPath == "/"
+            && ((dataTree.at(nodePath).isMissingNode()) || (dataTree.at(nodePath) == null))) {
           ((ObjectNode) dataTree).putObject(key);
-        } else {
+        } else if ((dataTree.at(nodePath).isMissingNode()) || (dataTree.at(nodePath) == null)) {
           ((ObjectNode) dataTree.at(parentPath)).putObject(key);
         }
         refreshMetadata(dataTree);
@@ -1204,7 +1238,7 @@ public class ModelObject {
       switch (type) {
         case SYNC:
           try {
-            returnValue = createSyncdValue(propertyDef);
+            returnValue = getSyncdValue(propertyDef);
           } catch (InvalidSyncReferenceException e) {
             logger.log(Level.SEVERE, e.getMessage());
           }
@@ -1265,8 +1299,7 @@ public class ModelObject {
           returnValue = ipv6;
           break;
         case REF_DEFINITION:
-          JSONObject obj = buildDefinedObjectNode(nodePath, propertyDef);
-          returnValue = obj;
+          returnValue = buildDefinedObjectNode(nodePath, propertyDef);
           break;
         case REF_SCHEMA:
           ModelObject newObj;
@@ -1396,12 +1429,10 @@ public class ModelObject {
    * @param dataTree
    */
   private void refreshMetadata(JsonNode dataTree) {
-    String treeDump = dataTree.toString().replace("\\", "").replace("\"[", "[").replace("]\"", "]");
-    // strip backslashes and format arrays. A problem caused by the JsonNode string
-    // dump.
     try {
-      objectMetadata = (JSONObject) parser.parse(treeDump);
-    } catch (ParseException e) {
+      String treeString = mapper.writeValueAsString(dataTree);
+      objectMetadata = (JSONObject) parser.parse(treeString);
+    } catch (ParseException | JsonProcessingException e) {
       logger.log(Level.SEVERE, e.getMessage());
     }
   }
@@ -1431,7 +1462,7 @@ public class ModelObject {
     } else if (type == ModelPropertyType.NUMBER) {
       ((ObjectNode) tree.at(pathToParent)).put(key, Double.parseDouble(value.toString()));
     } else if (type == ModelPropertyType.OBJECT || type == ModelPropertyType.REF_DEFINITION
-        || type == ModelPropertyType.REF_SCHEMA) {
+        || type == ModelPropertyType.REF_SCHEMA || type == ModelPropertyType.ARRAY) {
       try {
         String stringValue = value.toString();
         JsonNode node = mapper.readTree(stringValue);

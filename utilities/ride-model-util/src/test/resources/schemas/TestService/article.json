@@ -70,7 +70,7 @@
 			"properties":{
 				"name":{ "type": "string", "maxLength": 100, "searchable":true },
 				"authorUrl": { "type": "string", "sync": "{$path:/url}/author/{$path:/authorInfo/name}", "maxLength": 150 },
-				"otherArticles": { "type": "string", "sync": "/_links/relatedContent", "maxLength": 150 }
+				"otherArticles": { "type": "array", "sync": "{$path:/_links/relatedContent}", "maxLength": 150 }
 			}
 		},	
 		"articleText": { "type": "string", "maxLength": 2000 },
