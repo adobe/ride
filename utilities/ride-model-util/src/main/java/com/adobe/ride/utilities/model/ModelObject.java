@@ -740,9 +740,8 @@ public class ModelObject {
           Object genValue = null;
           try {
             if (currentkey.equals("otherArticles")) {
-              System.out.println("Debug");
+              genValue = generateNodeValue(null, currentkey, propertyDef);
             }
-            genValue = generateNodeValue(null, currentkey, propertyDef);
           } catch (ModelSearchException e1) {
             e1.printStackTrace();
           }
