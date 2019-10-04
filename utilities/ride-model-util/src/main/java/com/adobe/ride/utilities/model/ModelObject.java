@@ -739,7 +739,7 @@ public class ModelObject {
         if (existingValue == null) {
           Object genValue = null;
           try {
-             genValue = generateNodeValue(null, currentkey, propertyDef);
+            genValue = generateNodeValue(null, currentkey, propertyDef);
           } catch (ModelSearchException e1) {
             e1.printStackTrace();
           }
