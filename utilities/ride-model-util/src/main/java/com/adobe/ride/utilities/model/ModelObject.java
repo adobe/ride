@@ -294,12 +294,6 @@ public class ModelObject {
    */
   public ModelObject(String resourceLocation, String modelString, JSONObject presetNodes,
       Set<String> nodesToBuild, boolean useRequiredOnly) {
-    initializeModelObject(resourceLocation, modelString, presetNodes, nodesToBuild,
-        useRequiredOnly);
-  }
-
-  private void initializeModelObject(String resourceLocation, String modelString,
-      JSONObject presetNodes, Set<String> nodesToBuild, boolean useRequiredOnly) {
     if (presetNodes != null) {
       this.presetNodes = presetNodes;
     }
