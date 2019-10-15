@@ -53,7 +53,7 @@ Architect/Driver: [Ted Casey](https://www.linkedin.com/in/ted-casey-0074064/)
 
 
 ## Repositories
-When extending Adobe Ride, these settings need to be added to the repository node of your project(s) (or parent project) to post your extension to your internal artifact management system.
+When extending Adobe Ride, these settings need to be added to the repository node of your project(s) (or parent project) in order to post your extension to your internal artifact management system.
 ```
         <repository>
             <releases>
