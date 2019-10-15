@@ -185,7 +185,7 @@ Release versions are created as PRs are reviewed and made widely available.
 When a service REST API comes online, to test it with Adobe Ride, the Core will need to be extended to a service-library.  This is done to handle workflows and data specific to that API/Service.
 
 ### SharedResources
-Shared resource is a term used to describe a set of resources you create for your Ride extension project (just like any other resource in a javaproject), but specifically json schema for data modeling and generation, and config files for use in endpoint targeting and testuser management. Ideally, your shared-resources resources lives in separate and centralized source repo outside of your extension project, built as a jar, and then used as a dependency for your project (explained in the usage docs). This is so that if, as is common, you are working in an environment creating multiple webservices/API, there can be one set of resources that can be used by multiple extensions for an easy end to end testing.  However, it is just as valid to put these resources in the resources directory of your java project (src/main/resources).
+Shared resource is a term used to describe a set of resources you create for your Ride extension project (just like any other resource in a javaproject), but specifically json schema for data modeling and generation, and config files for use in endpoint targeting and testuser management. Ideally, your shared-resources resources lives in a separate and centralized source repo outside of your extension project, built as a jar, and then used as a dependency for your project (explained in the usage docs). This is so that if, as is common, you are working in an environment creating multiple webservices/API, there can be one set of resources that can be used by multiple extensions for an easy end to end testing.  However, it is just as valid to put these resources in the resources directory of your java project (src/main/resources).
 
 ### Reporting 
 Ride relies on TestNG and log4j for the bulk of reporting.  However, the use of ReportNG is a work in progress.
@@ -197,7 +197,7 @@ Usage docs can be found here: [Usage](Usage.md)
 Because TestNG is built into the framework, the functionality available there is applicable for annotating tests.  More information is available here: http://testng.org/doc/
 
 ### Command Line
-The built-in functionality of Maven/failsafe in addition to the aspects built into Ride allows for simple execution of run tests as outlined below (from within the test repo root):
+The built-in functionality of Maven/failsafe, in addition to the aspects built into Ride, allows for simple execution of run tests as outlined below (from within the test repo root):
 
 ``
 mvn clean verify -Dtarget=<configname> -Psmoke
