@@ -108,6 +108,46 @@ public class ModelObjectTest {
 
   @SuppressWarnings("unchecked")
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
+  public void testSchemaStringStatic() throws ModelSearchException {
+    // Model String
+    String modelString = "";
+    try {
+      InputStream inputStream =
+          ModelObject.class.getResourceAsStream("/schemas/TestService/simple.json");
+      Charset nullCharset = null; // platform default
+      modelString = IOUtils.toString(inputStream, nullCharset);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    // Presets
+    JSONObject presets = new JSONObject();
+    JSONObject title = new JSONObject();
+    title.put("title", "Gladys Phillips");
+    presets.put("title", title);
+
+    // Targets
+    Set<String> targetNodes = new HashSet<String>();
+    targetNodes.add("/title");
+
+    // Instantiate
+    ModelObject responseObj =
+        ModelObject.createFromSchemaString(modelString, presets, targetNodes, true);
+    JSONObject model = responseObj.getModel();
+    Assert.assertTrue(model.containsKey("title"));
+
+    // Gen data
+    responseObj.buildValidModelInstance();
+
+    // Dump To Console
+    ModelObject.prettyPrintToConsole(responseObj.getObjectMetadata());
+
+    Set<String> test = responseObj.getObjectMetadata().keySet();
+    Assert.assertTrue(test.contains("title"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testBuildComplexObjectInstance() throws ModelSearchException {
     ModelObject testObj = new ModelObject("TestService", "article", null, false);
     JSONObject model = testObj.getModel();
