@@ -89,7 +89,7 @@ public class ModelObjectTest {
     // pull in model as String
     try {
       InputStream inputStream =
-          ClassLoader.class.getResourceAsStream("/schemas/TestService/simple.json");
+          ModelObject.class.getResourceAsStream("/schemas/TestService/simple.json");
       Charset nullCharset = null; // platform default
       modelString = IOUtils.toString(inputStream, nullCharset);
     } catch (IOException e) {
