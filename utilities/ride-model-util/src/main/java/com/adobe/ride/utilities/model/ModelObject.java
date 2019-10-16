@@ -291,22 +291,22 @@ public class ModelObject {
    *        defined nodes will not be generated.
    * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
    *        defined in the spec
+   *
+   * @return ModelObject the model object
    */
-  public ModelObject(String resourceLocation, String modelString, JSONObject presetNodes,
+  public static ModelObject createFromSchemaString(String modelString, JSONObject presetNodes,
       Set<String> nodesToBuild, boolean useRequiredOnly) {
+    ModelObject modelObject = new ModelObject(modelString, useRequiredOnly);
+
     if (presetNodes != null) {
-      this.presetNodes = presetNodes;
+      modelObject.presetNodes = presetNodes;
     }
 
     if (nodesToBuild != null) {
-      this.nodesToBuild = nodesToBuild;
+      modelObject.nodesToBuild = nodesToBuild;
     }
 
-    this.requiredOnly = useRequiredOnly;
-
-    this.resourceLocation = resourceLocation;
-    this.modelString = modelString;
-    loadModelString(modelString);
+    return modelObject;
   }
 
   /**
