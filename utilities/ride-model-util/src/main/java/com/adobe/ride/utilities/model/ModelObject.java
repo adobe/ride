@@ -279,16 +279,14 @@ public class ModelObject {
   }
 
   /**
-   * Create a model object from a json schema string and use a predefined set of nodes to start
-   * with. Also only build a targeted set of nodes. The specified resource location is only used as
-   * metadata, so the content will not be fetched from it.
-   * 
-   * @param resourceLocation location of the schema within the project resources.
+	 * Static constructor to initialize with a JSON schema string. Optional parameters for
+	 * adding preset nodes, defining target nodes, and whether to use only required
+	 * nodes.
    * @param modelString string which conforms to JSON schema standards
-   * @param presetNodes set of JSON nodes and values to be used in the object, not generated
-   *        dynamically
-   * @param nodesToBuild set of JSONnodes which are to be dynamically generated. Remaining schema
-   *        defined nodes will not be generated.
+   * @param presetNodes optional set of JSON nodes and values to be used in the object, not
+   *        generated dynamically
+   * @param nodesToBuild optional set of JSONnodes which are to be dynamically generated.
+   *        Remaining schema defined nodes will not be generated.
    * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
    *        defined in the spec
    *
