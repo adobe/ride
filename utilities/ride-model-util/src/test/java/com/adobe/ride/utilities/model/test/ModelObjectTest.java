@@ -113,7 +113,7 @@ public class ModelObjectTest {
     String modelString = "";
     try {
       InputStream inputStream =
-          ClassLoader.class.getResourceAsStream("/schemas/TestService/simple.json");
+          ClassLoader.class.getResourceAsStream("/schemas/TestService/entitylink.json");
       Charset nullCharset = null; // platform default
       modelString = IOUtils.toString(inputStream, nullCharset);
     } catch (IOException e) {
@@ -122,19 +122,20 @@ public class ModelObjectTest {
 
     // Presets
     JSONObject presets = new JSONObject();
-    JSONObject title = new JSONObject();
-    title.put("title", "Gladys Phillips");
-    presets.put("title", title);
+    JSONObject href = new JSONObject();
+    href.put("href", "ftp://test.com/data/file.txt");
+    presets.put("href", href);
 
     // Targets
     Set<String> targetNodes = new HashSet<String>();
-    targetNodes.add("/title");
+    targetNodes.add("/href");
+    targetNodes.add("/type");
 
     // Instantiate
     ModelObject responseObj =
         ModelObject.createFromSchemaString(modelString, presets, targetNodes, true);
     JSONObject model = responseObj.getModel();
-    Assert.assertTrue(model.containsKey("title"));
+    Assert.assertTrue(model.containsKey("properties"));
 
     // Gen data
     responseObj.buildValidModelInstance();
@@ -143,7 +144,8 @@ public class ModelObjectTest {
     ModelObject.prettyPrintToConsole(responseObj.getObjectMetadata());
 
     Set<String> test = responseObj.getObjectMetadata().keySet();
-    Assert.assertTrue(test.contains("title"));
+    Assert.assertTrue(test.contains("href"));
+    Assert.assertTrue(test.contains("type"));
   }
 
   @SuppressWarnings("unchecked")
