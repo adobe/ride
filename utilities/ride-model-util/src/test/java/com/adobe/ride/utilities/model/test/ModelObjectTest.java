@@ -108,6 +108,48 @@ public class ModelObjectTest {
 
   @SuppressWarnings("unchecked")
   @Test(suiteName = "smoke", groups = "integration", enabled = true)
+  public void testSchemaStringStatic() throws ModelSearchException {
+    // Model String
+    String modelString = "";
+    try {
+      InputStream inputStream =
+          ClassLoader.class.getResourceAsStream("/schemas/TestService/entitylink.json");
+      Charset nullCharset = null; // platform default
+      modelString = IOUtils.toString(inputStream, nullCharset);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    // Presets
+    JSONObject presets = new JSONObject();
+    JSONObject href = new JSONObject();
+    href.put("href", "ftp://test.com/data/file.txt");
+    presets.put("href", href);
+
+    // Targets
+    Set<String> targetNodes = new HashSet<String>();
+    targetNodes.add("/href");
+    targetNodes.add("/type");
+
+    // Instantiate
+    ModelObject responseObj =
+        ModelObject.createFromSchemaString(modelString, presets, targetNodes, true);
+    JSONObject model = responseObj.getModel();
+    Assert.assertTrue(model.containsKey("properties"));
+
+    // Gen data
+    responseObj.buildValidModelInstance();
+
+    // Dump To Console
+    ModelObject.prettyPrintToConsole(responseObj.getObjectMetadata());
+
+    Set<String> test = responseObj.getObjectMetadata().keySet();
+    Assert.assertTrue(test.contains("href"));
+    Assert.assertTrue(test.contains("type"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test(suiteName = "smoke", groups = "integration", enabled = true)
   public void testBuildComplexObjectInstance() throws ModelSearchException {
     ModelObject testObj = new ModelObject("TestService", "article", null, false);
     JSONObject model = testObj.getModel();

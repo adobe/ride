@@ -279,6 +279,35 @@ public class ModelObject {
   }
 
   /**
+	 * Static constructor to initialize with a JSON schema string. Optional parameters for
+	 * adding preset nodes, defining target nodes, and whether to use only required
+	 * nodes.
+   * @param modelString string which conforms to JSON schema standards
+   * @param presetNodes optional set of JSON nodes and values to be used in the object, not
+   *        generated dynamically
+   * @param nodesToBuild optional set of JSONnodes which are to be dynamically generated.
+   *        Remaining schema defined nodes will not be generated.
+   * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
+   *        defined in the spec
+   *
+   * @return ModelObject the model object
+   */
+  public static ModelObject createFromSchemaString(String modelString, JSONObject presetNodes,
+      Set<String> nodesToBuild, boolean useRequiredOnly) {
+    ModelObject modelObject = new ModelObject(modelString, useRequiredOnly);
+
+    if (presetNodes != null) {
+      modelObject.presetNodes = presetNodes;
+    }
+
+    if (nodesToBuild != null) {
+      modelObject.nodesToBuild = nodesToBuild;
+    }
+
+    return modelObject;
+  }
+
+  /**
    * Constructor to initialize with a JSON schema string
    * 
    * @param modelString string which conforms to JSON schema standards
