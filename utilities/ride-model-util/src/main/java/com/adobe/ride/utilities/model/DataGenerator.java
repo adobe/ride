@@ -23,19 +23,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
@@ -60,8 +56,8 @@ public abstract class DataGenerator {
   protected static final Logger logger = Logger.getLogger(DataGenerator.class.getName());
   protected static final Random randomGen = new Random();
   protected static JSONParser parser = new JSONParser();
-  protected static final String rideDefaultDateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-  protected static final String jsonFullDateFormat = "yyyy-MM-dd";
+  private static final DateTimeFormatter ISO_8601_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_INSTANT;
+  private static final DateTimeFormatter ISO_8601_DATE_FORMATTER = DateTimeFormatter.ISO_ORDINAL_DATE;
   protected static final String dataPrepend = "test-";
   public static final String genericRegex = "[0-9a-zA-Z.-]{0,62}";
   public static final String genericSmallAlphaRegex = "[a-z]{5,10}";
@@ -99,8 +95,8 @@ public abstract class DataGenerator {
    * 
    * @return String The default standard for date formatting.
    */
-  public static String getDateFormat() {
-    return rideDefaultDateFormat;
+  public static DateTimeFormatter getDateFormat() {
+    return ISO_8601_DATE_TIME_FORMATTER;
   }
 
   /**
@@ -113,9 +109,8 @@ public abstract class DataGenerator {
    */
   public static String generateRandomPassedDate(int minNumDaysPassed, int maxNumDaysPassed) {
     int diff = generateRandomInt(minNumDaysPassed, maxNumDaysPassed);
-    LocalDate rndDate = LocalDate.now().minusDays(diff);
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(jsonFullDateFormat);
-    return formatter.format(rndDate);
+    ZonedDateTime rndDate = ZonedDateTime.now().minusDays(diff);
+    return ISO_8601_DATE_FORMATTER.format(rndDate);
   }
 
   /**
@@ -126,10 +121,9 @@ public abstract class DataGenerator {
    * @return String
    */
   public static String generateStdDateTime(int daysFromToday) {
-    Date now = new Date();
-    Date newDate = DateUtils.addDays(now, daysFromToday);
-    DateFormat stdDate = new SimpleDateFormat(rideDefaultDateFormat);
-    return stdDate.format(newDate);
+    ZonedDateTime now = ZonedDateTime.now();
+    ZonedDateTime newDateTime = now.plusDays(daysFromToday);
+    return getDateFormat().format(newDateTime); // ISO 8601 format
   }
 
   /**
@@ -139,9 +133,8 @@ public abstract class DataGenerator {
    */
   public static String getTodayJSONFullDateFormat() {
 
-    Date now = new Date();
-    DateFormat fullDate = new SimpleDateFormat(jsonFullDateFormat);
-    return fullDate.format(now);
+    ZonedDateTime now = ZonedDateTime.now();
+    return ISO_8601_DATE_FORMATTER.format(now);
   }
 
 
