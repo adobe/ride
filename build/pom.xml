@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.adobe.ride</groupId>
   <artifactId>ride-parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.8</version>
   <packaging>pom</packaging>
   <name>ride-parent</name>
   <description>Adobe Ride Parent Pom</description>
