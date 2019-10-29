@@ -8,7 +8,7 @@
 
 # Jump Start Your Engine
 
-There are a number of documents in this repo revolving around Ride usage and in depth solutions to planning your rest api testing needs.  But to get started using Ride, you should think of it simply as a sdk to help you build libraries to make testing your target REST APIs easier and more maintainable.  This document focuses on the bare basics of Ride and how to get up and running quickly. 
+There are a number of documents in this repo revolving around Ride usage and in depth solutions to planning your REST API testing needs.  But to get started using Ride, you should think of it simply as an SDK to help you build libraries to make testing your target REST APIs easier and more maintainable.  This document focuses on the bare basics of Ride and how to get up and running quickly. 
 
 # Setup
 
@@ -26,7 +26,7 @@ You will need to add the Ride core dependency to your pom to get the ride librar
     </dependency>
 ```
 
-Add the following files to your project (don't worry about the contents, for now just create the place holders:
+Add the following files to your project (don't worry about the contents, for now just create the place holders):
 
 #### ResourceFiles
 <html>
@@ -143,9 +143,9 @@ public class SampleServiceObject1 extends ModelObject {
 }
 ```
 
-What we have here is a simple java class which extends the ModelObject in Ride.  The superclass arguments tell Ride where the schema of the object and configs of the service live (based on what we've defined above).  The arguments we pass into the class tell it what we want to name the instance and whether we want to instantiate all of the properties defined in the json schema or just the required ones.
+What we have here is a simple java class which extends the ModelObject in Ride.  The superclass arguments tell Ride where the schema of the object and configs of the service live (based on what we've defined above).  The arguments we pass into the class tell it what we want to name the instance and whether we want to instantiate all of the properties defined in the JSON schema or just the required ones.
 
-Now that we have an object, let's defined the controller which actually sends the object to the server.  Open the file MyWebServiceController.java and add the following code:
+Now that we have an object, let's define the controller which actually sends the object to the server.  Open the file MyWebServiceController.java and add the following code:
 
 ```
 com.mycompany.mywebservice.core
@@ -244,7 +244,7 @@ Let's run the test, and specify which environment we want to target in the confi
 mvn clean verify -Dtarget=stage01 
 ```
 
-When it's run your REST call should be generated and logged, which you'll see in the console, and assuming your webservice exists in the way it is specified in the configs, you should see a response come back
+When it's run your REST call should be generated and logged, which you'll see in the console, and assuming your webservice exists in the way it is specified in the configs, you should see a response come back.
 
 ## Final Thoughts
 
