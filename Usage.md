@@ -45,7 +45,7 @@ When you have this setup, create a new maven project in the IDE of your choice, 
 
 
 ### Creating Environment Configs
-Part of the way you define how Ride (and your extension) interacts with your service is through a environment configuration.  In this project, you'll create java .properties files, which define the components of the core url for each of the environments on which your service runs, to include:
+Part of the way you define how Ride (and your extension) interacts with your service is through an environment configuration.  In this project, you'll create java .properties files, which define the components of the core URL for each of the environments on which your service runs, to include:
 
 	* endpoints
 	* ports
@@ -74,9 +74,9 @@ OtherSampleService.endpoint=localhost
 OtherSampleService.basePath=/other-sample-service-server/rest
 ```
 
-This config file, when invoked by Ride, will create a target service url of of http://localhost:8080/sample-service-server/rest for the "SampleService" declared service for the tests that run it.
+This config file, when invoked by Ride, will create a target service URL of http://localhost:8080/sample-service-server/rest for the "SampleService" declared service for the tests that run it.
 
-*Important Note:* It is not required to place this config information this in a separate jar.  If your dev partner doesn't need to access this information outside of running the functional/integration tests, or you don't believe there is a need for cross-service integration, you could simply place the config folder directly in the resources folder of your Adobe Ride extension you will create (discussed later in this document). 
+*Important Note:* It is not required to place this config information in a separate jar.  If your dev partner doesn't need to access this information outside of running the functional/integration tests, or you don't believe there is a need for cross-service integration, you could simply place the config folder directly in the resources folder of your Adobe Ride extension you will create (discussed later in this document). 
 
 ### Creating Shared Schemas
 
@@ -86,17 +86,17 @@ The diagram below shows how the shared-resources jar build structure should look
 
 ![shared resources build dependencies and order](images/build_and_dependencies.jpg)
 
-Currently, the datamodel for any object must be defined by a json schema.  This is because the [json schema](http://json-schema.org/) standard is strong in its rigor, fueling more precision in generation valid data and testing the server data handling.  Also, because the data in a protobuf can be json-like, a json schema can define what is compiled into a protobuf message as well.
+Currently, the datamodel for any object must be defined by a JSON schema.  This is because the [JSON schema](http://json-schema.org/) standard is strong in its rigor, fueling more precision in generation of valid data and testing the server data handling.  Also, because the data in a protobuf can be JSON-like, a JSON schema can define what is compiled into a protobuf message as well.
 
-In terms of the consumption of the json schema, the ModelObject class in the model-util has the ability to read a schema of almost any complexity and generate valid data for any object to be used in a REST call.  When you create your Ride extension, you will create java classes (pojos) which map to the data models (json schema) that you support, and these classes will sub-class the ModelObject.  When you create instances of your object classes, the ModelObject will generate valid data for the object, which can then be passed to the controller classes in the Ride core.  This is also discussed later in this document.
+In terms of the consumption of the JSON schema, the ModelObject class in the model-util has the ability to read a schema of almost any complexity and generate valid data for any object to be used in a REST call.  When you create your Ride extension, you will create java classes (pojos) which map to the data models (JSON schema) that you support, and these classes will sub-class the ModelObject.  When you create instances of your object classes, the ModelObject will generate valid data for the object, which can then be passed to the controller classes in the Ride core.  This is also discussed later in this document.
 
-Samples of what a json schema might look like are in the samples in the Ride git repos, but you can also reference the json-schema website linked above.
+Samples of what a JSON schema might look like are in the samples in the Ride git repos, but you can also reference the JSON-schema website linked above.
 
 *Important Note:* Sometimes, the organizational structure of your development team doesn't allow for the schemas to live outside of their source repo.  That's ok, you'll just need to add a pom to their repo which builds only the schemas into a jar (through exclusions in the pom).  The model is essentially the same in effect.  You will have a jenkins job to fire the pom and post the artifact which you will rely upon.
 
 ### Importing the shared resources into your Extension project
 
-While these config and schema documents do live outside of your porject, fortunately, maven provides simple way to get them into your extension project (and the server source) - the [maven-remote resources-plugin](http://maven.apache.org/plugins/maven-remote-resources-plugin/).  You simply need to modify your Extension (and server) pom.  In the build node of your  pom, you will add a plugin node which will utilize the maven-remote-resources-plugin to import the shared schemas jar.  Below shows what your Extension pom modification will look like:
+While these config and schema documents do live outside of your project, fortunately, maven provides a simple way to get them into your extension project (and the server source) - the [maven-remote resources-plugin](http://maven.apache.org/plugins/maven-remote-resources-plugin/).  You simply need to modify your Extension (and server) pom.  In the build node of your  pom, you will add a plugin node which will utilize the maven-remote-resources-plugin to import the shared schemas jar.  Below shows what your Extension pom modification will look like:
 
 ![pom with maven remote resources](images/pom_shared_resources.jpg)
 
@@ -119,7 +119,7 @@ In the /samples folder of the Ride repo, if you look at the sample-service-exten
 
 Let's start by looking at cloud\_objects.  The files in this package map directly to the objects in the sample-service-shared-resources schemas.  They are more or less java representations of the schemas. Because they are java classes, you can use the power of java for abstraction to remove repetitive code with custom methods.  This in turn allows you (and those that use your extension) to develop tests faster.  And because all of the classes in this package sub-class the model object, the data for the object can be generated automatically (and fuzzed automatically - discussed later).
 
-In the core package, there is one class called "SampleServiceController".  This class is a subclass of the RestApiController in the Ride core.  This is where the bulk of the normally repetitive rest-assured groovy syntax that appears in tests will be abstracted.  It overrides calls like put, post, get which are in the core to pass in things which are common to most calls your tests would make to your service, like Content-Type and Accepts headers.  Again, the idea is to remove repetitive stuff like that out of your tests and place it in files like this.
+In the core package, there is one class called "SampleServiceController".  This class is a subclass of the RestApiController in the Ride core.  This is where the bulk of the normally repetitive rest-assured groovy syntax that appears in tests will be abstracted.  It overrides calls like put, post, and get which are in the core to pass in things which are common to most calls your tests would make to your service, like Content-Type and Accepts headers.  Again, the idea is to remove repetitive stuff like that out of your tests and place it in files like this.
 
 The last package in the project is the types package.  There are two classes in here, both of which are enums.  They "CloudObjectType" is a list of enums which map to the java representation of the service types.  This is standard java best practice to reduce errors caused by typos.  The other is "SERVICE", another enum, this one referring to the list of declared services in your config properties files.
 
@@ -131,7 +131,7 @@ Now let's look at a diagram that shows the linkages we've discussed so far:
 ![RideExtension Logo](images/RideArchitectureLandscape.jpg)
 
 ### Hooking up with the Schemas
-We'll talk about the "configs" portion of the diagram in a moment, but for now let's discuss the schemas flow that starts in the middle of the diagram at the top.  This shows one of the schemas in the schemas folder and how it is being consumed by it's relative java representation in our extension.  So what does this look like in the code?  Let's take a look at one of the constructors for our java object in the samples:
+We'll talk about the "configs" portion of the diagram in a moment, but for now let's discuss the schemas flow that starts in the middle of the diagram at the top.  This shows one of the schemas in the schemas folder and how it is being consumed by its relative java representation in our extension.  So what does this look like in the code?  Let's take a look at one of the constructors for our java object in the samples:
 
 ```
 
@@ -144,9 +144,9 @@ We'll talk about the "configs" portion of the diagram in a moment, but for now l
 
 ```
 
-Because this class subclasses the ModelObject, it calls the super constructor in its own constructor in order to take advantage of the data generation that the ModelObject provides.  While the ModelObject constructor is overloaded, the signature utilized above is the most commonly used.  There are four required arguments here.  
+Because this class subclasses the ModelObject, it calls the super constructor in its own constructor in order to take advantage of the data generation that the ModelObject provides.  While the ModelObject constructor is overloaded, the signature utilized above is the most commonly used.  There are four required arguments here:  
 
-- *Service* - this is passed as a const and refers not only to the service your are testing, but more importantly, the name of the folder in which the json schema representation file lives in the shared resources., String objectType, String objectName, boolean useRequiredOnly
+- *Service* - this is passed as a const and refers not only to the service your are testing, but more importantly, the name of the folder in which the JSON schema representation file lives in the shared resources., String objectType, String objectName, boolean useRequiredOnly
 - *ObjectType* is not only the name of the object, but a reference to the file name of the json schema which represents the type.  These first two arguments are mappings back to the schema we wish to use.   
 - *ObjectName* argument is for syncing purposes.  Currently, the ObjectType and ObjectName properties will build an objectPath property in the instance.  It is not called automatically in your REST calls, but is there for convenience. It can be reset manually, or even overridden in your classes. 
 - *initRequiredOnly* is a boolean which refers to the standard json schema property which identifies properties which must be defined when instantiating an object.  A value of true will only generate data for required properties and stop there (i.e. the object instance will have only these properties present).  A value of false will generate all values for the object.
@@ -213,7 +213,7 @@ If we look at the information we've reviewed, we can conclude there that there a
 These two flows of information form the basis for data flowing through your extension from your tests to your target service.
 
 ## The Fuzz
-One of the most powerful features of Ride is the fuzzer.  The fuzzer takes an array of data, some it corner cases, some of it edge, some of it quasi-malicious and attempts to see if your service is handling it properly based on the datamodels defined by the schema.  This removes the need for you to generate a good chunk of the negative and edge tests manually, and allows you to focus on real-world data flows for your service, high-value testing.
+One of the most powerful features of Ride is the fuzzer.  The fuzzer takes an array of data, some of it corner cases, some of it edge, some of it quasi-malicious and attempts to see if your service is handling it properly based on the datamodels defined by the schema.  This removes the need for you to generate a good chunk of the negative and edge tests manually, and allows you to focus on real-world data flows for your service, high-value testing.
 
 The good news is that if you have set up your Ride extension, utlizing the fuzzer is almost trivial.  Here's what the Fuzzer test looks like in our sample project:
 
@@ -286,7 +286,7 @@ mvn verify -Dtarget=stage01 -Dprofile=smoke
 
 ## Authenticated Calls
 
-Often REST API calls will need to be Authenticated.  However, authentication schemes vary widely by company.  We have tried to make allowances for authentication by add arguments about whether to add a token to a service call, or not.  In the Ride core, there is a check which utilizes a rest-assured Filter class.  This checks to see if there is already an Authorization header added to the call, and if it is not present, it attempts to add one.  However, again, and with good reason, these company-specific authentication details are kept secret and you will need to do a bit of work here to determine how to add authorization to your call.
+Often REST API calls will need to be Authenticated.  However, authentication schemes vary widely by company.  We have tried to make allowances for authentication by adding arguments about whether to add a token to a service call, or not.  In the Ride core, there is a check which utilizes a rest-assured Filter class.  This checks to see if there is already an Authorization header added to the call, and if it is not present, it attempts to add one.  However, again, and with good reason, these company-specific authentication details are kept secret and you will need to do a bit of work here to determine how to add authorization to your call.
 
 
 ## Final Note
