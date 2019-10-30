@@ -15,7 +15,7 @@ Ride provides for the ability to utilize Rest-Assured Filters to augment calls i
 
 ## Rest-Assured Filters
 
-Per its [documentation](https://github.com/rest-assured/rest-assured/wiki/usage#filters), Rest-Assured filters allow you "to inspect and alter a request before it's actually committed and also inspect and alter the response before it's returned to the expectations."  In the Ride core, you can send an arbitrary number of Filters to call any REST API, so adding a filter for authentication will not interfere (as long as your code is correct) with any other filters.
+Per its [documentation](https://github.com/rest-assured/rest-assured/wiki/usage#filters), Rest-Assured filters allow you "to inspect and alter a request before it's actually committed and also inspect and alter the response before it's returned to the expectations".  In the Ride core, you can send an arbitrary number of Filters to call any REST API, so adding a filter for authentication will not interfere (as long as your code is correct) with any other filters.
 
 ## Passing a Filter to a Ride call
 
