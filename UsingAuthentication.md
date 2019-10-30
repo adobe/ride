@@ -101,7 +101,7 @@ public class SampleServiceController extends RestApiController {
 }
 ```
 
-Notice how the filter is setup as soon as the class is loaded, and then when a method in the sample extension called "callCore" is called, the method determines whether the call is to be tried with or without Authorization and then adds the Filter, if the Authorization is called for.  It leaves off the argument complement if not because variable arguments in methods can also handle the case when you do not send arguments in.
+Notice how the filter is setup as soon as the class is loaded, and then when a method in the sample extension called "callCore" is called. The method determines whether the call is to be tried with or without Authorization and then adds the Filter, if the Authorization is called for.  Because addAuthorization is a variable argument, the method can handle the case when you do not specify a value there.
 
 ## Final Thoughts
 
