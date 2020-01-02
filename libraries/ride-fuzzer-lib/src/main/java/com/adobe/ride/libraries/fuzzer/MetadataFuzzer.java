@@ -164,7 +164,8 @@ public class MetadataFuzzer {
    */
   private void populateFuzzSet(JSONObject set, Object[][] fuzzSet, String propertyType) {
     try {
-      Object[] keys = set.keySet().toArray();
+      JSONObject newSet = getFullObject(set);
+      Object[] keys = newSet.keySet().toArray();
 
       for (int i = 0; i < keys.length; i++) {
         JSONObject obj = (JSONObject) set.get(keys[i]);
@@ -179,6 +180,29 @@ public class MetadataFuzzer {
       e.printStackTrace();
     }
 
+  }
+
+  /**
+   * Method to modify json such that all the child objects are added on parent level
+   * @param JSON object containing child objects
+   * @return Modified JSON object by adding child objects on parent level and deleting from original positions
+   */
+  private JSONObject getFullObject(JSONObject object) {
+	Object[] keys = object.keySet().toArray();
+	for (int i = 0; i < keys.length; i++) {
+	  JSONObject subObject = (JSONObject) object.get(keys[i]);
+	  try {
+		ModelPropertyType typeSubObject = ModelObject.getModelPropertyType(subObject);
+		if (typeSubObject == ModelPropertyType.OBJECT) {
+		  object.remove(keys[i]);
+		  object.putAll(getFullObject((JSONObject)subObject.get("properties")));
+		}
+	  }
+	  catch (UnexpectedModelPropertyTypeException e) {
+		e.printStackTrace();
+	  }
+	}
+	return object;
   }
 
   /**
