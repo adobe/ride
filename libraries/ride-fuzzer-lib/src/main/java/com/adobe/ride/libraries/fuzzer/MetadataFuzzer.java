@@ -196,6 +196,10 @@ public class MetadataFuzzer {
 		if (typeSubObject == ModelPropertyType.OBJECT) {
 		  object.remove(keys[i]);
 		  object.putAll(getFullObject((JSONObject)subObject.get("properties")));
+		} else if (typeSubObject == ModelPropertyType.ARRAY) {
+		  JSONObject arrayDef = ((JSONObject) subObject.get("items"));
+		  object.remove(keys[i]);
+		  object.putAll(getFullObject((JSONObject)arrayDef.get("properties")));
 		}
 	  }
 	  catch (UnexpectedModelPropertyTypeException e) {
