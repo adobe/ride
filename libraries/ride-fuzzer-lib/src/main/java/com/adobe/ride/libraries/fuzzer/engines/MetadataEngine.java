@@ -15,7 +15,6 @@ package com.adobe.ride.libraries.fuzzer.engines;
 import java.net.URI;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
 // import java.util.UUID;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,6 +22,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.controllers.RestApiController;
+import com.adobe.ride.libraries.fuzzer.MetadataFuzzer;
+import com.adobe.ride.libraries.fuzzer.exceptions.NullPropertyValueException;
 import com.adobe.ride.utilities.model.ModelObject;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
 import com.adobe.ride.utilities.model.types.ModelPropertyType;
@@ -44,14 +45,14 @@ public class MetadataEngine extends CoreEngine {
 
   public String serviceName;
   public JSONObject modelProperties;
-  public JSONObject linksProperties;// For HAL-style schema handling
   public JSONObject nodeDefinition;
   public JSONObject modelInstance;
+  public JSONArray modelInstanceItems;
   public JSONObject linksInstance;
   public JSONObject customDefs;
-  private boolean linksProperty;
   private ModelObject entity;
-  public String modelProperty;
+  public String fuzzPropertyInstancePath;
+  public String fuzzProperty;
   private ModelPropertyType propertyType;
   public String entityString;
   public String entityName;
@@ -60,14 +61,14 @@ public class MetadataEngine extends CoreEngine {
   private boolean objectExists = false;
   private Method requestMethod;
   private RequestSpecBuilder requestBuilder = null;
-  private Schema schema;
 
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param serviceName name of the target service, which is a mapping to the config folder in
+   * @param schema Schema of the target service, which is a mapping to the config folder in
    *        the project resources
    * @param entityObj ModelObject to be fuzzed
+   * @param parentPath String path to the key in the object
    * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
    * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
    * @param value Start value to be reset in the property to ensure fuzzing is done in isolation
@@ -75,19 +76,20 @@ public class MetadataEngine extends CoreEngine {
    * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
    */
-  public MetadataEngine(String serviceName, ModelObject entityObj, String property,
+  public MetadataEngine(Schema schema, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType) {
-    super(entityObj.getModelString(), property);
-    initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
+    super(parentPath, property);
+    initializeEngine(serviceName, entityObj, parentPath, property, type, value, requestMethod, contentType,
         null);
   }
 
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param serviceName name of the target service, which is a mapping to the config folder in
+   * @param schema Schema  of the target service, which is a mapping to the config folder in
    *        the project resources
    * @param entityObj ModelObject to be fuzzed
+   * @param parentPath String path to the key in the object
    * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
    * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
    * @param value Start value to be reset in the property to ensure fuzzing is done in isolation
@@ -96,20 +98,21 @@ public class MetadataEngine extends CoreEngine {
    *        "application/json;charset=utf-8")
    * @param requestBuilder Rest-Assured request builder
    */
-  public MetadataEngine(String serviceName, ModelObject entityObj, String property,
+  public MetadataEngine(Schema schema, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder) {
-    super(entityObj.getModelString(), property);
-    initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
+    super(parentPath, property);
+    initializeEngine(serviceName, entityObj, parentPath, property, type, value, requestMethod, contentType,
         requestBuilder);
   }
 
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param serviceName name of the target service, which is a mapping to the config folder in
+   * @param schema Schema of the target service, which is a mapping to the config folder in
    *        the project resources
    * @param entityObj ModelObject to be fuzzed
+   * @param parentPath String path to the key in the object
    * @param property key in the metadata to be fuzzed. Passed by the MetadataFuzzer
    * @param type ModelPropertyType to be used in more fine grained fuzzing - TBD
    * @param value start value to be reset in the property to ensure fuzzing is done in isolation
@@ -119,15 +122,22 @@ public class MetadataEngine extends CoreEngine {
    * @param requestBuilder Rest-Assured RequestSpecBuilder
    * @param filters RestAssured Filters
    */
-  public MetadataEngine(String serviceName, ModelObject entityObj, String property,
+  public MetadataEngine(Schema schema, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder, Filter... filters) {
-    super(entityObj.getModelString(), property);
-    initializeEngine(serviceName, entityObj, property, type, value, requestMethod, contentType,
+    super(parentPath, property);
+    initializeEngine(serviceName, entityObj, parentPath, property, type, value, requestMethod, contentType,
         requestBuilder, filters);
   }
+  
+  public MetadataEngine(Schema schema, MetadataFuzzer fuzzObj, String parentPath, String property,
+      ModelPropertyType type, Object value) {
+    super(parentPath, property);
+    initializeEngine(serviceName, fuzzObj.entity, parentPath, property, type, value, fuzzObj.requestMethod, fuzzObj.contentType,
+        requestBuilder, fuzzObj.filters);
+  }
 
-  private void initializeEngine(String serviceName, ModelObject entityObj, String property,
+  private void initializeEngine(String serviceName, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder, Filter... filters) {
 
@@ -146,38 +156,29 @@ public class MetadataEngine extends CoreEngine {
     requestBuilder = RideCore.nullCheckAndAddFilters(requestBuilder, filters);
 
     JSONObject model = entity.getModel();
-    modelProperties = (JSONObject) model.get("properties");
-    linksProperties = (modelProperties.containsKey("_links"))
-        ? (JSONObject) ((JSONObject) modelProperties.get("_links")).get("properties")
-        : null;
-
-    modelInstance = (JSONObject) entity.buildValidModelInstance();
-    modelProperty = property;
+    modelProperties = ModelObject.getModelProperties(entity, model);
+    if(entity.getModelType() == ModelPropertyType.OBJECT) {
+      modelInstance = entity.getObjectMetadata();
+    }else if(entity.getModelType() == ModelPropertyType.ARRAY) {
+      modelInstanceItems = entity.getObjectItems();
+    }
+    fuzzProperty = property;
+    fuzzPropertyInstancePath = parentPath;
     propertyType = type;
     propertyStartValue = value;
 
-    if (linksProperty) {
-      linksInstance = (JSONObject) modelInstance.get("_links");
-    }
-
-    if (linksProperty) {
-      nodeDefinition = (JSONObject) linksProperties.get(modelProperty);
-    } else {
-      nodeDefinition = (JSONObject) modelProperties.get(modelProperty);
-    }
-    nodeDefinition = (JSONObject) modelProperties.get(modelProperty);
+    nodeDefinition = entity.getDefinitionAtModelPath(modelProperties, parentPath+property);//(JSONObject) modelProperties.get(fuzzProperty);
 
     if (model.containsKey("definitions")) {
       customDefs = (JSONObject) model.get("definitions");
     }
 
-    org.json.JSONObject rawSchema = new org.json.JSONObject(entity.getModelString());
-    schema = SchemaLoader.load(rawSchema);
   }
 
   /**
    * Method to determine if node is mutable by caller or only by the server (i.e. read/write
-   * property or read-only)
+   * property or read-only). Non-mutable nodes should be ignored and the call accepted if the 
+   * rest of the json is valid.
    * 
    * @param nodeDef node to be tested
    * @return boolean
@@ -472,27 +473,17 @@ public class MetadataEngine extends CoreEngine {
    * @param propertyValue
    * @param expectSuccess boolean to determine whether the call should succeed or fail
    */
-  @SuppressWarnings("unchecked")
   private Response callService(Object propertyValue, boolean expectSuccess) {
 
-    if (linksProperty) {
-      setLinksProperty(propertyValue);
-    } else {
-      modelInstance.remove(modelProperty);
-      modelInstance.put(modelProperty, propertyValue);
-    }
-
-    String callBody = modelInstance.toJSONString();
+    entity.setMetadataValue(fuzzPropertyInstancePath, fuzzProperty, propertyValue);
+    
+    String callBody = entity.getMetadataString();
     requestBuilder.setBody(callBody);
 
     ResponseSpecBuilder expectedValues = new ResponseSpecBuilder();
 
-
-
-    try {
-      org.json.JSONObject objectMetadata = new org.json.JSONObject(callBody);
-      schema.validate(objectMetadata);
-
+    if(expectSuccess) {
+      
       if (requestMethod == Method.DELETE) {
         expectedValues.expectStatusCode(204);
       } else if (requestMethod == Method.GET) {
@@ -514,7 +505,7 @@ public class MetadataEngine extends CoreEngine {
           objectExists = true;
         }
       }
-    } catch (ValidationException e) {
+    } else {
       expectedValues.expectStatusCode(400);
     }
 
@@ -528,30 +519,16 @@ public class MetadataEngine extends CoreEngine {
   }
 
   /**
-   * Method to set the links property being tested.
-   * 
-   * @param propertyValue
-   */
-  @SuppressWarnings("unchecked")
-  private void setLinksProperty(Object propertyValue) {
-    JSONObject tempLinks = linksInstance;
-    tempLinks.remove(modelProperty);
-    tempLinks.put(modelProperty, propertyValue);
-    modelInstance.remove("_links");
-    modelInstance.put("_links", tempLinks);
-  }
-
-  /**
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType --
+   * @param path --
    * @param property --
    * @param propertyValue --
    */
   @Test(dataProvider = "nonStringsDP", suiteName = "fuzzer", groups = "fuzz", enabled = false,
       singleThreaded = true)
-  public void fuzzMetadataStringsWithNonStrings(String entityType, String property,
+  public void fuzzMetadataStringsWithNonStrings(String path, String property,
       Object propertyValue) {
 
     String javaType = propertyValue.getClass().getSimpleName();
@@ -570,13 +547,13 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType --
+   * @param path --
    * @param property --
    * @param propertyValue --
    */
   @Test(dataProvider = "localizedStringsDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
-  public void fuzzMetadataStringsWithLocalizedStrings(String entityType, String property,
+  public void fuzzMetadataStringsWithLocalizedStrings(String path, String property,
       Object propertyValue) {
     boolean expectSuccess = evalData(ModelPropertyType.STRING, propertyValue);
     Response response = callService(propertyValue, expectSuccess);
@@ -587,13 +564,13 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType --
+   * @param path --
    * @param property --
    * @param propertyValue --
    */
   @Test(dataProvider = "passiveSqlDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
-  public void fuzzMetadataStringsWithPassiveSQLInjectionStrings(String entityType, String property,
+  public void fuzzMetadataStringsWithPassiveSQLInjectionStrings(String path, String property,
       Object propertyValue) {
     boolean expectSuccess = evalData(ModelPropertyType.STRING, propertyValue);
     Response response = callService(propertyValue, expectSuccess);
@@ -604,13 +581,13 @@ public class MetadataEngine extends CoreEngine {
    * DO NOT CALL THIS METHOD DIRECTLY. This is an internal method that is only public because TestNG
    * requires it. Test method which uses a TestNG DP to fuzz the target.
    * 
-   * @param entityType --
+   * @param path --
    * @param property --
    * @param propertyValue --
    */
-  @Test(dataProvider = "noSqlDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
+  @Test(dataProvider = "noSqlDP", groups = "fuzz", enabled = true,
       singleThreaded = true)
-  public void fuzzMetadataStringsWithNoSQLInjectionStrings(String entityType, String property,
+  public void fuzzMetadataStringsWithNoSQLInjectionStrings(String path, String property,
       Object propertyValue) {
     boolean expectSuccess = evalData(ModelPropertyType.STRING, propertyValue);
     Response response = callService(propertyValue, expectSuccess);
@@ -621,27 +598,15 @@ public class MetadataEngine extends CoreEngine {
    * Resets the start value for the fuzzed property before moving on the the next property to be
    * fuzzed.
    */
-  @SuppressWarnings("unchecked")
   @AfterMethod
-  private void resetValue(){
+  private void resetValue() throws NullPropertyValueException{
 
     if (propertyStartValue != null) {
-      modelInstance.remove(modelProperty);
-      modelInstance.put(modelProperty, propertyStartValue);
-    } else if (linksProperty) {
-      // for links properties, and perhaps just
-      // array properties, attempting to reset to
-      // the original value fails, most
-      // likely due to cast issues, so regenerating
-      // a valid value.
-      Object nodeValue = null;
-      nodeValue = entity.generateNodeValue(nodeDefinition);
-      setLinksProperty(nodeValue);
+      entity.setMetadataValue(fuzzPropertyInstancePath, fuzzProperty, propertyStartValue);
     } else {
-      Object nodeValue = null;
-      nodeValue = entity.generateNodeValue(nodeDefinition);
-      modelInstance.remove(modelProperty);
-      modelInstance.put(modelProperty, nodeValue);
+      throw new NullPropertyValueException(modelInstance, fuzzProperty);
+      
     }
+    
   }
 }

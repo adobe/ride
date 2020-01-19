@@ -50,7 +50,7 @@ public class ModelObjectTest {
     testObj.buildValidModelInstance();
     ModelObject.prettyPrintToConsole(testObj.getObjectMetadata());
     Set<String> test = testObj.getObjectMetadata().keySet();
-    Set<String> control = testObj.getModelProperties().keySet();
+    Set<String> control = ModelObject.getModelProperties(testObj, testObj.getModel()).keySet();
     Assert.assertTrue(test.containsAll(control));
   }
 
@@ -64,7 +64,7 @@ public class ModelObjectTest {
     ModelObject.prettyPrintToConsole(items);
     JSONArray objectItems = testArray.getObjectItems();
     Set<String> element1 = ((JSONObject) objectItems.get(0)).keySet();
-    Set<String> control = testArray.getModelProperties().keySet();
+    Set<String> control = ModelObject.getModelProperties(testArray, testArray.getModel()).keySet();
     Assert.assertTrue(element1.containsAll(control));
   }
 
@@ -77,7 +77,7 @@ public class ModelObjectTest {
     responseObj.buildValidModelInstance();
     ModelObject.prettyPrintToConsole(responseObj.getObjectMetadata());
     Set<String> test = responseObj.getObjectMetadata().keySet();
-    Set<String> control = responseObj.getModelProperties().keySet();
+    Set<String> control = ModelObject.getModelProperties(responseObj, responseObj.getModel()).keySet();
     Assert.assertTrue(test.containsAll(control));
   }
 
@@ -102,7 +102,7 @@ public class ModelObjectTest {
     responseObj.buildValidModelInstance();
     ModelObject.prettyPrintToConsole(responseObj.getObjectMetadata());
     Set<String> test = responseObj.getObjectMetadata().keySet();
-    Set<String> control = responseObj.getModelProperties().keySet();
+    Set<String> control = ModelObject.getModelProperties(responseObj, responseObj.getModel()).keySet();
     Assert.assertTrue(test.containsAll(control));
   }
 
@@ -157,7 +157,7 @@ public class ModelObjectTest {
     testObj.buildValidModelInstance();
     ModelObject.prettyPrintToConsole(testObj.getObjectMetadata());
     Set<String> test = testObj.getObjectMetadata().keySet();
-    Set<String> control = testObj.getModelProperties().keySet();
+    Set<String> control = ModelObject.getModelProperties(testObj, testObj.getModel()).keySet();
     Assert.assertTrue(test.containsAll(control));
   }
 
@@ -175,7 +175,7 @@ public class ModelObjectTest {
     testObj.buildValidModelInstance();
     ModelObject.prettyPrintToConsole(testObj.getObjectMetadata());
     Set<String> test = testObj.getObjectMetadata().keySet();
-    Set<String> control = testObj.getModelProperties().keySet();
+    Set<String> control = ModelObject.getModelProperties(testObj, testObj.getModel()).keySet();
     Assert.assertTrue(test.containsAll(control));
   }
 
@@ -191,7 +191,7 @@ public class ModelObjectTest {
     JSONObject newObject = (JSONObject) testObj.buildNewModelInstance();
     ModelObject.prettyPrintToConsole(newObject);
     Set<String> test = newObject.keySet();
-    Set<String> control = testObj.getModelProperties().keySet();
+    Set<String> control = ModelObject.getModelProperties(testObj, testObj.getModel()).keySet();
     Assert.assertTrue(test.containsAll(control));
   }
 
@@ -210,7 +210,7 @@ public class ModelObjectTest {
     testObj.buildValidModelInstance();
     ModelObject.prettyPrintToConsole(testObj.getObjectMetadata());
     Set<String> test = testObj.getObjectMetadata().keySet();
-    Set<String> control = testObj.getModelProperties().keySet();
+    Set<String> control = ModelObject.getModelProperties(testObj, testObj.getModel()).keySet();
     Assert.assertTrue(test.containsAll(control));
   }
 

@@ -110,7 +110,7 @@ public class SampleService {
 
     } catch (ValidationException e) {
       responseCode = 400;
-      failureMsgs.add(e.getMessage());
+      failureMsgs.add(e.getAllMessages());
     }
 
     if (responseCode == 400) {

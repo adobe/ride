@@ -12,6 +12,10 @@ governing permissions and limitations under the License.
 
 package com.adobe.ride.libraries.fuzzer;
 
+import java.io.File;
+import java.util.ArrayList;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.json.simple.JSONObject;
 import org.testng.annotations.Factory;
 import com.adobe.ride.libraries.fuzzer.engines.MetadataEngine;
@@ -29,14 +33,14 @@ import io.restassured.http.Method;
  * 
  */
 public class MetadataFuzzer {
-  protected ModelObject entity;
+  public ModelObject entity;
   protected JSONObject properties;
-  protected JSONObject instance;
   protected String serviceName;
-  protected Method requestMethod;
-  protected String contentType;
+  public Method requestMethod;
+  public String contentType;
   protected RequestSpecBuilder requestBuilder;
-  protected Filter[] filters;
+  public Filter[] filters;
+  protected String root;
 
   /** Arrays to be dynamically populated with metadata info for fuzzing **/
   private Object[][] propertiesFuzzSet;
@@ -44,8 +48,8 @@ public class MetadataFuzzer {
   /**
    * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName name of the target service, which is a mapping to the config folder in
-   *        the project resources
+   * @param serviceName name of the target service, which is a mapping to the config folder in the
+   *        project resources
    * @param objectToBeFuzzed ModelObject or a subclass thereof
    */
   public MetadataFuzzer(String serviceName, ModelObject objectToBeFuzzed) {
@@ -70,8 +74,8 @@ public class MetadataFuzzer {
   /**
    * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName name of the target service, which is a mapping to the config folder in
-   *        the project resources
+   * @param serviceName name of the target service, which is a mapping to the config folder in the
+   *        project resources
    * @param objectToBeFuzzed ModelObject or a subclass thereof
    * @param builder RequestSpecBuilder to be used in the fuzzer calls. If null, a base spec with
    *        only Authorization, Content-Type, and Accepts set, with the latter two set to a json
@@ -86,8 +90,8 @@ public class MetadataFuzzer {
   /**
    * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName name of the target service, which is a mapping to the config folder in
-   *        the project resources
+   * @param serviceName name of the target service, which is a mapping to the config folder in the
+   *        project resources
    * @param objectToBeFuzzed ModelObject or a subclass thereof
    * @param builder RequestSpecBuilder to be used in the fuzzer calls. If null, a base spec with
    *        only Authorization, Content-Type, and Accepts set, with the latter two set to a json
@@ -104,8 +108,8 @@ public class MetadataFuzzer {
   /**
    * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName name of the target service, which is a mapping to the config folder in
-   *        the project resources
+   * @param serviceName name of the target service, which is a mapping to the config folder in the
+   *        project resources
    * @param objectToBeFuzzed ModelObject or a subclass thereof
    * @param builder RequestSpecBuilder to be used in the fuzzer calls. If null, a base spec with
    *        only Authorization, Content-Type, and Accepts set, with the latter two set to a json
@@ -123,8 +127,8 @@ public class MetadataFuzzer {
   /**
    * Method to initialize the Fuzzer factory and related engine subcomponents.
    * 
-   * @param serviceName name of the target service, which is a mapping to the config folder in
-   *        the project resources
+   * @param serviceName name of the target service, which is a mapping to the config folder in the
+   *        project resources
    * @param objectToBeFuzzed ModelObject subclass instance to be fuzzed.
    * @param method http action to be invoked (i.e. POST, GET, etc.). If null, PUT is used
    * @param contentType content type header value (if null, default is
@@ -140,19 +144,84 @@ public class MetadataFuzzer {
 
     // Populate global properties
     this.entity = objectToBeFuzzed;
+    this.entity.buildValidModelInstance();
+
     this.requestMethod = method;
     this.serviceName = serviceName;
-    this.properties = this.entity.getModelProperties();
-    this.instance = this.entity.getObjectMetadata();
+    this.properties = ModelObject.getModelProperties(entity, this.entity.getModel());
     this.requestMethod = method;
     this.contentType = contentType;
     this.requestBuilder = requestBuilder;
     this.filters = filters;
-    propertiesFuzzSet = new Object[properties.keySet().size()][3];
+    // propertiesFuzzSet = new Object[properties.keySet().size()][3];
 
     // Prep TestNG dataprovider to make reporting better.
-    populateFuzzSet(properties, propertiesFuzzSet, "rootProperty");
+    root = (objectToBeFuzzed.getModelType() == ModelPropertyType.OBJECT) ? File.separator
+        : File.separator + "0" + File.separator ;
+
+    propertiesFuzzSet = populateFuzzSet(this.entity, new ArrayList<Object[]>(), root, this.entity.getModel());
+
+    for (int i = 0; i < propertiesFuzzSet.length; i++) {
+      System.out.println(propertiesFuzzSet[i][0] + ", " + propertiesFuzzSet[i][1] + ", "
+          + propertiesFuzzSet[i][2]);
+    }
+    
+    ModelPropertyType type = entity.getModelType();
+    if (type == ModelPropertyType.ARRAY) {
+      ModelObject.prettyPrintToConsole(entity.getObjectItems());
+    } else {
+      ModelObject.prettyPrintToConsole(entity.getObjectMetadata());
+    }
+    //ModelObject.prettyPrintToConsole(instance);
   }
+
+
+  private String getFuzzPath(JSONObject currentPathModel, String currentPath, String propertyName) {
+    String fuzzPath = "";
+    try {
+      ModelPropertyType type = ModelObject.getModelPropertyType(currentPathModel);
+      if (type == ModelPropertyType.ARRAY) {
+        fuzzPath = currentPath + propertyName + File.separator + "0" + File.separator;
+      } else {
+        fuzzPath = currentPath + propertyName + File.separator;
+      }
+    } catch (UnexpectedModelPropertyTypeException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return fuzzPath;
+  }
+  
+  private class ModelProperties{
+    Object[] propertiesArray;
+    JSONObject properties;
+    
+    public ModelProperties(JSONObject properties) {
+      this.properties = properties;
+      this.propertiesArray = properties.keySet().toArray();
+    }
+  }
+
+  private ModelProperties getObjectProperties(ModelObject currentfuzzObject,
+      JSONObject currentPathModel) {
+    JSONObject properties = null;
+
+    properties = ModelObject.getModelProperties(currentfuzzObject, currentPathModel);
+    
+
+    return new ModelProperties(properties);
+  }
+
+  private boolean isObjectProperty(ModelPropertyType type) {
+    if (type == ModelPropertyType.OBJECT || type == ModelPropertyType.ARRAY
+        || type == ModelPropertyType.REF_SCHEMA || type == ModelPropertyType.REF_DEFINITION) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 
   /**
    * Method which turns the properties of the model into a dataprovider for the fuzzer to use.
@@ -162,23 +231,50 @@ public class MetadataFuzzer {
    * @param propertyType indicator specifying links or root property
    * @throws UnexpectedModelPropertyTypeException
    */
-  private void populateFuzzSet(JSONObject set, Object[][] fuzzSet, String propertyType) {
+  private Object[][] populateFuzzSet(ModelObject objectToBeFuzzed,
+      ArrayList<Object[]> fuzzPropertiesList, String currentPath, JSONObject currentPathModel) {
+    Object[][] returnArray = null;
     try {
-      Object[] keys = set.keySet().toArray();
+      ModelProperties modelProps = getObjectProperties(objectToBeFuzzed, currentPathModel);
+      Object[] propertiesArray = modelProps.propertiesArray;
+      JSONObject properties = modelProps.properties;
+      for (int i = 0; i < propertiesArray.length; i++) {
+        String propertyName = propertiesArray[i].toString();
+        
+        JSONObject propertyDef = (JSONObject) properties.get(propertyName);
+        ModelPropertyType type = ModelObject.getModelPropertyType(propertyDef);
+        if (isObjectProperty(type)) {
+          populateFuzzSet(objectToBeFuzzed,
+              fuzzPropertiesList, getFuzzPath(propertyDef, currentPath, propertyName),
+              propertyDef);
+        } else {
+          Object[] propertyFuzzSet = new Object[3];
+          propertyFuzzSet[0] = currentPath;
+          propertyFuzzSet[1] = propertyName;
+          propertyFuzzSet[2] = (ModelPropertyType) type;
 
-      for (int i = 0; i < keys.length; i++) {
-        JSONObject obj = (JSONObject) set.get(keys[i]);
-        ModelPropertyType type = ModelObject.getModelPropertyType(obj);
+          fuzzPropertiesList.add(propertyFuzzSet);
+        }
+      }
 
-        fuzzSet[i][0] = keys[i].toString();
-        fuzzSet[i][1] = (ModelPropertyType) type;
-        fuzzSet[i][2] = propertyType;
+      if (currentPath == root) {
+        returnArray = convertFuzzListToArray(fuzzPropertiesList);
       }
     } catch (UnexpectedModelPropertyTypeException e) {
       System.out.println("FUZZER ERROR: UnexpectedModelPropertyType:" + e.getMessage());
       e.printStackTrace();
     }
+    return returnArray;
+  }
 
+  private Object[][] convertFuzzListToArray(ArrayList<Object[]> list) {
+    int len = list.size();
+    Object[][] returnArray = new Object[len][3];
+    for (int i = 0; i < len; i++) {
+      returnArray[i] = list.get(i);
+    }
+
+    return returnArray;
   }
 
   /**
@@ -212,13 +308,17 @@ public class MetadataFuzzer {
   @Factory
   public Object[] fuzzProperties() {
     Object[] result = new Object[propertiesFuzzSet.length];
+    org.json.JSONObject rawSchema = new org.json.JSONObject(entity.getModelString());
+    Schema schema = SchemaLoader.load(rawSchema);
     for (int i = 0; i < propertiesFuzzSet.length; i++) {
-      String currentkey = propertiesFuzzSet[i][0].toString();
-      ModelPropertyType type = (ModelPropertyType) propertiesFuzzSet[i][1];
-      Object currentValue = instance.get(currentkey);
+      String currentParentPath = propertiesFuzzSet[i][0].toString();
+      String currentkey = propertiesFuzzSet[i][1].toString();
+      ModelPropertyType type = (ModelPropertyType) propertiesFuzzSet[i][2];
+      Object currentValue = entity.getMetadataValue(currentParentPath, currentkey);
+      // instance.get(currentkey);
 
-      result[i] = new MetadataEngine(serviceName, entity, currentkey, type, currentValue,
-          requestMethod, contentType, requestBuilder, filters);
+      result[i] = new MetadataEngine(schema, this, currentParentPath, currentkey, type,
+          currentValue);
     }
     return result;
   }

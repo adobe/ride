@@ -30,7 +30,7 @@ public class ProfileObject extends ModelObject {
   public ProfileObject(String objectName, boolean initRequiredOnly) {
     super(Service.SAMPLE_SERVICE.toString(), CloudObjectType.PROFILE_OBJECT.toString(), objectName,
         initRequiredOnly);
-    buildValidModelInstance();
+    //buildValidModelInstance();
   }
 
   public JSONObject getRemoteProperties() {
