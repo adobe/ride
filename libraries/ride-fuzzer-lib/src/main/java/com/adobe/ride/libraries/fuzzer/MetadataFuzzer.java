@@ -165,7 +165,6 @@ public class MetadataFuzzer {
     }
 
     this.filters = filters;
-    // propertiesFuzzSet = new Object[properties.keySet().size()][3];
 
     // Prep TestNG dataprovider to make reporting better.
     root = (objectToBeFuzzed.getModelType() == ModelPropertyType.OBJECT) ? File.separator
@@ -219,7 +218,6 @@ public class MetadataFuzzer {
     JSONObject properties = null;
 
     properties = ModelObject.getObjectNodeProperties(currentfuzzObject, currentPathModel);
-    
 
     return new ModelProperties(properties);
   }

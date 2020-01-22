@@ -130,6 +130,7 @@ public class MetadataEngine extends CoreEngine {
         requestBuilder, filters);
   }
   
+  @Deprecated
   private void initializeEngine(String serviceName, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder, Filter... filters) throws ModelSearchException {
@@ -162,7 +163,7 @@ public class MetadataEngine extends CoreEngine {
   }
   
   /**
-   * Optimized contrstructor for better performance.
+   * Constructor for optimized full schema fuzzing
    * @param fuzzObj MetadataFuzzer object which contains the schema and other globals
    * @param fuzzInfo MetadataEngineInfo instance which contains info specific to the target path/property
    * @param filters RestAssured filters
