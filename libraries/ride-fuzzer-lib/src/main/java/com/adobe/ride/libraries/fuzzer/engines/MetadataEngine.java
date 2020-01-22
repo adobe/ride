@@ -68,6 +68,8 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
    * @param entityObj ModelObject to be fuzzed
    * @param parentPath String path to the key in the object
    * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
@@ -78,7 +80,7 @@ public class MetadataEngine extends CoreEngine {
    *        "application/json;charset=utf-8")
    */
   @Deprecated
-  public MetadataEngine(ModelObject entityObj, String parentPath, String property,
+  public MetadataEngine(String serviceName, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType) throws ModelSearchException {
     super(parentPath, property);
     initializeEngine(serviceName, entityObj, parentPath, property, type, value, requestMethod, contentType,
@@ -88,6 +90,8 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
    * @param entityObj ModelObject to be fuzzed
    * @param parentPath String path to the key in the object
    * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
@@ -99,7 +103,7 @@ public class MetadataEngine extends CoreEngine {
    * @param requestBuilder Rest-Assured request builder
    */
   @Deprecated
-  public MetadataEngine(ModelObject entityObj, String parentPath, String property,
+  public MetadataEngine(String serviceName, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
       RequestSpecBuilder requestBuilder) throws ModelSearchException {
     super(parentPath, property);
@@ -110,6 +114,8 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
    * @param entityObj ModelObject to be fuzzed
    * @param parentPath String path to the key in the object
    * @param property key in the metadata to be fuzzed. Passed by the MetadataFuzzer
@@ -122,9 +128,9 @@ public class MetadataEngine extends CoreEngine {
    * @param filters RestAssured Filters
    */
   @Deprecated
-  public MetadataEngine(ModelObject entityObj, String parentPath, String property,
+  public MetadataEngine(String serviceName, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilder, Filter... filters) throws ModelSearchException {
+      RequestSpecBuilder requestBuilder, Filter... filters) {
     super(parentPath, property);
     initializeEngine(serviceName, entityObj, parentPath, property, type, value, requestMethod, contentType,
         requestBuilder, filters);
@@ -133,7 +139,7 @@ public class MetadataEngine extends CoreEngine {
   @Deprecated
   private void initializeEngine(String serviceName, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilder, Filter... filters) throws ModelSearchException {
+      RequestSpecBuilder requestBuilder, Filter... filters) {
 
     this.serviceName = serviceName;
     this.entity = entityObj;
@@ -153,7 +159,7 @@ public class MetadataEngine extends CoreEngine {
     propertyType = type;
     propertyStartValue = value;
 
-    nodeDefinition = entity.getDefinitionAtModelPath(modelProperties, parentPath+property);//(JSONObject) modelProperties.get(fuzzPropertyKey);
+    nodeDefinition = (JSONObject) modelProperties.get(fuzzProperty);
     this.fuzzPropertyIsMutable = MetadataFuzzer.getNodeMutability(nodeDefinition);
 
     if (model.containsKey("definitions")) {

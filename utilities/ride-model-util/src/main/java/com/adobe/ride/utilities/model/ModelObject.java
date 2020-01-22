@@ -135,7 +135,7 @@ public class ModelObject {
    * Method to retrieve the property definition of a key within a schema, based on a fully qualified path
    * @param parentNodeDef Node which contains the root of the path
    * @param path qualified path mapping to hierachrical nodes within a schema
-   * @return a JSOBObject representation of the target definition
+   * @return a JSONObject representation of the target definition
    * @throws ModelSearchException
    */
   public JSONObject getDefinitionAtModelPath(JSONObject parentNodeDef, String path)
@@ -192,12 +192,6 @@ public class ModelObject {
       throw new ModelSearchException(parentNodeDef, path);
     }
   }
-
-  /*
-   * private JSONObject returnMappedObject(JSONObject nodeDef, String[] pathParts) {
-   * 
-   * }
-   */
 
   /**
    * Method to load the model from a file in the resourceLocation which is expected to be
@@ -427,7 +421,7 @@ public class ModelObject {
 
 
   /**
-   * Method which retrieves the property definition for
+   * Method which retrieves the property definition for the various JSON object types
    * 
    * @param propertyModel model of the object node
    * @return JSONObject properties of the model
@@ -476,7 +470,6 @@ public class ModelObject {
         properties = model.getObjectNodeProperties(definition);
       }
     } catch (UnexpectedModelPropertyTypeException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return properties;
