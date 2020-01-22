@@ -14,12 +14,16 @@ package com.adobe.ride.libraries.fuzzer;
 
 import java.io.File;
 import java.util.ArrayList;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
+//import org.everit.json.schema.Schema;
+//import org.everit.json.schema.loader.SchemaLoader;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.annotations.Factory;
+//import com.adobe.ride.core.RideCore;
+import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.libraries.fuzzer.engines.MetadataEngine;
 import com.adobe.ride.utilities.model.ModelObject;
+import com.adobe.ride.utilities.model.exceptions.ModelSearchException;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
 import com.adobe.ride.utilities.model.types.ModelPropertyType;
 import io.restassured.builder.RequestSpecBuilder;
@@ -35,10 +39,10 @@ import io.restassured.http.Method;
 public class MetadataFuzzer {
   public ModelObject entity;
   protected JSONObject properties;
-  protected String serviceName;
+  public String serviceName;
   public Method requestMethod;
   public String contentType;
-  protected RequestSpecBuilder requestBuilder;
+  public RequestSpecBuilder requestBuilder;
   public Filter[] filters;
   protected String root;
 
@@ -148,10 +152,18 @@ public class MetadataFuzzer {
 
     this.requestMethod = method;
     this.serviceName = serviceName;
-    this.properties = ModelObject.getModelProperties(entity, this.entity.getModel());
+    this.properties = ModelObject.getObjectNodeProperties(entity, this.entity.getModel());
     this.requestMethod = method;
     this.contentType = contentType;
     this.requestBuilder = requestBuilder;
+    
+    if (requestBuilder != null) {
+      this.requestBuilder = requestBuilder;
+    } else {
+      this.requestBuilder = RestApiController.getRequestBuilder(false);
+      this.requestBuilder.addHeader("Content-Type", "application/json");
+    }
+
     this.filters = filters;
     // propertiesFuzzSet = new Object[properties.keySet().size()][3];
 
@@ -172,7 +184,6 @@ public class MetadataFuzzer {
     } else {
       ModelObject.prettyPrintToConsole(entity.getObjectMetadata());
     }
-    //ModelObject.prettyPrintToConsole(instance);
   }
 
 
@@ -207,7 +218,7 @@ public class MetadataFuzzer {
       JSONObject currentPathModel) {
     JSONObject properties = null;
 
-    properties = ModelObject.getModelProperties(currentfuzzObject, currentPathModel);
+    properties = ModelObject.getObjectNodeProperties(currentfuzzObject, currentPathModel);
     
 
     return new ModelProperties(properties);
@@ -228,7 +239,7 @@ public class MetadataFuzzer {
    * 
    * @param set JSONObject representing a set of metadata nodes
    * @param fuzzSet the array in which the data will be pushed
-   * @param propertyType indicator specifying links or root property
+   * @param fuzzPropertyType indicator specifying links or root property
    * @throws UnexpectedModelPropertyTypeException
    */
   private Object[][] populateFuzzSet(ModelObject objectToBeFuzzed,
@@ -299,6 +310,65 @@ public class MetadataFuzzer {
     }
     return result;
   }
+  
+  /**
+   * Method to determine if node is mutable by caller or only by the server (i.e. read/write
+   * property or read-only). Non-mutable nodes should be ignored and the call accepted if the 
+   * rest of the json is valid.
+   * 
+   * @param nodeDef node to be tested
+   * @return boolean
+   */
+  public static boolean getNodeMutability(JSONObject nodeDef) {
+    boolean retVal = true;
+    if (nodeDef.containsKey("mutable")) {
+      if (Boolean.parseBoolean(nodeDef.get("mutable").toString()) == false) {
+        retVal = true;
+      } else {
+        retVal = false;
+      }
+    }
+
+    return retVal;
+  }
+  
+  public class MetadataEngineInfo{
+    public JSONObject modelProperties;
+    public JSONObject modelInstance;
+    public JSONArray modelInstanceItems;
+    public String fuzzPropertyParentPath;
+    public String fuzzPropertyKey; 
+    public ModelPropertyType fuzzPropertyType;
+    public Object fuzzPropertyStartValue;
+    public JSONObject fuzzPropertyNodeDefinition;
+    public boolean fuzzPropertyIsMutable;
+    private String modelSearchPath;
+    
+    
+    public MetadataEngineInfo(String currentPath, String currentKey, ModelPropertyType type, Object currentValue) throws ModelSearchException {
+      this.modelProperties = ModelObject.getObjectNodeProperties(entity, entity.getModel());
+      if(entity.getModelType() == ModelPropertyType.OBJECT) {
+        this.modelInstance = entity.getObjectMetadata();
+      }else if(entity.getModelType() == ModelPropertyType.ARRAY) {
+        this.modelInstanceItems = entity.getObjectItems();
+      }
+      this.fuzzPropertyKey = currentKey;
+      this.fuzzPropertyParentPath = currentPath;
+      this.fuzzPropertyType = type;
+      this.fuzzPropertyStartValue = currentValue;
+      
+      this.modelSearchPath = fuzzPropertyParentPath.concat(fuzzPropertyKey);
+
+      this.fuzzPropertyNodeDefinition = entity.getDefinitionAtModelPath(modelProperties, modelSearchPath);//(JSONObject) modelProperties.get(fuzzPropertyKey);
+      
+      if(fuzzPropertyNodeDefinition == null) {
+        System.out.println("hello");
+      }
+      
+      fuzzPropertyIsMutable = getNodeMutability(fuzzPropertyNodeDefinition);
+    }
+  }
+
 
   /**
    * Fuzzer factory which drives properties to the fuzz engine.
@@ -306,19 +376,19 @@ public class MetadataFuzzer {
    * @return Object[]
    */
   @Factory
-  public Object[] fuzzProperties() {
+  public Object[] fuzzProperties()  throws ModelSearchException {
     Object[] result = new Object[propertiesFuzzSet.length];
-    org.json.JSONObject rawSchema = new org.json.JSONObject(entity.getModelString());
-    Schema schema = SchemaLoader.load(rawSchema);
+    //org.json.JSONObject rawSchema = new org.json.JSONObject(entity.getModelString());
+    //Schema schema = SchemaLoader.load(rawSchema);
     for (int i = 0; i < propertiesFuzzSet.length; i++) {
       String currentParentPath = propertiesFuzzSet[i][0].toString();
       String currentkey = propertiesFuzzSet[i][1].toString();
       ModelPropertyType type = (ModelPropertyType) propertiesFuzzSet[i][2];
       Object currentValue = entity.getMetadataValue(currentParentPath, currentkey);
       // instance.get(currentkey);
+      MetadataEngineInfo fuzzInfo = new MetadataEngineInfo(currentParentPath, currentkey, type, currentValue);
 
-      result[i] = new MetadataEngine(schema, this, currentParentPath, currentkey, type,
-          currentValue);
+      result[i] = new MetadataEngine(this, fuzzInfo);
     }
     return result;
   }

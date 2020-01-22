@@ -44,6 +44,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.util.RawValue;
 import com.fasterxml.jackson.databind.node.MissingNode;
 
 /**
@@ -82,8 +83,7 @@ public class ModelObject {
   protected JSONArray objectItems;
   protected JSONObject presetNodes;
   protected Set<String> nodesToBuild;
-  //private Schema schema;
-  private Object metadata;
+  protected Object metadata;
 
 
   public ModelObject() {
@@ -105,40 +105,98 @@ public class ModelObject {
         modelProperties = (JSONObject) model.get("properties");
         requiredModelProperties = (JSONArray) model.get("required");
         modelDefinitions = (JSONObject) model.get("definitions");
-        
+
       } else if (modelType == ModelPropertyType.ARRAY) {
         JSONObject arrayDef = ((JSONObject) model.get("items"));
-        modelProperties = getModelProperties(this, arrayDef);
+        modelProperties = getObjectNodeProperties(this, arrayDef);
         requiredModelProperties = (JSONArray) arrayDef.get("required");
         modelDefinitions = (JSONObject) model.get("definitions");
       }
-      
+
       try {
-        String loadableProperties = (modelProperties != null)?modelProperties.toJSONString():modelString;
+        String loadableProperties =
+            (modelProperties != null) ? modelProperties.toJSONString() : modelString;
         modelPropertiesNodes = mapper.readTree(loadableProperties);
       } catch (IOException e) {
         logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
       }
 
-      //org.json.JSONObject rawSchema = new org.json.JSONObject(getModelString());
-      //schema = SchemaLoader.load(rawSchema);
-      
+      // breadcrumb in case this is needed again.
+      // org.json.JSONObject rawSchema = new org.json.JSONObject(getModelString());
+      // schema = SchemaLoader.load(rawSchema);
+
     } catch (ParseException e) {
       logger.log(Level.SEVERE, "A Parse exception was thrown", e);
     }
   }
-  
-  public JSONObject getDefinitionAtModelPath(JSONObject nodeDef, String path) {
-    String[] pathParts = path.split("/", 2);
-    
-    JSONObject parentDef = ((JSONObject) nodeDef.get(pathParts[1]));
-    
-    if(!((pathParts[1]).contains("/"))) {
-      return parentDef;
+
+  /**
+   * Method to retrieve the property definition of a key within a schema, based on a fully qualified path
+   * @param parentNodeDef Node which contains the root of the path
+   * @param path qualified path mapping to hierachrical nodes within a schema
+   * @return a JSOBObject representation of the target definition
+   * @throws ModelSearchException
+   */
+  public JSONObject getDefinitionAtModelPath(JSONObject parentNodeDef, String path)
+      throws ModelSearchException {
+    String[] pathParts = path.split("/", 3);
+
+    if (pathParts.length >= 2) {
+      String mainPath1 = pathParts[1];
+
+      if (isInt(mainPath1)) {
+        // segment is array index, so ignore first segment and move to next segment
+        if (pathParts.length != 3) {
+          // No more segments after index, so throw.
+          throw new ModelSearchException(parentNodeDef, path);
+        } else {
+
+          String[] subPathParts = pathParts[2].split("/", 3);
+          if (subPathParts.length >= 2) {
+            String subPath0 = subPathParts[0];
+            if (isInt(subPath0)) {
+              // malformed path for searching for definition
+              throw new ModelSearchException(parentNodeDef, path);
+            } else {
+              JSONObject segmentDef = (JSONObject) parentNodeDef.get(subPath0);
+              JSONObject nextDef = getObjectNodeProperties(this, segmentDef);
+              String subPath1 = subPathParts[1];
+              if (subPathParts.length == 3) {
+                String nextPath = ("/").concat(subPath1).concat("/").concat(subPathParts[2]);
+                return getDefinitionAtModelPath(nextDef, nextPath);
+              } else {
+                return (JSONObject) nextDef.get(subPath1);
+              }
+            }
+          } else if (subPathParts.length == 1) {
+            return (JSONObject) parentNodeDef.get(pathParts[2]);
+          } else {
+            // Something strange has happened
+            throw new ModelSearchException(parentNodeDef, path);
+          }
+        }
+      } else {
+        if (pathParts.length == 3) {
+          JSONObject segmentDef = (JSONObject) parentNodeDef.get(mainPath1);
+          JSONObject nextDef = getObjectNodeProperties(this, segmentDef);
+          return getDefinitionAtModelPath(nextDef, ("/").concat(pathParts[2]));
+        } else {
+          return (JSONObject) parentNodeDef.get(mainPath1);
+        }
+      }
+    } else if (pathParts.length == 1) {
+      return (JSONObject) parentNodeDef.get(path);
     } else {
-      return getDefinitionAtModelPath(getModelProperties(this, parentDef), pathParts[1]);
+      // Something strange has happened
+      throw new ModelSearchException(parentNodeDef, path);
     }
   }
+
+  /*
+   * private JSONObject returnMappedObject(JSONObject nodeDef, String[] pathParts) {
+   * 
+   * }
+   */
 
   /**
    * Method to load the model from a file in the resourceLocation which is expected to be
@@ -349,7 +407,7 @@ public class ModelObject {
   public JSONObject getModel() {
     return model;
   }
-  
+
   /**
    * 
    * @return ModelPropertyType Object Type
@@ -381,7 +439,7 @@ public class ModelObject {
       properties = (JSONObject) propertyModel.get("properties");
     } else if (propertyModel.containsKey("items")) {
       JSONObject items = (JSONObject) propertyModel.get("items");
-      properties = (JSONObject) getModelProperties(this, items);
+      properties = (JSONObject) getObjectNodeProperties(this, items);
     } else {
       try {
         throw new UnexpectedModelDefinitionException(propertyModel);
@@ -392,9 +450,14 @@ public class ModelObject {
 
     return properties;
   }
-
   
-  public static JSONObject getModelProperties(ModelObject model, JSONObject propertyDef) {
+  /**
+   * Retrieve the properties of the various type of schema objects
+   * @param model ModelObject which contains the target
+   * @param propertyDef definition of the target
+   * @return
+   */
+  public static JSONObject getObjectNodeProperties(ModelObject model, JSONObject propertyDef) {
     JSONObject properties = null;
     ModelPropertyType type;
     try {
@@ -645,22 +708,16 @@ public class ModelObject {
     setMetadata();
     return returnObject;
   }
-  
+
   /*
-  public boolean validateMetadata() {
-    boolean validationValue = true;
-    try {
-      schema.validate(metadata);
-    } catch (ValidationException e) {
-      validationValue = false;
-    }
-    return validationValue;
-  }
-  */
-  
+   * public boolean validateMetadata() { boolean validationValue = true; try {
+   * schema.validate(metadata); } catch (ValidationException e) { validationValue = false; } return
+   * validationValue; }
+   */
+
   private void setMetadata() {
     ModelPropertyType type = getModelType();
-    if(type.equals(ModelPropertyType.OBJECT)) {
+    if (type.equals(ModelPropertyType.OBJECT)) {
       metadata = objectMetadata;
     } else {
       metadata = objectItems;
@@ -951,7 +1008,7 @@ public class ModelObject {
 
     return returnObj;
   }
-  
+
 
   @SuppressWarnings("unchecked")
   private ArrayNode buildArrayNode(JSONObject propertyDef) {
@@ -1566,7 +1623,7 @@ public class ModelObject {
   private void refreshMetadata(JsonNode dataTree) {
     try {
       String treeString = mapper.writeValueAsString(dataTree);
-      if(modelType.equals(ModelPropertyType.OBJECT)) {
+      if (modelType.equals(ModelPropertyType.OBJECT)) {
         objectMetadata = (JSONObject) parser.parse(treeString);
       } else {
         objectItems = (JSONArray) parser.parse(treeString);
@@ -1575,15 +1632,30 @@ public class ModelObject {
       logger.log(Level.SEVERE, e.getMessage());
     }
   }
-  
+
+  /**
+   * 
+   * @return Object internally stored generated instance
+   */
   public Object getMetadata() {
-    return (modelType.equals(ModelPropertyType.OBJECT))?objectMetadata:objectItems;
+    return (modelType.equals(ModelPropertyType.OBJECT)) ? objectMetadata : objectItems;
   }
-  
+
+  /**
+   * 
+   * @return String representation of the internally stored generated instance
+   */
   public String getMetadataString() {
-    return (modelType.equals(ModelPropertyType.OBJECT))?objectMetadata.toJSONString():objectItems.toJSONString();
+    return (modelType.equals(ModelPropertyType.OBJECT)) ? objectMetadata.toJSONString()
+        : objectItems.toJSONString();
   }
-  
+
+  /**
+   * Method to retrieve at object path of internally stored generated instance
+   * @param path fully qualified object path
+   * @param key name of the property to be retrieved
+   * @return
+   */
   public Object getMetadataValue(String path, String key) {
     Object exisitingValue = null;
     if (path == null || path == null + "/" + null) {
@@ -1592,13 +1664,13 @@ public class ModelObject {
       try {
         String jsonstring = "";
 
-        if(getModelType() == ModelPropertyType.OBJECT) {
+        if (getModelType() == ModelPropertyType.OBJECT) {
           jsonstring = objectMetadata.toJSONString();
         } else if (getModelType() == ModelPropertyType.ARRAY) {
           jsonstring = objectItems.toJSONString();
         }
-        
-        //look up value (strip trailing slash from parent path)
+
+        // look up value (strip trailing slash from parent path)
         Object value = mapper.readTree(jsonstring).at(path.replaceAll("/$", "")).get(key);
 
         if (value != null) {
@@ -1620,27 +1692,26 @@ public class ModelObject {
    * @param key String target node key
    * @param value Object value to be assigned
    */
-  public void setMetadataValue(String metadataPath, String key,
-      Object value) {
+  public void setMetadataValue(String metadataPath, String key, Object value) {
     JsonNode tree = null;
-    
+
     try {
 
       tree = mapper.readTree(getMetadataString());
     } catch (IOException e) {
       logger.log(Level.SEVERE, e.getMessage());
     }
-    
+
     String path = metadataPath.replaceAll("/$", "");
-    
-    String stringRep = value.toString();
+
+    String stringRep = castAsString(value);
     if (isBoolean(value)) {
       ((ObjectNode) tree.at(path)).put(key, Boolean.parseBoolean(stringRep));
     } else if (isInt(value)) {
       ((ObjectNode) tree.at(path)).put(key, Long.parseLong(stringRep));
     } else if (isNumber(value)) {
       ((ObjectNode) tree.at(path)).put(key, Double.parseDouble(stringRep));
-    }  else if(isArrayNode(value)) {
+    } else if (isArrayNode(value)) {
       ((ObjectNode) tree.at(path)).putArray(key).addAll((ArrayNode) value);
     } else if (isObject(value)) {
       try {
@@ -1652,10 +1723,24 @@ public class ModelObject {
     } else if (value == null || value == "null") {
       ((ObjectNode) tree.at(path)).putNull(key);
     } else {
-      JsonNode node = tree.at(path);
-      ((ObjectNode) node).put(key, stringRep);
+      ((ObjectNode) tree.at(path)).put(key, stringRep);
     }
     refreshMetadata(tree);
+  }
+  
+  /**
+   * Rerturn a string representation based on the value object type
+   * @param value
+   * @return
+   */
+  public String castAsString(Object value) {
+    if(isBoolean(value) || isInt(value) || isNumber(value) || isArrayNode(value) || isObject(value) ) {
+      return value.toString();
+    } else {
+      String string = value.toString();
+      String unescaped = string.replaceAll("\"", "");
+      return unescaped;
+    }
   }
 
 
@@ -1776,41 +1861,43 @@ public class ModelObject {
   public String getObjectType() {
     return objectType;
   }
-  
+
   private boolean isBoolean(Object value) {
-    if( value.toString().equalsIgnoreCase("true") || value.toString().equalsIgnoreCase("false")){
+    if (value.toString().equalsIgnoreCase("true") || value.toString().equalsIgnoreCase("false")) {
       return true;
     } else {
       return false;
     }
   }
-  
+
   private boolean isInt(Object value) {
-    if(value instanceof Long){
+    try {
+      Integer.parseInt(value.toString());
       return true;
-    } else {
+    } catch (NumberFormatException e) {
       return false;
     }
   }
-  
+
   private boolean isNumber(Object value) {
-    if(value instanceof Double){
+    try {
+      Double.parseDouble(value.toString());
       return true;
-    } else {
+    } catch (NumberFormatException e) {
       return false;
     }
   }
-  
+
   private boolean isObject(Object value) {
-    if(value instanceof JSONObject){
+    if (value instanceof JSONObject) {
       return true;
     } else {
       return false;
     }
   }
-  
+
   private boolean isArrayNode(Object value) {
-    if(value instanceof ArrayNode){
+    if (value instanceof ArrayNode) {
       return true;
     } else {
       return false;

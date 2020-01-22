@@ -13,8 +13,8 @@ governing permissions and limitations under the License.
 package com.adobe.ride.libraries.fuzzer.engines;
 
 import java.net.URI;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
+// import org.everit.json.schema.Schema;
+// import org.everit.json.schema.ValidationException;
 // import java.util.UUID;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,8 +23,10 @@ import org.testng.annotations.Test;
 import com.adobe.ride.core.RideCore;
 import com.adobe.ride.core.controllers.RestApiController;
 import com.adobe.ride.libraries.fuzzer.MetadataFuzzer;
+import com.adobe.ride.libraries.fuzzer.MetadataFuzzer.MetadataEngineInfo;
 import com.adobe.ride.libraries.fuzzer.exceptions.NullPropertyValueException;
 import com.adobe.ride.utilities.model.ModelObject;
+import com.adobe.ride.utilities.model.exceptions.ModelSearchException;
 import com.adobe.ride.utilities.model.exceptions.UnexpectedModelPropertyTypeException;
 import com.adobe.ride.utilities.model.types.ModelPropertyType;
 import io.restassured.builder.RequestSpecBuilder;
@@ -61,12 +63,11 @@ public class MetadataEngine extends CoreEngine {
   private boolean objectExists = false;
   private Method requestMethod;
   private RequestSpecBuilder requestBuilder = null;
+  private boolean fuzzPropertyIsMutable;
 
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param schema Schema of the target service, which is a mapping to the config folder in
-   *        the project resources
    * @param entityObj ModelObject to be fuzzed
    * @param parentPath String path to the key in the object
    * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
@@ -76,8 +77,9 @@ public class MetadataEngine extends CoreEngine {
    * @param contentType string content type header value (if null, default is
    *        "application/json;charset=utf-8")
    */
-  public MetadataEngine(Schema schema, ModelObject entityObj, String parentPath, String property,
-      ModelPropertyType type, Object value, Method requestMethod, String contentType) {
+  @Deprecated
+  public MetadataEngine(ModelObject entityObj, String parentPath, String property,
+      ModelPropertyType type, Object value, Method requestMethod, String contentType) throws ModelSearchException {
     super(parentPath, property);
     initializeEngine(serviceName, entityObj, parentPath, property, type, value, requestMethod, contentType,
         null);
@@ -86,8 +88,6 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param schema Schema  of the target service, which is a mapping to the config folder in
-   *        the project resources
    * @param entityObj ModelObject to be fuzzed
    * @param parentPath String path to the key in the object
    * @param property Key in the metadata to be fuzzed. Passed by the Metadata Fuzzer
@@ -98,9 +98,10 @@ public class MetadataEngine extends CoreEngine {
    *        "application/json;charset=utf-8")
    * @param requestBuilder Rest-Assured request builder
    */
-  public MetadataEngine(Schema schema, ModelObject entityObj, String parentPath, String property,
+  @Deprecated
+  public MetadataEngine(ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilder) {
+      RequestSpecBuilder requestBuilder) throws ModelSearchException {
     super(parentPath, property);
     initializeEngine(serviceName, entityObj, parentPath, property, type, value, requestMethod, contentType,
         requestBuilder);
@@ -109,8 +110,6 @@ public class MetadataEngine extends CoreEngine {
   /**
    * Constructor for the class from which all of the fuzz target data is derived.
    * 
-   * @param schema Schema of the target service, which is a mapping to the config folder in
-   *        the project resources
    * @param entityObj ModelObject to be fuzzed
    * @param parentPath String path to the key in the object
    * @param property key in the metadata to be fuzzed. Passed by the MetadataFuzzer
@@ -122,41 +121,27 @@ public class MetadataEngine extends CoreEngine {
    * @param requestBuilder Rest-Assured RequestSpecBuilder
    * @param filters RestAssured Filters
    */
-  public MetadataEngine(Schema schema, ModelObject entityObj, String parentPath, String property,
+  @Deprecated
+  public MetadataEngine(ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilder, Filter... filters) {
+      RequestSpecBuilder requestBuilder, Filter... filters) throws ModelSearchException {
     super(parentPath, property);
     initializeEngine(serviceName, entityObj, parentPath, property, type, value, requestMethod, contentType,
         requestBuilder, filters);
   }
   
-  public MetadataEngine(Schema schema, MetadataFuzzer fuzzObj, String parentPath, String property,
-      ModelPropertyType type, Object value) {
-    super(parentPath, property);
-    initializeEngine(serviceName, fuzzObj.entity, parentPath, property, type, value, fuzzObj.requestMethod, fuzzObj.contentType,
-        requestBuilder, fuzzObj.filters);
-  }
-
   private void initializeEngine(String serviceName, ModelObject entityObj, String parentPath, String property,
       ModelPropertyType type, Object value, Method requestMethod, String contentType,
-      RequestSpecBuilder requestBuilder, Filter... filters) {
+      RequestSpecBuilder requestBuilder, Filter... filters) throws ModelSearchException {
 
     this.serviceName = serviceName;
     this.entity = entityObj;
     this.requestMethod = requestMethod;
-    if (requestBuilder != null) {
-      this.requestBuilder = requestBuilder;
-    } else {
-      this.requestBuilder = RestApiController.getRequestBuilder(false);
-      this.requestBuilder.addHeader("Accept", "application/json");
-      this.requestBuilder.addHeader("Content-Type",
-          (contentType != null) ? contentType : "application/json;charset=utf-8");
-    }
-
-    requestBuilder = RideCore.nullCheckAndAddFilters(requestBuilder, filters);
+    
+    this.requestBuilder = RideCore.nullCheckAndAddFilters(requestBuilder, filters);
 
     JSONObject model = entity.getModel();
-    modelProperties = ModelObject.getModelProperties(entity, model);
+    modelProperties = ModelObject.getObjectNodeProperties(entity, model);
     if(entity.getModelType() == ModelPropertyType.OBJECT) {
       modelInstance = entity.getObjectMetadata();
     }else if(entity.getModelType() == ModelPropertyType.ARRAY) {
@@ -167,33 +152,34 @@ public class MetadataEngine extends CoreEngine {
     propertyType = type;
     propertyStartValue = value;
 
-    nodeDefinition = entity.getDefinitionAtModelPath(modelProperties, parentPath+property);//(JSONObject) modelProperties.get(fuzzProperty);
+    nodeDefinition = entity.getDefinitionAtModelPath(modelProperties, parentPath+property);//(JSONObject) modelProperties.get(fuzzPropertyKey);
+    this.fuzzPropertyIsMutable = MetadataFuzzer.getNodeMutability(nodeDefinition);
 
     if (model.containsKey("definitions")) {
       customDefs = (JSONObject) model.get("definitions");
     }
 
   }
-
+  
   /**
-   * Method to determine if node is mutable by caller or only by the server (i.e. read/write
-   * property or read-only). Non-mutable nodes should be ignored and the call accepted if the 
-   * rest of the json is valid.
-   * 
-   * @param nodeDef node to be tested
-   * @return boolean
+   * Optimized contrstructor for better performance.
+   * @param fuzzObj MetadataFuzzer object which contains the schema and other globals
+   * @param fuzzInfo MetadataEngineInfo instance which contains info specific to the target path/property
+   * @param filters RestAssured filters
+   * @throws ModelSearchException
    */
-  private boolean getNodeMutability(JSONObject nodeDef) {
-    boolean retVal = true;
-    if (nodeDef.containsKey("mutable")) {
-      if (Boolean.parseBoolean(nodeDef.get("mutable").toString()) == false) {
-        retVal = true;
-      } else {
-        retVal = false;
-      }
-    }
-
-    return retVal;
+  public MetadataEngine(MetadataFuzzer fuzzObj, MetadataEngineInfo fuzzInfo, Filter... filters) throws ModelSearchException {
+    super(fuzzInfo.fuzzPropertyParentPath, fuzzInfo.fuzzPropertyKey);
+    this.serviceName = fuzzObj.serviceName;
+    this.entity = fuzzObj.entity;
+    this.requestMethod = fuzzObj.requestMethod;
+    this.requestBuilder = RideCore.nullCheckAndAddFilters(fuzzObj.requestBuilder, filters);
+    this.modelProperties = fuzzInfo.modelProperties;
+    this.fuzzProperty = fuzzInfo.fuzzPropertyKey;
+    this.fuzzPropertyInstancePath = fuzzInfo.fuzzPropertyParentPath;
+    this.propertyType = fuzzInfo.fuzzPropertyType;
+    this.propertyStartValue = fuzzInfo.fuzzPropertyStartValue;
+    this.nodeDefinition = fuzzInfo.fuzzPropertyNodeDefinition;
   }
 
   /**
@@ -209,7 +195,7 @@ public class MetadataEngine extends CoreEngine {
       ModelPropertyType fuzzDataType, Object data, JSONObject nodeDef) {
     boolean retVal = false;
 
-    if (!getNodeMutability(nodeDef)) {// non-mutable nodes should be ignored
+    if (this.fuzzPropertyIsMutable) {// non-mutable nodes should be ignored
       // and the call accepted if the rest
       // of the json is valid
       retVal = true;
@@ -585,7 +571,7 @@ public class MetadataEngine extends CoreEngine {
    * @param property --
    * @param propertyValue --
    */
-  @Test(dataProvider = "noSqlDP", groups = "fuzz", enabled = true,
+  @Test(dataProvider = "noSqlDP", suiteName = "fuzzer", groups = "fuzz", enabled = true,
       singleThreaded = true)
   public void fuzzMetadataStringsWithNoSQLInjectionStrings(String path, String property,
       Object propertyValue) {
