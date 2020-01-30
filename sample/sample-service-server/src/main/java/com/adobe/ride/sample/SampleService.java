@@ -110,7 +110,7 @@ public class SampleService {
 
     } catch (ValidationException e) {
       responseCode = 400;
-      failureMsgs.add(e.getMessage());
+      failureMsgs.add(e.getAllMessages());
     }
 
     if (responseCode == 400) {
@@ -232,9 +232,9 @@ public class SampleService {
       writer.close();
       writeSuccess = true;
     } catch (UnsupportedEncodingException | FileNotFoundException e) {
-      e.printStackTrace();
+      System.out.println("DB write failed");
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("DB write failed");
     }
     return writeSuccess;
   }
@@ -260,7 +260,7 @@ public class SampleService {
       statement.setQueryTimeout(30); // set timeout to 30 sec.
       statement.executeUpdate(query);
     } catch (SQLException e) {
-      e.printStackTrace();
+      System.out.println("Failed POST Query: "+query);
     }
   }
 
@@ -271,7 +271,7 @@ public class SampleService {
       statement.setQueryTimeout(30); // set timeout to 30 sec.
       result = statement.executeQuery(query);
     } catch (SQLException e) {
-      e.printStackTrace();
+      System.out.println("Failed GET Query: "+query);
     }
 
     return result;

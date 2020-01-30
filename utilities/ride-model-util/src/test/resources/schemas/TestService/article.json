@@ -47,7 +47,7 @@
 					"thumbnail": { "$ref":"#/definitions/imagelink", "imagelink":true },
 					"socialSharing": { "$ref":"#/definitions/imagelink", "imagelink":true },
 					"collections" : { "type" : "array", "items": { "$ref":"entitylink.json" }, "mutable":false },
-					"relatedContent" : { "type" : "array", "items": { "$ref":"./entitylink.json" } },
+					"relatedContent" : { "type" : "array", "items": { "$ref":"entitylink.json" } },
 					"articleFolio" : {  "$ref":"#/definitions/contentlink"  }
 					}
 			},

@@ -90,6 +90,7 @@ public class BasicTest_IT {
     String itemName = UUID.randomUUID().toString();
     // Create Object
     ProfileObject testObject = new ProfileObject(itemName, false);
+    testObject.buildValidModelInstance();
     // Send Object To Server
     SampleServiceController.createOrUpdateArrayObject(testObject.getObjectPath(), testObject,
         ExpectedResponse.CREATED_RESPONSE, false);

@@ -25,6 +25,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
+/*
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
+*/
 import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -69,7 +74,7 @@ public class ModelObject {
   protected boolean requiredOnly = false;
   protected String modelString;
   private final String NULL_MODEL_VALUE = "nulledValue";
-  private static final String REFERENCE_KEY = "$ref";
+  public static final String REFERENCE_KEY = "$ref";
   private String serviceName;
   private String objectPath;
   private String objectName;
@@ -79,6 +84,8 @@ public class ModelObject {
   protected JSONArray objectItems;
   protected JSONObject presetNodes;
   protected Set<String> nodesToBuild;
+  protected Object metadata;
+
 
   public ModelObject() {
 
@@ -94,28 +101,95 @@ public class ModelObject {
       // turn model contents into usable JSONObjects
       model = (JSONObject) parser.parse(modelString);
       modelType = ModelPropertyType.eval(model.get("type").toString());
+
       if (modelType == ModelPropertyType.OBJECT) {
         modelProperties = (JSONObject) model.get("properties");
         requiredModelProperties = (JSONArray) model.get("required");
         modelDefinitions = (JSONObject) model.get("definitions");
-        try {
-          modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
-        } catch (IOException e) {
-          logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
-        }
+
       } else if (modelType == ModelPropertyType.ARRAY) {
         JSONObject arrayDef = ((JSONObject) model.get("items"));
-        modelProperties = ((JSONObject) arrayDef.get("properties"));
+        modelProperties = getObjectNodeProperties(this, arrayDef);
         requiredModelProperties = (JSONArray) arrayDef.get("required");
         modelDefinitions = (JSONObject) model.get("definitions");
-        try {
-          modelPropertiesNodes = mapper.readTree(modelProperties.toJSONString());
-        } catch (IOException e) {
-          logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
-        }
       }
+
+      try {
+        String loadableProperties =
+            (modelProperties != null) ? modelProperties.toJSONString() : modelString;
+        modelPropertiesNodes = mapper.readTree(loadableProperties);
+      } catch (IOException e) {
+        logger.log(Level.SEVERE, "An error was thrown while deserializing the JSON content", e);
+      }
+
+      // breadcrumb in case this is needed again.
+      // org.json.JSONObject rawSchema = new org.json.JSONObject(getModelString());
+      // schema = SchemaLoader.load(rawSchema);
+
     } catch (ParseException e) {
       logger.log(Level.SEVERE, "A Parse exception was thrown", e);
+    }
+  }
+
+  /**
+   * Method to retrieve the property definition of a key within a schema, based on a fully qualified path
+   * @param parentNodeDef Node which contains the root of the path
+   * @param path qualified path mapping to hierachrical nodes within a schema
+   * @return a JSONObject representation of the target definition
+   * @throws ModelSearchException
+   */
+  public JSONObject getDefinitionAtModelPath(JSONObject parentNodeDef, String path)
+      throws ModelSearchException {
+    String[] pathParts = path.split("/", 3);
+
+    if (pathParts.length >= 2) {
+      String mainPath1 = pathParts[1];
+
+      if (isInt(mainPath1)) {
+        // segment is array index, so ignore first segment and move to next segment
+        if (pathParts.length != 3) {
+          // No more segments after index, so throw.
+          throw new ModelSearchException(parentNodeDef, path);
+        } else {
+
+          String[] subPathParts = pathParts[2].split("/", 3);
+          if (subPathParts.length >= 2) {
+            String subPath0 = subPathParts[0];
+            if (isInt(subPath0)) {
+              // malformed path for searching for definition
+              throw new ModelSearchException(parentNodeDef, path);
+            } else {
+              JSONObject segmentDef = (JSONObject) parentNodeDef.get(subPath0);
+              JSONObject nextDef = getObjectNodeProperties(this, segmentDef);
+              String subPath1 = subPathParts[1];
+              if (subPathParts.length == 3) {
+                String nextPath = ("/").concat(subPath1).concat("/").concat(subPathParts[2]);
+                return getDefinitionAtModelPath(nextDef, nextPath);
+              } else {
+                return (JSONObject) nextDef.get(subPath1);
+              }
+            }
+          } else if (subPathParts.length == 1) {
+            return (JSONObject) parentNodeDef.get(pathParts[2]);
+          } else {
+            // Something strange has happened
+            throw new ModelSearchException(parentNodeDef, path);
+          }
+        }
+      } else {
+        if (pathParts.length == 3) {
+          JSONObject segmentDef = (JSONObject) parentNodeDef.get(mainPath1);
+          JSONObject nextDef = getObjectNodeProperties(this, segmentDef);
+          return getDefinitionAtModelPath(nextDef, ("/").concat(pathParts[2]));
+        } else {
+          return (JSONObject) parentNodeDef.get(mainPath1);
+        }
+      }
+    } else if (pathParts.length == 1) {
+      return (JSONObject) parentNodeDef.get(path);
+    } else {
+      // Something strange has happened
+      throw new ModelSearchException(parentNodeDef, path);
     }
   }
 
@@ -279,14 +353,14 @@ public class ModelObject {
   }
 
   /**
-	 * Static constructor to initialize with a JSON schema string. Optional parameters for
-	 * adding preset nodes, defining target nodes, and whether to use only required
-	 * nodes.
+   * Static constructor to initialize with a JSON schema string. Optional parameters for adding
+   * preset nodes, defining target nodes, and whether to use only required nodes.
+   * 
    * @param modelString string which conforms to JSON schema standards
    * @param presetNodes optional set of JSON nodes and values to be used in the object, not
    *        generated dynamically
-   * @param nodesToBuild optional set of JSONnodes which are to be dynamically generated.
-   *        Remaining schema defined nodes will not be generated.
+   * @param nodesToBuild optional set of JSONnodes which are to be dynamically generated. Remaining
+   *        schema defined nodes will not be generated.
    * @param useRequiredOnly boolean to determine whether to build only the required json nodes as
    *        defined in the spec
    *
@@ -331,11 +405,76 @@ public class ModelObject {
 
   /**
    * 
+   * @return ModelPropertyType Object Type
+   */
+  public ModelPropertyType getModelType() {
+    return modelType;
+  }
+
+  /**
+   * 
    * @return JSONObject representation of the properties of the model
    */
   public JSONObject getModelProperties() {
     return modelProperties;
   }
+
+
+  /**
+   * Method which retrieves the property definition for the various JSON object types
+   * 
+   * @param propertyModel model of the object node
+   * @return JSONObject properties of the model
+   */
+  private JSONObject getObjectNodeProperties(JSONObject propertyModel) {
+    JSONObject properties = new JSONObject();
+    if (propertyModel.containsKey("patternProperties")) {
+      properties = (JSONObject) propertyModel.get("patternProperties");
+    } else if (propertyModel.containsKey("properties")) {
+      properties = (JSONObject) propertyModel.get("properties");
+    } else if (propertyModel.containsKey("items")) {
+      JSONObject items = (JSONObject) propertyModel.get("items");
+      properties = (JSONObject) getObjectNodeProperties(this, items);
+    } else {
+      try {
+        throw new UnexpectedModelDefinitionException(propertyModel);
+      } catch (UnexpectedModelDefinitionException e) {
+        logger.log(Level.SEVERE, e.getMessage());
+      }
+    }
+
+    return properties;
+  }
+  
+  /**
+   * Retrieve the properties of the various type of schema objects
+   * @param model ModelObject which contains the target
+   * @param propertyDef definition of the target
+   * @return
+   */
+  public static JSONObject getObjectNodeProperties(ModelObject model, JSONObject propertyDef) {
+    JSONObject properties = null;
+    ModelPropertyType type;
+    try {
+      type = getModelPropertyType(propertyDef);
+      if (type == ModelPropertyType.OBJECT || type == ModelPropertyType.ARRAY) {
+        properties = model.getObjectNodeProperties(propertyDef);
+      } else if (type == ModelPropertyType.REF_SCHEMA) {
+        String objectString = propertyDef.get(REFERENCE_KEY).toString();
+        String relativeSchema;
+        relativeSchema = getRelativeResourceLocation(model.resourceLocation, objectString);
+        ModelObject newObj = new ModelObject(relativeSchema);
+        properties = newObj.modelProperties;
+      } else if (type == ModelPropertyType.REF_DEFINITION) {
+        JSONObject definition = model.getDefinitionRef(propertyDef);
+        properties = model.getObjectNodeProperties(definition);
+      }
+    } catch (UnexpectedModelPropertyTypeException e) {
+      e.printStackTrace();
+    }
+    return properties;
+  }
+
 
   /**
    * 
@@ -534,6 +673,7 @@ public class ModelObject {
    * @return Object JSON Object of model type
    */
   public Object buildValidModelInstance() {
+    Object returnObject = null;
     if (modelType == ModelPropertyType.OBJECT) {
       if (presetNodes != null && objectMetadata.isEmpty()) {
         objectMetadata = presetNodes;
@@ -543,22 +683,41 @@ public class ModelObject {
         return buildTargetedNodes();
       } else {
         JSONObject modelSet = (requiredOnly) ? getRequiredOnlyDefs(model) : modelProperties;
-        return buildModelInstance(modelSet);
+        returnObject = buildModelInstance(modelSet);
       }
     } else if (modelType == ModelPropertyType.ARRAY) {
       try {
         ArrayNode generatedItems = buildArrayNode(model);
         String itemsString = generatedItems.toString();
         objectItems = (JSONArray) (parser.parse(itemsString));
+        returnObject = objectItems;
       } catch (ParseException e) {
         logger.log(Level.SEVERE, e.getMessage());
       }
       return objectItems;
     } else {
       // Handling Primitive type schemas
-      return generateNodeValue(model);
+      returnObject = generateNodeValue(model);
+    }
+    setMetadata();
+    return returnObject;
+  }
+
+  /*
+   * public boolean validateMetadata() { boolean validationValue = true; try {
+   * schema.validate(metadata); } catch (ValidationException e) { validationValue = false; } return
+   * validationValue; }
+   */
+
+  private void setMetadata() {
+    ModelPropertyType type = getModelType();
+    if (type.equals(ModelPropertyType.OBJECT)) {
+      metadata = objectMetadata;
+    } else {
+      metadata = objectItems;
     }
   }
+
 
   private Object buildTargetedNodes() {
     for (String str : nodesToBuild) {
@@ -843,6 +1002,7 @@ public class ModelObject {
 
     return returnObj;
   }
+
 
   @SuppressWarnings("unchecked")
   private ArrayNode buildArrayNode(JSONObject propertyDef) {
@@ -1413,7 +1573,7 @@ public class ModelObject {
       }
 
       if (parentPath != null) {// not dealing with root so don't add value
-        setMetadataValue(type, parentPath, key, returnValue);
+        setMetadataValue(parentPath, key, returnValue);
       }
 
       return returnValue;
@@ -1427,7 +1587,7 @@ public class ModelObject {
    * @param relativePath relative path to referenced schema
    * @return String
    */
-  protected String getRelativeResourceLocation(String controlPath, String relativePath) {
+  protected static String getRelativeResourceLocation(String controlPath, String relativePath) {
     String returnPath = "";
     String[] relativeSegments = relativePath.split("\\.\\.");
     int relSegLength = relativeSegments.length;
@@ -1457,53 +1617,126 @@ public class ModelObject {
   private void refreshMetadata(JsonNode dataTree) {
     try {
       String treeString = mapper.writeValueAsString(dataTree);
-      objectMetadata = (JSONObject) parser.parse(treeString);
+      if (modelType.equals(ModelPropertyType.OBJECT)) {
+        objectMetadata = (JSONObject) parser.parse(treeString);
+      } else {
+        objectItems = (JSONArray) parser.parse(treeString);
+      }
     } catch (ParseException | JsonProcessingException e) {
       logger.log(Level.SEVERE, e.getMessage());
     }
   }
 
   /**
+   * 
+   * @return Object internally stored generated instance
+   */
+  public Object getMetadata() {
+    return (modelType.equals(ModelPropertyType.OBJECT)) ? objectMetadata : objectItems;
+  }
+
+  /**
+   * 
+   * @return String representation of the internally stored generated instance
+   */
+  public String getMetadataString() {
+    return (modelType.equals(ModelPropertyType.OBJECT)) ? objectMetadata.toJSONString()
+        : objectItems.toJSONString();
+  }
+
+  /**
+   * Method to retrieve at object path of internally stored generated instance
+   * @param path fully qualified object path
+   * @param key name of the property to be retrieved
+   * @return
+   */
+  public Object getMetadataValue(String path, String key) {
+    Object exisitingValue = null;
+    if (path == null || path == null + "/" + null) {
+      exisitingValue = null;
+    } else {
+      try {
+        String jsonstring = "";
+
+        if (getModelType() == ModelPropertyType.OBJECT) {
+          jsonstring = objectMetadata.toJSONString();
+        } else if (getModelType() == ModelPropertyType.ARRAY) {
+          jsonstring = objectItems.toJSONString();
+        }
+
+        // look up value (strip trailing slash from parent path)
+        Object value = mapper.readTree(jsonstring).at(path.replaceAll("/$", "")).get(key);
+
+        if (value != null) {
+          exisitingValue = (Object) value;
+        } else {
+          exisitingValue = null;
+        }
+      } catch (Exception e) {
+        logger.log(Level.SEVERE, e.getMessage());
+      }
+    }
+    return exisitingValue;
+  }
+
+  /**
    * Method to cast and post value to json node path.
    * 
-   * @param type ModelPropertyType
-   * @param pathToParent String Fully qualified path to parent node of the target
-   * @param key String target node
+   * @param metadataPath String Fully qualified path to parent node of the target
+   * @param key String target node key
    * @param value Object value to be assigned
    */
-  protected void setMetadataValue(ModelPropertyType type, String pathToParent, String key,
-      Object value) {
+  public void setMetadataValue(String metadataPath, String key, Object value) {
     JsonNode tree = null;
-    pathToParent = (pathToParent == "/") ? "" : pathToParent;
+
     try {
 
-      tree = mapper.readTree(objectMetadata.toJSONString());
+      tree = mapper.readTree(getMetadataString());
     } catch (IOException e) {
       logger.log(Level.SEVERE, e.getMessage());
     }
-    if (type == ModelPropertyType.BOOLEAN) {
-      ((ObjectNode) tree.at(pathToParent)).put(key, Boolean.parseBoolean(value.toString()));
-    } else if (type == ModelPropertyType.INTEGER) {
-      ((ObjectNode) tree.at(pathToParent)).put(key, Long.parseLong(value.toString()));
-    } else if (type == ModelPropertyType.NUMBER) {
-      ((ObjectNode) tree.at(pathToParent)).put(key, Double.parseDouble(value.toString()));
-    } else if (type == ModelPropertyType.OBJECT || type == ModelPropertyType.REF_DEFINITION
-        || type == ModelPropertyType.REF_SCHEMA || type == ModelPropertyType.ARRAY) {
+
+    String path = metadataPath.replaceAll("/$", "");
+
+    String stringRep = castAsString(value);
+    if (isBoolean(value)) {
+      ((ObjectNode) tree.at(path)).put(key, Boolean.parseBoolean(stringRep));
+    } else if (isInt(value)) {
+      ((ObjectNode) tree.at(path)).put(key, Long.parseLong(stringRep));
+    } else if (isNumber(value)) {
+      ((ObjectNode) tree.at(path)).put(key, Double.parseDouble(stringRep));
+    } else if (isArrayNode(value)) {
+      ((ObjectNode) tree.at(path)).putArray(key).addAll((ArrayNode) value);
+    } else if (isObject(value)) {
       try {
-        String stringValue = value.toString();
-        JsonNode node = mapper.readTree(stringValue);
-        ((ObjectNode) tree.at(pathToParent)).set(key, node);
+        JsonNode node = mapper.readTree(stringRep);
+        ((ObjectNode) tree.at(path)).set(key, node);
       } catch (IOException e) {
         logger.log(Level.SEVERE, e.getMessage());
       }
-    } else if (type == ModelPropertyType.NULL) {
-      ((ObjectNode) tree.at(pathToParent)).putNull(key);
+    } else if (value == null || value == "null") {
+      ((ObjectNode) tree.at(path)).putNull(key);
     } else {
-
-      ((ObjectNode) tree.at(pathToParent)).put(key, value.toString());
+      ((ObjectNode) tree.at(path)).put(key, stringRep);
     }
     refreshMetadata(tree);
   }
+  
+  /**
+   * Rerturn a string representation based on the value object type
+   * @param value
+   * @return
+   */
+  public String castAsString(Object value) {
+    if(isBoolean(value) || isInt(value) || isNumber(value) || isArrayNode(value) || isObject(value) ) {
+      return value.toString();
+    } else {
+      String string = value.toString();
+      String unescaped = string.replaceAll("\"", "");
+      return unescaped;
+    }
+  }
+
 
   /**
    * Returns path to the Object.
@@ -1566,6 +1799,7 @@ public class ModelObject {
    * @param data data to be set
    */
   @SuppressWarnings("unchecked")
+  @Deprecated
   public void setDataAtItemsIndex(int index, JSONObject data) {
     if (modelType == ModelPropertyType.ARRAY) {
       objectItems.set(index, data);
@@ -1581,6 +1815,7 @@ public class ModelObject {
    * @param index position of the item
    * @return JSONObject
    */
+  @Deprecated
   public JSONObject getDataAtItemsIndex(int index) {
     if (modelType == ModelPropertyType.ARRAY) {
       return (JSONObject) objectItems.get(index);
@@ -1621,6 +1856,48 @@ public class ModelObject {
     return objectType;
   }
 
+  private boolean isBoolean(Object value) {
+    if (value.toString().equalsIgnoreCase("true") || value.toString().equalsIgnoreCase("false")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean isInt(Object value) {
+    try {
+      Integer.parseInt(value.toString());
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
+    }
+  }
+
+  private boolean isNumber(Object value) {
+    try {
+      Double.parseDouble(value.toString());
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
+    }
+  }
+
+  private boolean isObject(Object value) {
+    if (value instanceof JSONObject) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean isArrayNode(Object value) {
+    if (value instanceof ArrayNode) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * Returns location of the schema in the project resources.
    * 
@@ -1637,6 +1914,7 @@ public class ModelObject {
    * @param value new value of the key
    */
   @SuppressWarnings("unchecked")
+  @Deprecated
   public void setObjectMetadataProperty(String property, Object value) {
     if (objectMetadata.containsKey(property)) {
       objectMetadata.remove(property);
@@ -1650,6 +1928,7 @@ public class ModelObject {
    * @param property string representation of the property to be retrieved
    * @return Object representation of the value
    */
+  @Deprecated
   public Object getObjectMetadataProperty(String property) {
     return objectMetadata.get(property);
   }
@@ -1660,6 +1939,7 @@ public class ModelObject {
    * @param path standard path to the node in the object instance to be retrieved
    * @return Object
    */
+  @Deprecated
   public Object getObjectMetadataValueAt(String path) {
     JsonNode node = null;
     try {
@@ -1678,6 +1958,7 @@ public class ModelObject {
    * @param property String representation of the property to be removed
    * @return boolean indicator of whether the property existed previously
    */
+  @Deprecated
   public boolean removeObjectMetadataProperty(String property) {
     boolean existed = false;
     if (objectMetadata.containsKey(property)) {

@@ -41,11 +41,14 @@ public class PathEngine extends CoreEngine {
   /**
    * Constructor
    * 
+   * @param serviceName name of the target service, which is a mapping to the config folder in
+   *        the project resources
    * @param reqSpec RequestSpecBuilder to be used in the call to the core controller. Usually these
    *        are control values, not test values
    * @param path string path to be fuzzed
    * @param target string part of the target to be fuzzed
    * @param method http action to be invoked (i.e. POST, GET, etc.)
+   * @param filters RestAssured Filters
    */
   public PathEngine(String serviceName, RequestSpecBuilder reqSpec, String path, String target,
       Method method, Filter... filters) {
