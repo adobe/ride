@@ -17,14 +17,14 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <integrationtests>**/integration-test/*Test.java</integrationtests>
-    <framework.version>0.0.1-SNAPSHOT</framework.version>
+    <framework.version>2.0</framework.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>com.adobe.ride.sample</groupId>
       <artifactId>sample-service-extension</artifactId>
-      <version>${framework.version}</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.adobe.ride</groupId>
