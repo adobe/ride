@@ -28,7 +28,7 @@ Ride is a service-agnostic, modular, extensible Java REST API automation framewo
 
 # Getting Started
 
-While Ride can be used as is, it is more powerful when extended for your specific services.  Extending is consists of three steps:
+While Ride can be used as is, it is more powerful when extended for your specific services.  Extending it consists of three steps:
 * Providing config information, in the form of environment property files and payload schemas
 * Creating extensions from the core API Controller and ModelObject, which consume the config info you provide
 * Writing tests using the configured extension(s)
@@ -66,35 +66,47 @@ An examination of the pom files in those two sample projects will given you an i
 ## Writing Tests
 
 
-Once you have created and built your extension, you can begin using is tests which abstract away a significant portion repetitive code, as is shown below:
+Once you have created and built your extension, you can begin using is tests which abstract away a significant portion repetitive code, as is shown below (the annotation is TestNG standard, built into Ride):
 
 ```
   @Test(groups = {"smoke", "acceptance"})
   public void testAuthenticatedCalltoServer() {
     String itemName = UUID.randomUUID().toString();
 
-    // Create  Object
+    // Create object
     SampleServiceObject1 testObject = new SampleServiceObject1(itemName, false);
     
-    // 
+    // Send object data to service
     SampleServiceController.createOrUpdateObject(testObject.getObjectPath(), testObject,
         ExpectedResponse.CREATED_RESPONSE, true);
   }
 ```
 
+If you don't have [Maven failsafe](https://maven.apache.org/surefire/maven-failsafe-plugin/) configured, it is recommended that you append your test file names with "_IT" so that they will be run by Failsafe as opposed to maven Surefire (for example, MyBasicTest_IT.java).
+
 ## Running Your Tests
 
-When you are ready to run your tests from the command line, it will look something like this (standard maven command line syntax):
+When you are ready to run your tests from the command line, below are a few examples of run commands (standard maven command line syntax):
+
 
 ``` 
+#run all against prod01 environment
 mvn clean verify -Dtarget=prod01
 ```
 
-If you do not specify a target, 'localhost' is the default and will be used by your extension.
+``` 
+#run specific test
+mvn clean verify -Dtarget=prod01 -Dit.test="myGreatTestFile_IT.java#creationTest
+```
+
+``` 
+#run specific test group
+mvn clean verify -Dtarget=prod01 -Dgroup=smoke
+```
 
 ## Fuzzing
 
-With a few simple lines of code, you can generate many negative tests against the JSON payload sent to your service.  Ride internally maintains arrays of non-strings, SQL injection strings, No SQL injection strings, and localized strings to teste against the definitions in your schema.  This fuzzing walks the entire hiearchy of any arbitrary schema and tests each node in isolation ([sample code](https://github.com/adobe/ride/blob/develop/sample/sample-service-tests/src/test/java/com/adobe/ride/sample/Basic_FuzzTest_IT.java)):
+With a few simple lines of code, you can generate different data type and content tests against the payload schema to see if your service handles each correctly.  Ride internally maintains arrays of non-strings, SQL injection strings, No SQL injection strings, and localized strings to test against the definitions in your schema.  The Fuzzer walks the entire hierarchy of any arbitrary schema and tests each node in isolation ([sample code](https://github.com/adobe/ride/blob/develop/sample/sample-service-tests/src/test/java/com/adobe/ride/sample/Basic_FuzzTest_IT.java)):
 
 ```
 @Factory
@@ -109,17 +121,18 @@ With a few simple lines of code, you can generate many negative tests against th
 
 ## Performance Testing
 
-Part of the power of Ride is that once you have your extension written, you can use it for fuzzing (as shown above), but also for performance testing.  The performance library in Ride is based on Gatling, so while there is a bit of setup, and a bit of a shift in syntax to scala, you are still able to setup tests that measure performance for full flows of data withough having to rewrite what you've already created in your extension - [sample Ride performance test](https://github.com/adobe/ride/blob/develop/sample/sample-service-performance-tests/src/main/scala/com/adobe/ride/sample/performance/SampleServiceBasicRunner.scala)
+Part of the power of Ride is that once you have your extension written, you can use it for fuzzing (as shown above), but also for performance testing.  The performance library in Ride is based on Gatling, so while there is a bit of setup, and a bit of a shift in syntax to scala, you are still able to setup tests that measure performance for full flows of data withough having to rewrite what you've already created in your extension - [sample Ride performance test](https://github.com/adobe/ride/blob/develop/sample/sample-service-performance-tests/src/main/scala/com/adobe/ride/sample/performance/SampleServiceBasicRunner.scala).
 
 
 ## Additional Documentation
 
-There are a number of supporting Informational documents in this repo which will help you utilize and perhaps contribute to Ride.
+There are a number of supporting informational documents in this repo which will help you utilize and perhaps contribute to Ride.
 
 
 * [Architecture (former main readme)](https://github.com/adobe/ride/blob/develop/Architecture.md)
 * [Quick Start](https://github.com/adobe/ride/blob/develop/QuickStart.md)
 * [Usage](https://github.com/adobe/ride/blob/develop/Usage.md)
 * [Using Authentication](https://github.com/adobe/ride/blob/develop/UsingAuthentiation.md)
+
 
 
