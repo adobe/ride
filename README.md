@@ -13,8 +13,8 @@ Ride is a service-agnostic, modular, extensible Java REST API automation framewo
 * Standardizing service-specific calls
 * Integrating testing across microservices and workflows
 * Auto Generating json payloads from schema
-* Auto-Fuzzing payload defined by arbitrary json schema
-* Runing Perfomance tests against entire workflows without re-writing your test code.
+* Auto-Fuzzing payloads defined by arbitrary json schemas
+* Running Perfomance tests against entire workflows without re-writing your test code
 
 # Current
 
