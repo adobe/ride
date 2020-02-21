@@ -1,4 +1,5 @@
 ![Adobe Ride Logo](images/RideBanner.png)
+
 <br>
 <br>
  Speed the development of your automated REST API tests across microservices and end-to-end workflows.
