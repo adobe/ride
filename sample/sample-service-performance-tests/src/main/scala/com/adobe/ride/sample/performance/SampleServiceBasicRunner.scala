@@ -62,6 +62,5 @@ class SampleServiceClient extends RideServiceClient {
     val testObject: SampleServiceObject1 = new SampleServiceObject1(itemName, false)
 
     SampleServiceController.createOrUpdateObject(testObject.getObjectPath(), testObject, ExpectedResponse.CREATED_RESPONSE, true)
-    // ------
   }
 }

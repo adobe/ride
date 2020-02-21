@@ -46,11 +46,3 @@ public class FuzzArticleMetadata_IT {
 
 ```
 
-### Point of Contact
-
-tedcasey@adobe.com
-
-
-### Future
-
-Future refinements include smarter fuzzing, determining the proper response for any type of fuzz target and data.
